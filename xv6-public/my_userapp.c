@@ -2,7 +2,7 @@
 #include "stat.h"
 #include "user.h"
 
-int 
+int
 main(int argc, char *argv[])
 {
 	char *buf = "Hello xv6!";

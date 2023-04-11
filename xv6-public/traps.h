@@ -25,6 +25,9 @@
 // These are arbitrarily chosen, but with care not to overlap
 // processor defined exceptions or interrupt vectors.
 #define T_SYSCALL       64      // system call
+#define T_INT128       128
+#define T_INT129       129
+#define T_INT130       130
 #define T_DEFAULT      500      // catchall
 
 #define T_IRQ0          32      // IRQ 0 corresponds to int T_IRQ

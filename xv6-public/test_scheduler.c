@@ -2,9 +2,9 @@
 #include "stat.h"
 #include "user.h"
 
-#define LIFETIME (1000)        /* (ticks) */
+#define LIFETIME (1000) /* (ticks) */
 #define COUNT_PERIOD (1000000) /* (iteration) */
-#define MLFQ_LEVEL (3) /* Number of level(priority) of MLFQ scheduler */
+#define MLFQ_LEVEL (3)  /* Number of level(priority) of MLFQ scheduler */
 #define MAX_NUM_PROCESSES (10) 
 
 struct workload
@@ -24,7 +24,7 @@ struct workload
 enum { MLFQ_NONE, MLFQ_LEVCNT, MLFQ_YIELD, MLFQ_LEVCNT_YIELD };
 
 void
-test_mlfq(int type, int pipe)
+test_mlfq(int type)
 {
   int cnt_level[MLFQ_LEVEL] = {0, 0, 0};
   int cnt = 0;
@@ -35,7 +35,7 @@ test_mlfq(int type, int pipe)
 
   /* Get start tick */
   start_tick = uptime();
-  
+
   for(;;) {
     i++;
     if(i >= COUNT_PERIOD) {
@@ -44,7 +44,7 @@ test_mlfq(int type, int pipe)
 
       if(type == MLFQ_LEVCNT || type == MLFQ_LEVCNT_YIELD) {
         /* Count per level */
-        curr_mlfq_level = getLevel(); /* getlev : system call */
+        curr_mlfq_level = getLevel(); /* getLevel : system call */
         cnt_level[curr_mlfq_level]++;
       }
 

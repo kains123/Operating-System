@@ -8,10 +8,38 @@
 #include "spinlock.h"
 #include "mlfq_scheduler.h"
 
+
+#define MLFQ_NUM 3 //MLFQ의 큐는 3개로 이루어져 있다. 
+#define MLFQ_GLOBAL_BOOSTING_TICK_INTERVAL 100
+//NPROC is the maximum number of processes per user.
+#define GET_MIN(a, b) ((a) < (b) ? (a) : (b))
+#define BEGIN(mlfq) (((mlfq)->front + 1) % (NPROC + 1))
+#define NEXT(iter) (((iter) + 1) % (NPROC + 1))
+#define PREV(iter) (((iter) + NPROC) % (NPROC + 1))
+#define END(mlfq) (((mlfq)->rear + 1) % (NPROC + 1))
+
 struct {
   struct spinlock lock;
   struct proc proc[NPROC];
 } ptable;
+
+extern struct {
+  struct spinlock lock;
+  struct proc proc[NPROC];
+} ptable;
+
+typedef struct proc_queue
+{
+  struct proc *data[NPROC];
+  int front, rear;
+  int size;
+} proc_queue_t;
+
+struct
+{
+  proc_queue_t queue[MLFQ_NUM];
+  int global_executed_ticks; //MFLQ scheduler worked ticks
+} mlfq_manager;
 
 static struct proc *initproc;
 
@@ -20,6 +48,174 @@ extern void forkret(void);
 extern void trapret(void);
 
 static void wakeup1(void *chan);
+
+void mlfq_init()
+{
+  int lev;
+  proc_queue_t *queue;
+
+  //queue생성
+  for (lev = 0; lev < MLFQ_NUM; ++lev)
+  {
+    queue = &mlfq_manager.queue[lev];
+
+    memset(queue->data, 0, sizeof(struct proc *) * NPROC);
+
+    queue->front = 1;
+    queue->rear = 0;
+    queue->size = 0;
+  }
+
+  mlfq_manager.global_executed_ticks = 0;
+}
+
+
+static void
+mlfq_priority_boost(void)
+{
+  struct proc *p;
+  int lev;
+  for (lev = 1; lev < MLFQ_NUM; ++lev)
+  {
+    while (mlfq_manager.queue[lev].size)
+    {
+      mlfq_dequeue(lev, &p);
+      mlfq_enqueue(0, p);
+      p->executed_ticks = 0;
+    }
+  }
+  mlfq_manager.global_executed_ticks = 0;
+}
+
+int mlfq_enqueue(int lev, struct proc *p)
+{
+  proc_queue_t *const queue = &mlfq_manager.queue[lev];
+
+  // if queue is full, return failure
+  if (queue->size == NPROC)
+    return -1;
+
+  queue->rear = (queue->rear + 1) % NPROC;
+  queue->data[queue->rear] = p;
+  ++queue->size;
+
+  p->level = lev;
+
+  return 0;
+}
+
+
+int mlfq_dequeue(int lev, struct proc **ret)
+{
+  proc_queue_t *const queue = &mlfq_manager.queue[lev];
+  struct proc *p;
+
+  // if queue is empty, return failure
+  if (queue->size == 0)
+    return -1;
+
+  p = queue->data[queue->front];
+  queue->data[queue->front] = 0;
+
+  queue->front = (queue->front + 1) % NPROC;
+  --queue->size;
+
+  p->level = -1;
+
+  if (ret != 0)
+    *ret = p;
+
+  return lev;
+}
+
+struct proc *mlfq_front(int lev)
+{
+  proc_queue_t *const queue = &mlfq_manager.queue[lev];
+
+  return queue->data[queue->front];
+}
+
+struct proc *
+mlfq_choose()
+{
+  static const int TIME_ALLOTMENT[] = {20, 40};
+
+  struct proc *ret;
+  int lev = 0, size, i;
+
+  while (1)
+  {
+    for (; lev < MLFQ_NUM; ++lev)
+    {
+      if (mlfq_manager.queue[lev].size > 0)
+        break;
+    }
+
+    // if there is no process in the mlfq
+    if (lev == MLFQ_NUM)
+      return 0;
+
+    size = mlfq_manager.queue[lev].size;
+    //queue에 들어있는 것들 수(size)만큼 for문 이용해서 돌린다.
+    for (i = 0; i < size; ++i)
+    {
+      ret = mlfq_front(lev);
+
+      if (!runnable_proc(ret))
+      {
+        mlfq_dequeue(lev, 0);
+        mlfq_enqueue(lev, ret);
+      }
+      else
+      {
+        goto found;
+      }
+    }
+    // queue has no runnable process
+    // then find candidate at next lower queue
+    ++lev;
+  }
+
+found:
+  ++ret->executed_ticks;
+  ++mlfq_manager.global_executed_ticks;
+
+  if (lev < MLFQ_NUM - 1 && ret->executed_ticks >= TIME_ALLOTMENT[lev])
+  {
+    mlfq_dequeue(lev, 0);
+    mlfq_enqueue(lev + 1, ret);
+
+    ret->executed_ticks = 0;
+  }
+  else if (ret->executed_ticks % MLFQ_TIME_QUANTUM(lev) == 0)
+  {
+    mlfq_dequeue(lev, 0);
+    mlfq_enqueue(lev, ret);
+
+    if (lev == MLFQ_NUM - 1)
+      ret->executed_ticks = 0;
+  }
+
+  return ret;
+}
+
+void
+mlfq_print(void)
+{
+  int lev, idx;
+  static const char *state2str[] = {
+      [UNUSED] "unused",   [EMBRYO] "embryo",  [SLEEPING] "sleep ",
+      [RUNNABLE] "runble", [RUNNING] "run   ", [ZOMBIE] "zombie"};
+  cprintf("MLFQ Queue Info\n");
+  for(lev = 0; lev < MLFQ_NUM; lev++) {
+    cprintf("Level %d (%d)\n", lev, queue_size(&mlfq_manager.queue[lev]));
+    cprintf("f=%d, r=%d\n", mlfq_manager.queue[lev].front, mlfq_manager.queue[lev].rear);
+    for(idx = BEGIN(&mlfq_manager.queue[lev]); idx != END(&mlfq_manager.queue[lev]); idx = NEXT(idx))
+      cprintf("[%d] %s %s\n", idx, state2str[mlfq_manager.queue[lev].data[idx]->state],
+              mlfq_manager.queue[lev].data[idx]->name);
+    cprintf("\n");
+  }
+}
 
 void
 pinit(void)
@@ -342,9 +538,11 @@ scheduler(void)
 
     // Loop over process table looking for process to run.
     acquire(&ptable.lock);
-    cprintf("priority"); //! TODO
+    cprintf("priority"); //! TODO priority 조정해줘야함. 
+    p = mlfq_choose();
 
-    for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+    if(p != 0)
+    {
       if(p->state != RUNNABLE)
         continue;
 
@@ -361,6 +559,10 @@ scheduler(void)
       // Process is done running for now.
       // It should have changed its p->state before coming back.
       c->proc = 0;
+    }
+
+    if(mlfq_manager.global_executed_ticks >= MLFQ_GLOBAL_BOOSTING_TICK_INTERVAL) {
+      mlfq_priority_boost();
     }
     release(&ptable.lock);
 

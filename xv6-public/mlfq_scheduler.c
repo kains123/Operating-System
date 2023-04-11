@@ -130,9 +130,3 @@ mlfq_print(void)
   }
 }
 
-int
-is_mlfq(struct proc *p)
-{
-  return p && p->level >= 0 && p->level < MLFQ_NUM;
-}
-
