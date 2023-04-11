@@ -28,10 +28,11 @@ OBJS = \
 	vectors.o\
 	vm.o\
 	prac_syscall.o\
-        pj_one_get_level.o\
+  pj_one_get_level.o\
 	pj_one_set_priority.o\
 	pj_one_scheduler_lock.o\
 	pj_one_scheduler_unlock.o\
+	mlfq_scheduler.o\
 
 # Cross-compiling (e.g., on Mac OS X)
 # TOOLPREFIX = i386-jos-elf

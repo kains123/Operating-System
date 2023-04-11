@@ -6,6 +6,7 @@
 #include "x86.h"
 #include "proc.h"
 #include "spinlock.h"
+#include "mlfq_scheduler.h"
 
 struct {
   struct spinlock lock;
@@ -88,6 +89,15 @@ allocproc(void)
 found:
   p->state = EMBRYO;
   p->pid = nextpid++;
+  p->priority = 3; //Priority boosting이 될 때, 모든 프로세스들의 priority 값은 3으로 재설정됩니다.
+
+  //schduling 초기화
+  if (mlfq_enqueue(0, p) != 0)
+  {
+    release(&ptable.lock);
+    return 0;
+  }
+
 
   release(&ptable.lock);
 
@@ -147,7 +157,7 @@ userinit(void)
   // writes to be visible, and the lock is also needed
   // because the assignment might not be atomic.
   acquire(&ptable.lock);
-
+  
   p->state = RUNNABLE;
 
   release(&ptable.lock);
@@ -332,6 +342,8 @@ scheduler(void)
 
     // Loop over process table looking for process to run.
     acquire(&ptable.lock);
+    cprintf("priority"); //! TODO
+
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
       if(p->state != RUNNABLE)
         continue;
@@ -368,11 +380,11 @@ sched(void)
   int intena;
   struct proc *p = myproc();
 
-  if(!holding(&ptable.lock))
+  if(!holding(&ptable.lock)) // make sure the ptable is locked.
     panic("sched ptable.lock");
-  if(mycpu()->ncli != 1)
+  if(mycpu()->ncli != 1) // make sure interrupt is disabled.
     panic("sched locks");
-  if(p->state == RUNNING)
+  if(p->state == RUNNING) //sleep, yield, exit
     panic("sched running");
   if(readeflags()&FL_IF)
     panic("sched interruptible");
@@ -385,7 +397,7 @@ sched(void)
 void
 yield(void)
 {
-  acquire(&ptable.lock);  //DOC: yieldlock
+  acquire(&ptable.lock); //DOC: yieldlock
   myproc()->state = RUNNABLE;
   sched();
   release(&ptable.lock);

@@ -8,7 +8,7 @@
 #include "proc.h"
 #include "spinlock.h"
 
-//setPriority  system call
+//schedulerLock  system call
 
 void
 schedulerLock(int password)

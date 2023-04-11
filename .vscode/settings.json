@@ -1,0 +1,9 @@
+{
+  "files.associations": {
+    "mlfq_scheduler.h": "c",
+    "x86.h": "c",
+    "proc.h": "c",
+    "spinlock.h": "c",
+    "param.h": "c"
+  }
+}

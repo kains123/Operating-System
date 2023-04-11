@@ -7,13 +7,24 @@
 #include "mmu.h"
 #include "proc.h"
 #include "spinlock.h"
+#include "mlfq_scheduler.h"
 
+extern struct {
+  struct spinlock lock;
+  struct proc proc[NPROC];
+} ptable;
 //getLevel system call
 
 int 
 getLevel(void)
 {
-	return 0;
+	struct proc *p = myproc();
+  acquire(&ptable.lock);
+  uint level = p->level; //Fetch level of process
+  release(&ptable.lock);
+  if(0 <= level && level < MLFQ_NUM)
+    return level;
+  return -1;
 }
 
 int
