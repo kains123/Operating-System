@@ -43,6 +43,13 @@ sys_getpid(void)
 }
 
 int
+sys_get_level(void)
+{
+	return getLevel();
+}
+
+
+int
 sys_sbrk(void)
 {
   int addr;
