@@ -74,9 +74,8 @@ test_mlfq(int type)
   }
 }
 
-
-
-int main(int argc, char *argv[])
+int
+main(int argc, char *argv[])
 {
 	int pid;
 	int i;

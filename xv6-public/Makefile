@@ -32,7 +32,7 @@ OBJS = \
 	pj_one_set_priority.o\
 	pj_one_scheduler_lock.o\
 	pj_one_scheduler_unlock.o\
-	test_scheduler.o\
+
 
 # Cross-compiling (e.g., on Mac OS X)
 # TOOLPREFIX = i386-jos-elf
