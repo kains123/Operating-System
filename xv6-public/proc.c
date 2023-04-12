@@ -6,7 +6,6 @@
 #include "x86.h"
 #include "proc.h"
 #include "spinlock.h"
-#include "mlfq_scheduler.h"
 
 
 #define MLFQ_NUM 3 //MLFQ의 큐는 3개로 이루어져 있다. 
@@ -538,7 +537,7 @@ scheduler(void)
 
     // Loop over process table looking for process to run.
     acquire(&ptable.lock);
-    cprintf("priority"); //! TODO priority 조정해줘야함. 
+    cprintf("priority"); //! TODO priority 조정해주기
     p = mlfq_choose();
 
     if(p != 0)

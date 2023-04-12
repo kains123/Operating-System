@@ -9,7 +9,7 @@
 #include "spinlock.h"
 
 
-//setPriority  system call
+//schedulerUnlock  system call
 
 void
 schedulerUnlock(int password)
