@@ -7,7 +7,6 @@
 #include "mmu.h"
 #include "proc.h"
 #include "spinlock.h"
-#include "proc.h"
 
 extern struct {
   struct spinlock lock;
