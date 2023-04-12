@@ -106,9 +106,9 @@ extern int sys_uptime(void);
 extern int sys_myfunction(void);
 extern int sys_getLevel(void);
 extern int sys_yield(void);
-extern int sys_set_priority(void);
-extern int sys_scheduler_lock(void);
-extern int sys_scheduler_unlock(void);
+extern int sys_setPriority(void);
+extern int sys_schedulerLock(void);
+extern int sys_schedulerUnlock(void);
 
 static int (*syscalls[])(void) = {
 [SYS_fork]    sys_fork,
@@ -135,9 +135,9 @@ static int (*syscalls[])(void) = {
 [SYS_myfunction]   sys_myfunction,
 [SYS_getLevel]	  sys_getLevel,
 [SYS_yield]         sys_yield,
-[SYS_set_priority] sys_set_priority,
-[SYS_scheduler_lock] sys_scheduler_lock,
-[SYS_scheduler_unlock] sys_scheduler_unlock,
+[SYS_setPriority] sys_setPriority,
+[SYS_schedulerLock] sys_schedulerLock,
+[SYS_schedulerUnlock] sys_schedulerUnlock,
 };
 
 void

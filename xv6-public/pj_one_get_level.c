@@ -14,7 +14,7 @@ extern struct {
 } ptable;
 //getLevel system call
 
-int 
+int
 getLevel(void)
 {
 	struct proc *p = myproc();

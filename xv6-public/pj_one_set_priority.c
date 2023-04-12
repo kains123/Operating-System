@@ -31,7 +31,7 @@ setPriority(int pid, int priority)
 }
 
 int
-sys_set_priority(void)
+sys_setPriority(void)
 {
 	int pid;
 	int priority;

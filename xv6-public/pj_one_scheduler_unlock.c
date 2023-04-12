@@ -18,7 +18,7 @@ schedulerUnlock(int password)
 }
 
 int
-sys_scheduler_unlock(void)
+sys_schedulerUnlock(void)
 {
         int password = 0;
         schedulerUnlock(password);

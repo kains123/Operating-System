@@ -23,6 +23,6 @@
 #define SYS_myfunction 22
 #define SYS_getLevel 23
 #define SYS_yield 24
-#define SYS_set_priority 25
-#define SYS_scheduler_lock 26
-#define SYS_scheduler_unlock 27
+#define SYS_setPriority 25
+#define SYS_schedulerLock 26
+#define SYS_schedulerUnlock 27
