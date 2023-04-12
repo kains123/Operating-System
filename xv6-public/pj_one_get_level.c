@@ -27,7 +27,7 @@ getLevel(void)
 }
 
 int
-sys_get_level(void)
+sys_getLevel(void)
 {
 	return getLevel();
 }
