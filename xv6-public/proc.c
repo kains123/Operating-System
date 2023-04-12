@@ -22,10 +22,6 @@ struct {
   struct proc proc[NPROC];
 } ptable;
 
-extern struct {
-  struct spinlock lock;
-  struct proc proc[NPROC];
-} ptable;
 
 typedef struct proc_queue
 {
@@ -49,10 +45,8 @@ extern void trapret(void);
 static void wakeup1(void *chan);
 
 int
-queue_size(int lev)
+queue_size(proc_queue_t *queue)
 {
-  proc_queue_t *queue;
-  queue = &mlfq_manager.queue[lev];
   return queue->rear >= queue->front ? queue->rear - queue->front : (NPROC + 1) + queue->rear - queue->front;
 }
 
@@ -183,14 +177,14 @@ found:
 
     ret->executed_ticks = 0;
   }
-  else if (ret->executed_ticks % MLFQ_TIME_QUANTUM(lev) == 0)
-  {
-    mlfq_dequeue(lev, 0);
-    mlfq_enqueue(lev, ret);
+  // else if (ret->executed_ticks % MLFQ_TIME_QUANTUM(lev) == 0)
+  // {
+  //   mlfq_dequeue(lev, 0);
+  //   mlfq_enqueue(lev, ret);
 
-    if (lev == MLFQ_NUM - 1)
-      ret->executed_ticks = 0;
-  }
+  //   if (lev == MLFQ_NUM - 1)
+  //     ret->executed_ticks = 0;
+  // }
 
   return ret;
 }
