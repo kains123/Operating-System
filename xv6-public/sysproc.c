@@ -42,12 +42,6 @@ sys_getpid(void)
   return myproc()->pid;
 }
 
-int
-sys_get_level(void)
-{
-	return getLevel();
-}
-
 
 int
 sys_sbrk(void)
