@@ -8,8 +8,7 @@
 #include "spinlock.h"
 
 
-#define MLFQ_NUM 3 //MLFQ의 큐는 3개로 이루어져 있다. 
-#define MLFQ_GLOBAL_BOOSTING_TICK_INTERVAL 100
+
 //NPROC is the maximum number of processes per user.
 #define GET_MIN(a, b) ((a) < (b) ? (a) : (b))
 #define BEGIN(mlfq) (((mlfq)->front + 1) % (NPROC + 1))
@@ -159,7 +158,8 @@ mlfq_choose()
     //queue에 들어있는 것들 수(size)만큼 for문 이용해서 돌린다.
     for (i = 0; i < size; ++i)
     {
-        goto found;
+      ret = mlfq_front(lev);
+      goto found;
     }
     // queue has no runnable process
     // then find candidate at next lower queue

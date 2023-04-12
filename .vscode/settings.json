@@ -5,6 +5,7 @@
     "proc.h": "c",
     "spinlock.h": "c",
     "param.h": "c",
-    "memlayout.h": "c"
+    "memlayout.h": "c",
+    "user.h": "c"
   }
 }
