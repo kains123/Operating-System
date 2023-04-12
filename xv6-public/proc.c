@@ -48,6 +48,14 @@ extern void trapret(void);
 
 static void wakeup1(void *chan);
 
+int
+queue_size(int lev)
+{
+  proc_queue_t *queue;
+  queue = &mlfq_manager.queue[lev];
+  return queue->rear >= queue->front ? queue->rear - queue->front : (NPROC + 1) + queue->rear - queue->front;
+}
+
 void mlfq_init()
 {
   int lev;
