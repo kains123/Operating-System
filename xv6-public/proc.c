@@ -68,24 +68,6 @@ void mlfq_init()
   mlfq_manager.global_executed_ticks = 0;
 }
 
-
-static void
-mlfq_priority_boost(void)
-{
-  struct proc *p;
-  int lev;
-  for (lev = 1; lev < MLFQ_NUM; ++lev)
-  {
-    while (mlfq_manager.queue[lev].size)
-    {
-      mlfq_dequeue(lev, &p);
-      mlfq_enqueue(0, p);
-      p->executed_ticks = 0;
-    }
-  }
-  mlfq_manager.global_executed_ticks = 0;
-}
-
 int mlfq_enqueue(int lev, struct proc *p)
 {
   proc_queue_t *const queue = &mlfq_manager.queue[lev];
@@ -127,6 +109,23 @@ int mlfq_dequeue(int lev, struct proc **ret)
   return lev;
 }
 
+static void
+mlfq_priority_boost(void)
+{
+  struct proc *p;
+  int lev;
+  for (lev = 1; lev < MLFQ_NUM; ++lev)
+  {
+    while (mlfq_manager.queue[lev].size)
+    {
+      mlfq_dequeue(lev, &p);
+      mlfq_enqueue(0, p);
+      p->executed_ticks = 0;
+    }
+  }
+  mlfq_manager.global_executed_ticks = 0;
+}
+
 struct proc *mlfq_front(int lev)
 {
   proc_queue_t *const queue = &mlfq_manager.queue[lev];
@@ -158,17 +157,7 @@ mlfq_choose()
     //queue에 들어있는 것들 수(size)만큼 for문 이용해서 돌린다.
     for (i = 0; i < size; ++i)
     {
-      ret = mlfq_front(lev);
-
-      if (!runnable_proc(ret))
-      {
-        mlfq_dequeue(lev, 0);
-        mlfq_enqueue(lev, ret);
-      }
-      else
-      {
         goto found;
-      }
     }
     // queue has no runnable process
     // then find candidate at next lower queue
