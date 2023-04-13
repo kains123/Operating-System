@@ -527,9 +527,9 @@ scheduler(void)
     sti();
 
     // Loop over process table looking for process to run.
-    // acquire(&ptable.lock);
+    acquire(&ptable.lock);
     cprintf("priority ********"); //! TODO priority 조정해주기
-    // p = mlfq_choose();
+    p = mlfq_choose();
 
     // if(p != 0)
     // {
@@ -551,9 +551,9 @@ scheduler(void)
     //   c->proc = 0;
     // }
 
-    // if(mlfq_manager.global_executed_ticks >= MLFQ_GLOBAL_BOOSTING_TICK_INTERVAL) {
-    //   mlfq_priority_boost();
-    // }
+    if(mlfq_manager.global_executed_ticks >= MLFQ_GLOBAL_BOOSTING_TICK_INTERVAL) {
+      mlfq_priority_boost();
+    }
     release(&ptable.lock);
 
   }
