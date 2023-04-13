@@ -518,7 +518,7 @@ wait(void)
 void
 scheduler(void)
 {
-  struct proc *p;
+  // struct proc *p;
   struct cpu *c = mycpu();
   c->proc = 0;
   
@@ -529,7 +529,7 @@ scheduler(void)
     // Loop over process table looking for process to run.
     acquire(&ptable.lock);
     cprintf("priority ********"); //! TODO priority 조정해주기
-    p = mlfq_choose();
+    // p = mlfq_choose();
 
     // if(p != 0)
     // {
