@@ -192,23 +192,6 @@ found:
   return ret;
 }
 
-void
-mlfq_print(void)
-{
-  int lev, idx;
-  static const char *state2str[] = {
-      [UNUSED] "unused",   [EMBRYO] "embryo",  [SLEEPING] "sleep ",
-      [RUNNABLE] "runble", [RUNNING] "run   ", [ZOMBIE] "zombie"};
-  cprintf("MLFQ Queue Info\n");
-  for(lev = 0; lev < MLFQ_NUM; lev++) {
-    cprintf("Level %d (%d)\n", lev, queue_size(&mlfq_manager.queue[lev]));
-    cprintf("f=%d, r=%d\n", mlfq_manager.queue[lev].front, mlfq_manager.queue[lev].rear);
-    for(idx = BEGIN(&mlfq_manager.queue[lev]); idx != END(&mlfq_manager.queue[lev]); idx = NEXT(idx))
-      cprintf("[%d] %s %s\n", idx, state2str[mlfq_manager.queue[lev].data[idx]->state],
-              mlfq_manager.queue[lev].data[idx]->name);
-    cprintf("\n");
-  }
-}
 
 void
 pinit(void)
@@ -533,25 +516,25 @@ scheduler(void)
     cprintf("priority ********"); //! TODO priority 조정해주기
     p = mlfq_allot();
 
-    // if(p != 0)
-    // {
-    //   if(p->state != RUNNABLE)
-    //     continue;
+    if(p != 0)
+    {
+      if(p->state != RUNNABLE)
+        continue;
 
-    //   // Switch to chosen process.  It is the process's job
-    //   // to release ptable.lock and then reacquire it
-    //   // before jumping back to us.
-    //   c->proc = p;
-    //   switchuvm(p);
-    //   p->state = RUNNING;
+      // Switch to chosen process.  It is the process's job
+      // to release ptable.lock and then reacquire it
+      // before jumping back to us.
+      c->proc = p;
+      switchuvm(p);
+      p->state = RUNNING;
 
-    //   swtch(&(c->scheduler), p->context);
-    //   switchkvm();
+      swtch(&(c->scheduler), p->context);
+      switchkvm();
 
-    //   // Process is done running for now.
-    //   // It should have changed its p->state before coming back.
-    //   c->proc = 0;
-    // }
+      // Process is done running for now.
+      // It should have changed its p->state before coming back.
+      c->proc = 0;
+    }
 
     if(mlfq_manager.global_executed_ticks >= MLFQ_GLOBAL_BOOSTING_TICK_INTERVAL) {
       mlfq_priority_boost();
