@@ -15,7 +15,6 @@
 #define NEXT(iter) (((iter) + 1) % (NPROC + 1))
 #define PREV(iter) (((iter) + NPROC) % (NPROC + 1))
 #define END(mlfq) (((mlfq)->rear + 1) % (NPROC + 1))
-// #define MLFQ_TIME_QUANTUM(level) ((MLFQ_TIME_QUANTUM_CONST >> (MLFQ_TIME_CONST_SHIFT * (level))) & MLFQ_TIME_CONST_MASK)
 static const uint MLFQ_TIME_QUANTUM[MLFQ_NUM] = {4, 6, 8};
 
 
@@ -140,8 +139,6 @@ struct proc *mlfq_front(int lev)
 struct proc *
 mlfq_allot()
 {
-  static const int TIME_QUANTUM[] = {4, 6, 8};
-
   struct proc *ret;
   int lev = 0, size, i;
 
