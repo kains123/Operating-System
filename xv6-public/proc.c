@@ -142,49 +142,49 @@ mlfq_allot()
   struct proc *ret;
   int lev = 0, size, i;
 
-  while (1)
-  {
-    for (; lev < MLFQ_NUM; ++lev)
-    {
-      if (mlfq_manager.queue[lev].size > 0)
-        break;
-    }
+//   while (1)
+//   {
+//     for (; lev < MLFQ_NUM; ++lev)
+//     {
+//       if (mlfq_manager.queue[lev].size > 0)
+//         break;
+//     }
 
-    // if there is no process in the mlfq
-    if (lev == MLFQ_NUM)
-      return 0;
+//     // if there is no process in the mlfq
+//     if (lev == MLFQ_NUM)
+//       return 0;
 
-    size = mlfq_manager.queue[lev].size;
-    //queue
-    for (i = 0; i < size; ++i)
-    {
-      ret = mlfq_front(lev);
-      goto found;
-    }
-    // queue has no runnable process
-    // then find candidate at next lower queue
-    ++lev;
-  }
+//     size = mlfq_manager.queue[lev].size;
+//     //queue
+//     for (i = 0; i < size; ++i)
+//     {
+//       ret = mlfq_front(lev);
+//       goto found;
+//     }
+//     // queue has no runnable process
+//     // then find candidate at next lower queue
+//     ++lev;
+//   }
 
-found:
-  ++ret->executed_ticks;
-  ++mlfq_manager.global_executed_ticks;
+// found:
+//   ++ret->executed_ticks;
+//   ++mlfq_manager.global_executed_ticks;
 
-  if (lev < MLFQ_NUM - 1 && ret->executed_ticks >= MLFQ_TIME_QUANTUM[lev])
-  {
-     mlfq_dequeue(lev, 0);
-     mlfq_enqueue(lev + 1, ret);
+//   if (lev < MLFQ_NUM - 1 && ret->executed_ticks >= MLFQ_TIME_QUANTUM[lev])
+//   {
+//      mlfq_dequeue(lev, 0);
+//      mlfq_enqueue(lev + 1, ret);
 
-     ret->executed_ticks = 0;
-   }
-  if (ret->executed_ticks % MLFQ_TIME_QUANTUM[lev] == 0)
-  {
-    mlfq_dequeue(lev, 0);
-    mlfq_enqueue(lev, ret);
+//      ret->executed_ticks = 0;
+//    }
+//   if (ret->executed_ticks % MLFQ_TIME_QUANTUM[lev] == 0)
+//   {
+//     mlfq_dequeue(lev, 0);
+//     mlfq_enqueue(lev, ret);
 
-    if (lev == MLFQ_NUM - 1)
-      ret->executed_ticks = 0;
-  }
+//     if (lev == MLFQ_NUM - 1)
+//       ret->executed_ticks = 0;
+//   }
 
   return ret;
 }
