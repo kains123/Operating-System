@@ -155,7 +155,7 @@ mlfq_allot()
       return 0;
 
     size = mlfq_manager.queue[lev].size;
-    //queue에 들어있는 것들 수(size)만큼 for문 이용해서 돌린다.
+    //queue
     for (i = 0; i < size; ++i)
     {
       ret = mlfq_front(lev);
@@ -170,13 +170,13 @@ found:
   ++ret->executed_ticks;
   ++mlfq_manager.global_executed_ticks;
 
-  // if (lev < MLFQ_NUM - 1 && ret->executed_ticks >= TIME_QUANTUM[lev])
-  // {
-  //   mlfq_dequeue(lev, 0);
-  //   mlfq_enqueue(lev + 1, ret);
+  if (lev < MLFQ_NUM - 1 && ret->executed_ticks >= MLFQ_TIME_QUANTUM[lev])
+  {
+     mlfq_dequeue(lev, 0);
+     mlfq_enqueue(lev + 1, ret);
 
-  //   ret->executed_ticks = 0;
-  // }
+     ret->executed_ticks = 0;
+   }
   if (ret->executed_ticks % MLFQ_TIME_QUANTUM[lev] == 0)
   {
     mlfq_dequeue(lev, 0);
@@ -501,7 +501,7 @@ wait(void)
 void
 scheduler(void)
 {
-  // struct proc *p;
+  struct proc *p;
   struct cpu *c = mycpu();
   c->proc = 0;
   
@@ -510,13 +510,13 @@ scheduler(void)
     sti();
     // Loop over process table looking for process to run.
     acquire(&ptable.lock);
-    cprintf("priority ********"); //! TODO priority 조정해주기
-    // p = mlfq_allot();
+    cprintf("priority ********"); //! TODO set priority 
+    p = mlfq_allot();
 
-    // if(p != 0)
-    // {
-    //   if(p->state != RUNNABLE)
-    //     continue;
+    if(p != 0)
+    {
+        if(p->state != RUNNABLE)
+          continue;
 
     //   // Switch to chosen process.  It is the process's job
     //   // to release ptable.lock and then reacquire it
@@ -531,7 +531,7 @@ scheduler(void)
     //   // Process is done running for now.
     //   // It should have changed its p->state before coming back.
     //   c->proc = 0;
-    // }
+    }
 
     if(mlfq_manager.global_executed_ticks >= MLFQ_GLOBAL_BOOSTING_TICK_INTERVAL) {
       mlfq_priority_boost();
