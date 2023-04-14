@@ -41,12 +41,8 @@ test_mlfq(int type)
     if(i >= COUNT_PERIOD) {
       cnt++;
       i = 0;
-
-      if(type == MLFQ_LEVCNT || type == MLFQ_LEVCNT_YIELD) {
-        /* Count per level */
-        curr_mlfq_level = getLevel(); /* getLevel : system call */
-        cnt_level[curr_mlfq_level]++;
-      }
+      curr_mlfq_level = getLevel(); /* getLevel : system call */
+      cnt_level[curr_mlfq_level]++;
 
       /* Get current tick */
       curr_tick = uptime();
@@ -55,23 +51,13 @@ test_mlfq(int type)
         /* Time to terminate */
         break;
       }
-
-      if(type == MLFQ_YIELD || type == MLFQ_LEVCNT_YIELD) {
-        /* Yield process itself, not by timer interrupt */
-        yield();
-      }
+      /* Yield process itself, not by timer interrupt */
+      yield();
     }
   }
 
   /* Report */
-  if(type == MLFQ_LEVCNT || type == MLFQ_LEVCNT_YIELD) {
-    printf(1, "MLfQ(%s), cnt : %d, lev[0] : %d, lev[1] : %d, lev[2] : %d\n",
-           type == MLFQ_LEVCNT ? "compute" : "yield", cnt, cnt_level[0],
-           cnt_level[1], cnt_level[2]);
-  } else {
-    printf(1, "MLfQ(%s), cnt : %d\n", type == MLFQ_NONE ? "compute" : "yield",
-           cnt);
-  }
+  printf(1, "MLfQ, cnt : %d, lev[0] : %d, lev[1] : %d, lev[2] : %d\n" ,cnt, cnt_level[0], cnt_level[1], cnt_level[2]);
 }
 
 int
@@ -79,6 +65,8 @@ main(int argc, char *argv[])
 {
 	int pid;
 	int i;
+
+  cprintf("****TEST_SCHEDULER****");
 
 	#define WORKLOAD_NUM (2)
 	/* Workload list */

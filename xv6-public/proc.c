@@ -15,6 +15,9 @@
 #define NEXT(iter) (((iter) + 1) % (NPROC + 1))
 #define PREV(iter) (((iter) + NPROC) % (NPROC + 1))
 #define END(mlfq) (((mlfq)->rear + 1) % (NPROC + 1))
+// #define MLFQ_TIME_QUANTUM(level) ((MLFQ_TIME_QUANTUM_CONST >> (MLFQ_TIME_CONST_SHIFT * (level))) & MLFQ_TIME_CONST_MASK)
+static const uint MLFQ_TIME_QUANTUM[MLFQ_NUM] = {4, 6, 8};
+
 
 struct {
   struct spinlock lock;
@@ -135,9 +138,9 @@ struct proc *mlfq_front(int lev)
 }
 
 struct proc *
-mlfq_choose()
+mlfq_allot()
 {
-  static const int TIME_ALLOTMENT[] = {20, 40};
+  static const int TIME_QUANTUM[] = {4, 6, 8};
 
   struct proc *ret;
   int lev = 0, size, i;
@@ -170,21 +173,21 @@ found:
   ++ret->executed_ticks;
   ++mlfq_manager.global_executed_ticks;
 
-  if (lev < MLFQ_NUM - 1 && ret->executed_ticks >= TIME_ALLOTMENT[lev])
-  {
-    mlfq_dequeue(lev, 0);
-    mlfq_enqueue(lev + 1, ret);
-
-    ret->executed_ticks = 0;
-  }
-  // else if (ret->executed_ticks % MLFQ_TIME_QUANTUM(lev) == 0)
+  // if (lev < MLFQ_NUM - 1 && ret->executed_ticks >= TIME_QUANTUM[lev])
   // {
   //   mlfq_dequeue(lev, 0);
-  //   mlfq_enqueue(lev, ret);
+  //   mlfq_enqueue(lev + 1, ret);
 
-  //   if (lev == MLFQ_NUM - 1)
-  //     ret->executed_ticks = 0;
+  //   ret->executed_ticks = 0;
   // }
+  if (ret->executed_ticks % MLFQ_TIME_QUANTUM[lev] == 0)
+  {
+    mlfq_dequeue(lev, 0);
+    mlfq_enqueue(lev, ret);
+
+    if (lev == MLFQ_NUM - 1)
+      ret->executed_ticks = 0;
+  }
 
   return ret;
 }
@@ -518,18 +521,17 @@ wait(void)
 void
 scheduler(void)
 {
-  // struct proc *p;
+  struct proc *p;
   struct cpu *c = mycpu();
   c->proc = 0;
   
   for(;;){
     // Enable interrupts on this processor.
     sti();
-
     // Loop over process table looking for process to run.
     acquire(&ptable.lock);
     cprintf("priority ********"); //! TODO priority 조정해주기
-    // p = mlfq_choose();
+    p = mlfq_allot();
 
     // if(p != 0)
     // {
