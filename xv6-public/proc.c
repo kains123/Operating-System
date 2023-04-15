@@ -210,13 +210,32 @@ found: //if runnable process found.
   ++mlfq_manager.global_executed_ticks;
 
   //pass the process to lev+1 queue.
-  if (lev < MLFQ_NUM - 1 && ret->executed_ticks >= MLFQ_TIME_QUANTUM[lev])
+  //case L0, L1 && if executed_ticks full.
+  if (lev < MLFQ_NUM - 2 && ret->executed_ticks >= MLFQ_TIME_QUANTUM[lev])
   {
-     mlfq_dequeue(lev, 0);
-     mlfq_enqueue(lev + 1, ret);
+    //dequeue ret from current tree
+    mlfq_dequeue(lev, 0);
+    //enqueue ret to current lev + 1 queue
+    mlfq_enqueue(lev + 1, ret);
 
-     ret->executed_ticks = 0;
+    //executed_ticks reset to 0
+    ret->executed_ticks = 0;
+
+  //case L2 && if executed_ticks full.
+  } else if (lev == MLFQ_NUM - 1 && ret->executed_ticks >= MLFQ_TIME_QUANTUM[lev])
+  {
+    //dequeue ret from current tree
+    mlfq_dequeue(lev, 0);
+    //enqueue ret to current lev + 1 queue
+    mlfq_enqueue(lev + 1, ret);
+    
+    //executed_ticks reset to 0
+    ret->executed_ticks = 0;
+    if(ret->priority > 0) {
+      --ret->priority; //prority -1
+    }
   }
+  
   if (ret->executed_ticks % MLFQ_TIME_QUANTUM[lev] == 0)
   {
     mlfq_dequeue(lev, 0);
@@ -569,8 +588,8 @@ scheduler(void)
       swtch(&(c->scheduler), p->context);
       switchkvm();
 
-    //   // Process is done running for now.
-    //   // It should have changed its p->state before coming back.
+      // Process is done running for now.
+      // It should have changed its p->state before coming back.
       c->proc = 0;
     }
 

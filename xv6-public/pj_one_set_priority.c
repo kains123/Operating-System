@@ -20,6 +20,8 @@ setPriority(int pid, int priority)
 {
 	struct proc *p;
 	acquire(&ptable.lock);
+	//Set priority
+	cprintf("Set Priority - %d \n",priority);
 	for(p = ptable.proc; p < &ptable.proc[NPROC]; p++) {
 		if(p->pid == pid) {
 			p->priority = priority;
