@@ -75,17 +75,17 @@ static int is_runnable(struct proc *p){
 
 int mlfq_enqueue(int lev, struct proc *p)
 {
-  proc_queue_t *const q = &mlfq_manager.queue[lev];
+  // proc_queue_t *const queue = &mlfq_manager.queue[lev];
 
-  // if queue is full, return failure
-  if (q->size == NPROC)
-    return -1;
+  // // if queue is full, return failure
+  // if (queue->size == NPROC)
+  //   return -1;
 
-  q->rear = (q->rear + 1) % NPROC;
-  q->data[q->rear] = p;
-  ++q->size;
+  // queue->rear = (queue->rear + 1) % NPROC;
+  // queue->data[queue->rear] = p;
+  // ++queue->size;
 
-  p->level = lev;
+  // p->level = lev;
 
   return 0;
 }
