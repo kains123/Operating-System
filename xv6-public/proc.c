@@ -75,9 +75,8 @@ static int is_runnable(struct proc *p){
 
 int mlfq_enqueue(int lev, struct proc *p)
 {
-    proc_queue_t *const queue = &mlfq_manager.queue[lev];
-
-  // // if queue is full, return failure
+  proc_queue_t *const queue = &mlfq_manager.queue[lev];
+  // if queue is full, return failure
   if (queue->size == NPROC)
     return -1;
 
@@ -195,7 +194,7 @@ mlfq_select()
     {
       ret = mlfq_front(lev);
       if(!is_runnable(ret)) {
-        mlfq_dequeue(lev, 0); //remove first process in queue (lev).
+        // mlfq_dequeue(lev, 0); //remove first process in queue (lev).
         mlfq_enqueue(lev, ret); //add again in the end of queue (lev).
       } else {
         goto found;
