@@ -28,6 +28,7 @@ typedef struct proc_queue
 
 struct
 {
+  //multi-level
   proc_queue_t queue[MLFQ_NUM];
   int global_executed_ticks; //MFLQ scheduler worked ticks
 } mlfq_manager; // There is a global tick in mlfq (3-level feedback queue).
@@ -74,15 +75,15 @@ static int is_runnable(struct proc *p){
 
 int mlfq_enqueue(int lev, struct proc *p)
 {
-  proc_queue_t *const queue = &mlfq_manager.queue[lev];
+  proc_queue_t *const q = &mlfq_manager.queue[lev];
 
   // if queue is full, return failure
-  if (queue->size == NPROC)
+  if (q->size == NPROC)
     return -1;
 
-  queue->rear = (queue->rear + 1) % NPROC;
-  queue->data[queue->rear] = p;
-  ++queue->size;
+  q->rear = (q->rear + 1) % NPROC;
+  q->data[q->rear] = p;
+  ++q->size;
 
   p->level = lev;
 
