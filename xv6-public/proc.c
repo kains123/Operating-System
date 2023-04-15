@@ -81,7 +81,7 @@ int mlfq_enqueue(int lev, struct proc *p)
     return -1;
 
   queue->rear = (queue->rear + 1) % NPROC;
-  queue->data[queue->rear] = p;
+  // queue->data[queue->rear] = p;
   ++queue->size;
 
   p->level = lev;
@@ -194,7 +194,7 @@ mlfq_select()
     {
       ret = mlfq_front(lev);
       if(!is_runnable(ret)) {
-        // mlfq_dequeue(lev, 0); //remove first process in queue (lev).
+        mlfq_dequeue(lev, 0); //remove first process in queue (lev).
         mlfq_enqueue(lev, ret); //add again in the end of queue (lev).
       } else {
         goto found;
