@@ -82,7 +82,7 @@ int mlfq_enqueue(int lev, struct proc *p)
 
   queue->rear = (queue->rear + 1) % NPROC;
   // queue->data[queue->rear] = p;
-  ++queue->size;
+  // queue->size++; 
 
   p->level = lev;
 
