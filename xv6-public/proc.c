@@ -68,25 +68,6 @@ queue_size(proc_queue_t *queue)
   return queue->rear >= queue->front ? queue->rear - queue->front : (NPROC + 1) + queue->rear - queue->front;
 }
 
-void mlfq_init()
-{
-  int lev;
-  proc_queue_t *queue;
-
-  //queue생성
-  for (lev = 0; lev < MLFQ_NUM; ++lev)
-  {
-    queue = &mlfq_manager.queue[lev];
-
-    memset(queue->data, 0, sizeof(struct proc *) * NPROC);
-
-    queue->front = 1;
-    queue->rear = 0;
-    queue->size = 0;
-  }
-
-  mlfq_manager.global_executed_ticks = 0;
-}
 
 static int is_runnable(struct proc *p){
   cprintf("isruanirsuan\n");
