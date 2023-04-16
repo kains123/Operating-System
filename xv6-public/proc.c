@@ -597,7 +597,7 @@ scheduler(void)
     }
 
     if(mlfq_manager.global_executed_ticks >= MLFQ_GLOBAL_BOOSTING_TICK_INTERVAL) {
-      // mlfq_priority_boost();
+      mlfq_priority_boost();
     }
     release(&ptable.lock);
 
