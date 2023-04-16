@@ -662,11 +662,10 @@ yield(void)
   {
     panic("why you call me...?");
   }
-  if(((1 + p->executed_ticks) % MLFQ_TIME_QUANTUM[p->level]) != 0) {
-    ++p->executed_ticks;
-    ++mlfq_manager.global_executed_ticks;
-  }
-  cprintf("********************^^^^^^^^^^^*\n");  
+  // if(((1 + p->executed_ticks) % MLFQ_TIME_QUANTUM[p->level]) != 0) {
+  //   ++p->executed_ticks;
+  //   ++mlfq_manager.global_executed_ticks;
+  // }
   acquire(&ptable.lock); //DOC: yieldlock
   myproc()->state = RUNNABLE;
   myproc()->level = 0;
