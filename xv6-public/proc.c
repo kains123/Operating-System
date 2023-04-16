@@ -110,7 +110,7 @@ int mlfq_dequeue(int lev, struct proc** ret)
   --queue->size;
   //size -1
   p->level = -1;
-  cprintf("*****$$$$$*$$$**$$*$*$**$$$*$*\n")
+  cprintf("*****$$$$$*$$$**$$*$*$**$$$*$*\n");
   if (ret != 0)
     *ret = p;
 
