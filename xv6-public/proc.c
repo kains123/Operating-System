@@ -72,8 +72,8 @@ static int is_runnable(struct proc *p){
   if(!p) {
     cprintf("NULLNULL\n");
   }
-  // if(p->state == RUNNABLE)
-  //    return 1;
+  if(p->state == RUNNABLE)
+     return 1;
   return 0;
 }
 
@@ -323,9 +323,10 @@ allocproc(void)
 found:
   p->state = EMBRYO;
   p->pid = nextpid++;
-  p->priority = 3; //Priority boosting이 될 때, 모든 프로세스들의 priority 값은 3으로 재설정됩니다.
+  p->priority = 3; //if Priority boosting work, prioriy reset to 3.
 
   //schduling reset.
+  cprintf("!@#!@#!@#!@#!@#!@#!@#!@#!@#")
   if (mlfq_enqueue(0, p) != 0)
   {
     release(&ptable.lock);
@@ -393,6 +394,7 @@ userinit(void)
   acquire(&ptable.lock);
   
   p->state = RUNNABLE;
+  cprintf("userinituserinituserinituserinituserinit");
 
   release(&ptable.lock);
 }
@@ -530,7 +532,7 @@ wait(void)
       havekids = 1;
       if(p->state == ZOMBIE){
         mlfq_remove(p);
-        // // Found one.
+        // Found one.
         pid = p->pid;
         kfree(p->kstack);
         p->kstack = 0;
