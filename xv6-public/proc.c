@@ -636,7 +636,7 @@ sched(void)
 {
   int intena;
   struct proc *p = myproc();
-
+  cprintf("~~~~~~~~~~~~~~~~~~\n");
   if(!holding(&ptable.lock)) // make sure the ptable is locked.
     panic("sched ptable.lock");
   if(mycpu()->ncli != 1) // make sure interrupt is disabled.
@@ -646,7 +646,7 @@ sched(void)
   if(readeflags()&FL_IF)
     panic("sched interruptible");
   intena = mycpu()->intena;
-  cprintf("*********************");
+  cprintf("*********************\n");
   swtch(&p->context, mycpu()->scheduler);
   mycpu()->intena = intena;
 }
