@@ -189,6 +189,7 @@ mlfq_select()
       return 0;
 
     size = mlfq_manager.queue[lev].size;
+    cprintf("^^^^^^^^^^^^^^^^^^^^^"); //! TODO set priority 
 
     for (i = 0; i < size; ++i)
     {
@@ -196,7 +197,8 @@ mlfq_select()
       if(!is_runnable(ret)) {
         mlfq_dequeue(lev, 0); //remove first process in queue (lev).
         mlfq_enqueue(lev, ret); //add again in the end of queue (lev).
-      } else {
+      } 
+      else {
         goto found;
       }
     }
@@ -223,19 +225,19 @@ found: //if runnable process found.
 
   //case L2 && if executed_ticks full.
   } 
-  // else if (lev == MLFQ_NUM - 1 && ret->executed_ticks >= MLFQ_TIME_QUANTUM[lev])
-  // {
-  //   //dequeue ret from current tree
-  //   mlfq_dequeue(lev, 0);
-  //   //enqueue ret to current lev + 1 queue
-  //   mlfq_enqueue(lev + 1, ret);
+  else if (lev == MLFQ_NUM - 1 && ret->executed_ticks >= MLFQ_TIME_QUANTUM[lev])
+  {
+    //dequeue ret from current tree
+    mlfq_dequeue(lev, 0);
+    //enqueue ret to current lev + 1 queue
+    mlfq_enqueue(lev + 1, ret);
     
-  //   //executed_ticks reset to 0
-  //   ret->executed_ticks = 0;
-  //   if(ret->priority > 0) {
-  //     --ret->priority; //prority -1
-  //   }
-  // }
+    //executed_ticks reset to 0
+    ret->executed_ticks = 0;
+    if(ret->priority > 0) {
+      --ret->priority; //prority -1
+    }
+  }
   
   if (ret->executed_ticks % MLFQ_TIME_QUANTUM[lev] == 0)
   {
@@ -574,28 +576,28 @@ scheduler(void)
     acquire(&ptable.lock);
     cprintf("priority ********"); //! TODO set priority 
     p = mlfq_select(); //select mlfq which to execute.
-
+    cprintf("&&&&&&&&&&&&"); //! TODO set priority 
     if(p != 0)
     {
-      if(p->state != RUNNABLE)
-        continue;
-      // Switch to chosen process.  It is the process's job
-      // to release ptable.lock and then reacquire it
-      // before jumping back to us.
-      c->proc = p;
-      switchuvm(p);
-      p->state = RUNNING;
+    //   if(p->state != RUNNABLE)
+    //     continue;
+    //   // Switch to chosen process.  It is the process's job
+    //   // to release ptable.lock and then reacquire it
+    //   // before jumping back to us.
+    //   c->proc = p;
+    //   switchuvm(p);
+    //   p->state = RUNNING;
 
-      swtch(&(c->scheduler), p->context);
-      switchkvm();
+    //   swtch(&(c->scheduler), p->context);
+    //   switchkvm();
 
-      // Process is done running for now.
-      // It should have changed its p->state before coming back.
-      c->proc = 0;
-    }
+    //   // Process is done running for now.
+    //   // It should have changed its p->state before coming back.
+    //   c->proc = 0;
+    // }
 
     if(mlfq_manager.global_executed_ticks >= MLFQ_GLOBAL_BOOSTING_TICK_INTERVAL) {
-      mlfq_priority_boost();
+      // mlfq_priority_boost();
     }
     release(&ptable.lock);
 
