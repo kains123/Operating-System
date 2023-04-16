@@ -70,10 +70,6 @@ queue_size(proc_queue_t *queue)
 
 
 static int is_runnable(struct proc *p){
-  cprintf("isruanirsuan\n");
-  if(!p) {
-    cprintf("NULLNULL\n");
-  }
   if(p->state == RUNNABLE)
      return 1;
   return 0;
@@ -85,14 +81,12 @@ int mlfq_enqueue(int lev, struct proc *p)
   // if queue is full, return failure
   if (queue->size == NPROC)
     return -1;
-
-  cprintf("mlfq_enqueuemlfq_enqueuemlfq_enqueue\n");
   queue->rear = (queue->rear + 1) % NPROC;
   queue->data[queue->rear] = p;
   ++queue->size;
 
   p->level = lev;
-  cprintf("OUTOUTOUOTUOUOUTOUOUTOT\n");
+  
   return 0;
 }
 
@@ -102,7 +96,6 @@ int mlfq_dequeue(int lev, struct proc** ret)
 {
   proc_queue_t *const queue = &mlfq_manager.queue[lev];
   struct proc *p;
-  cprintf("mlfq_dequeuemlfq_dequeuemlfq_dequeuemlfq_dequeuemlfq_dequeuemlfq_dequeuemlfq_dequeue\n");
   // if queue is empty return  -1(error);
   if (queue->size == 0)
     return -1;
@@ -115,8 +108,8 @@ int mlfq_dequeue(int lev, struct proc** ret)
   //front + 1;
   --queue->size;
   //size -1
-  // p->level = -1;
-  cprintf("*****$$$$$*$$$**$$*$*$**$$$*$*\n");
+  p->level = -1;
+  
   if (ret != 0)
     *ret = p;
 
@@ -195,19 +188,14 @@ mlfq_select()
     if (lev == MLFQ_NUM)
       return 0;
 
-    size = mlfq_manager.queue[lev].size;
-    cprintf("^^^^^^^^^^^^^^^^^^^^^"); //! TODO set priority 
+    size = mlfq_manager.queue[lev].size;    
 
     for (i = 0; i < size; ++i)
     {
       ret = mlfq_front(lev);
-      cprintf("##################\n"); //! TODO set priority 
       if(!is_runnable(ret)) {
-        cprintf("##################\n"); //! TODO set priority 
         mlfq_dequeue(lev, 0); //remove first process in queue (lev).
-        cprintf("KKKKKKKKKKKKK\n"); //! TODO set priority 
         mlfq_enqueue(lev, ret); //add again in the end of queue (lev).
-        cprintf("(((((((((((((((((())))))))))))))))))\n"); //! TODO set priority 
       }
       else {
         goto found;
@@ -580,9 +568,8 @@ scheduler(void)
     sti();
     // Loop over process table looking for process to run.
     acquire(&ptable.lock);
-    cprintf("priority ********\n"); //! TODO set priority 
     p = mlfq_select(); //select mlfq which to execute.
-    cprintf("&&&&&&&&&&&&"); //! TODO set priority 
+  
     if(p != 0)
     {
       if(p->state != RUNNABLE)
