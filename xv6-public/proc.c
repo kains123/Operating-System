@@ -603,7 +603,6 @@ scheduler(void)
       switchuvm(p);
       p->state = RUNNING;
       cprintf("10&&&&&&&&&&&&&\n");
-
       swtch(&(c->scheduler), p->context);
       cprintf("11&&&&&&&&&&&&&\n");
       switchkvm();
