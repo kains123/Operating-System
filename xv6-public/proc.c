@@ -209,12 +209,11 @@ mlfq_select()
 found: //if runnable process found. 
   ++ret->executed_ticks;
   ++mlfq_manager.global_executed_ticks;
-  cprintf("FOUND_FOUND\n");
   //pass the process to lev+1 queue.
   //case L0, L1 && if executed_ticks full.
   if (lev < MLFQ_NUM - 1 && ret->executed_ticks >= MLFQ_TIME_QUANTUM[lev])
   {
-    cprintf("IFIFIFIFIIFIFIIFIFIIIF\n"); 
+    
     //dequeue ret from current tree
     mlfq_dequeue(lev, 0);
     //enqueue ret to current lev + 1 queue
@@ -225,7 +224,7 @@ found: //if runnable process found.
 
     //if L2, adjust priority
     if(ret->priority > 0 && lev == 2) {
-      cprintf("PRIPRI\n"); 
+    
       ret->priority--; //prority -1
     }
 
@@ -315,7 +314,6 @@ found:
   p->priority = 3; //if Priority boosting work, prioriy reset to 3.
 
   //schduling reset.
-  cprintf("!@#!@#!@#!@#!@#!@#!@#!@#!@#\n");
   if (mlfq_enqueue(0, p) != 0)
   {
     release(&ptable.lock);
