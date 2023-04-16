@@ -198,7 +198,9 @@ mlfq_select()
       ret = mlfq_front(lev);
       cprintf("##################\n"); //! TODO set priority 
       if(!is_runnable(ret)) {
+        cprintf("##################\n"); //! TODO set priority 
         mlfq_dequeue(lev, 0); //remove first process in queue (lev).
+        cprintf("KKKKKKKKKKKKK\n"); //! TODO set priority 
         mlfq_enqueue(lev, ret); //add again in the end of queue (lev).
         cprintf("(((((((((((((((((())))))))))))))))))\n"); //! TODO set priority 
       } 
