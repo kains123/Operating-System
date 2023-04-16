@@ -551,6 +551,24 @@ wait(void)
   }
 }
 
+void print_mlfq_info()
+{
+  int lev, i;
+
+  cprintf("[mlfq info]\n");
+  for (lev = 0; lev < MLFQ_NUM; ++lev)
+  {
+    cprintf("<level %d>\n", lev);
+    cprintf("size: %d\n", mlfq_manager.queue[lev].size);
+
+    for (i = 0; i < mlfq_manager.queue[lev].size; ++i)
+      cprintf("%d ", mlfq_manager.queue[lev].data[(mlfq_manager.queue[lev].front + i) % NPROC] ? mlfq_manager.queue[lev].data[(mlfq_manager.queue[lev].front + i) % NPROC]->pid : -1);
+
+    cprintf("\n");
+  }
+}
+
+
 //PAGEBREAK: 42
 // Per-CPU process scheduler.
 // Each CPU calls scheduler() after setting itself up.
@@ -567,6 +585,7 @@ scheduler(void)
   c->proc = 0;
   
   for(;;){
+    print_mlfq_info();
     // Enable interrupts on this processor.
     sti();
     // Loop over process table looking for process to run.
