@@ -655,7 +655,7 @@ sched(void)
 void
 yield(void)
 { 
-  struct proc *p = myproc();
+  
   acquire(&ptable.lock); //DOC: yieldlock
   myproc()->state = RUNNABLE;
   myproc()->level = 0;
