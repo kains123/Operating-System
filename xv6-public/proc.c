@@ -69,8 +69,8 @@ void mlfq_init()
 
 static int is_runnable(struct proc *p){
   cprintf("isruanirsuan\n");
-  // if(p->state == RUNNABLE)
-  //   return 1;
+  //if(p->state == RUNNABLE)
+     //return 1;
   return 0;
 }
 
