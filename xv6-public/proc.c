@@ -80,8 +80,8 @@ int mlfq_enqueue(int lev, struct proc *p)
   if (queue->size == NPROC)
     return -1;
 
-  // queue->rear = (queue->rear + 1) % NPROC;
-  // queue->data[queue->rear] = p;
+  queue->rear = (queue->rear + 1) % NPROC;
+  queue->data[queue->rear] = p;
   ++queue->size;
 
   p->level = lev;
@@ -211,7 +211,7 @@ found: //if runnable process found.
 
   //pass the process to lev+1 queue.
   //case L0, L1 && if executed_ticks full.
-  if (lev < MLFQ_NUM - 2 && ret->executed_ticks >= MLFQ_TIME_QUANTUM[lev])
+  if (lev < MLFQ_NUM - 1 && ret->executed_ticks >= MLFQ_TIME_QUANTUM[lev])
   {
     //dequeue ret from current tree
     mlfq_dequeue(lev, 0);
