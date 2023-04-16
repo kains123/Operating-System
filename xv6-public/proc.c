@@ -33,6 +33,27 @@ struct
   int global_executed_ticks; //MFLQ scheduler worked ticks
 } mlfq_manager; // There is a global tick in mlfq (3-level feedback queue).
 
+void mlfq_init()
+{
+  int lev;
+  proc_queue_t *queue;
+
+  for (lev = 0; lev < MLFQ_NUM; ++lev)
+  {
+    queue = &mlfq_manager.queue[lev];
+
+    memset(queue->data, 0, sizeof(struct proc *) * NPROC);
+
+    queue->front = 1;
+    queue->rear = 0;
+    queue->size = 0;
+  }
+
+  mlfq_manager.global_executed_ticks = 0;
+  
+}
+
+
 static struct proc *initproc;
 
 int nextpid = 1;
@@ -206,7 +227,7 @@ mlfq_select()
         cprintf("KKKKKKKKKKKKK\n"); //! TODO set priority 
         mlfq_enqueue(lev, ret); //add again in the end of queue (lev).
         cprintf("(((((((((((((((((())))))))))))))))))\n"); //! TODO set priority 
-      } 
+      }
       else {
         goto found;
       }
@@ -240,9 +261,7 @@ found: //if runnable process found.
     }
 
   //case L2 && if executed_ticks full.
-  } 
-  
-  if (ret->executed_ticks % MLFQ_TIME_QUANTUM[lev] == 0)
+  } else if (ret->executed_ticks % MLFQ_TIME_QUANTUM[lev] == 0)
   {
     mlfq_dequeue(lev, 0);
     mlfq_enqueue(lev, ret);
@@ -259,6 +278,7 @@ void
 pinit(void)
 {
   initlock(&ptable.lock, "ptable");
+  mlfq_init();
 }
 
 // Must be called with interrupts disabled
@@ -326,7 +346,7 @@ found:
   p->priority = 3; //if Priority boosting work, prioriy reset to 3.
 
   //schduling reset.
-  cprintf("!@#!@#!@#!@#!@#!@#!@#!@#!@#");
+  cprintf("!@#!@#!@#!@#!@#!@#!@#!@#!@#\n");
   if (mlfq_enqueue(0, p) != 0)
   {
     release(&ptable.lock);
