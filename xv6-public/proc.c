@@ -657,7 +657,7 @@ sched(void)
 void
 yield(void)
 { 
-  
+  cprintf("********************^^^^^^^^^^^*\n");  
   acquire(&ptable.lock); //DOC: yieldlock
   myproc()->state = RUNNABLE;
   myproc()->level = 0;
