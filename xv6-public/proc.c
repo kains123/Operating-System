@@ -583,18 +583,24 @@ scheduler(void)
       c->proc = p;
       switchuvm(p);
       p->state = RUNNING;
+      cprintf("10&&&&&&&&&&&&&\n");
 
       swtch(&(c->scheduler), p->context);
+      cprintf("11&&&&&&&&&&&&&\n");
       switchkvm();
-
+      cprintf("12&&&&&&&&&&&&&\n");
       // Process is done running for now.
       // It should have changed its p->state before coming back.
       c->proc = 0;
     }
 
+    
     if(mlfq_manager.global_executed_ticks >= MLFQ_GLOBAL_BOOSTING_TICK_INTERVAL) {
+      cprintf("13&&&&&&&&&&&&&\n");
       mlfq_priority_boost();
+      cprintf("14&&&&&&&&&&&&&\n");
     }
+    cprintf("15&&&&&&&&&&&&&\n");
     release(&ptable.lock);
 
   }
