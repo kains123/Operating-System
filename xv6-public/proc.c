@@ -80,12 +80,13 @@ int mlfq_enqueue(int lev, struct proc *p)
   if (queue->size == NPROC)
     return -1;
 
+  cprintf("mlfq_enqueuemlfq_enqueuemlfq_enqueue\n");
   queue->rear = (queue->rear + 1) % NPROC;
   queue->data[queue->rear] = p;
   ++queue->size;
 
   p->level = lev;
-
+  cprintf("OUTOUTOUOTUOUOUTOUOUTOT\n");
   return 0;
 }
 
@@ -95,7 +96,7 @@ int mlfq_dequeue(int lev, struct proc** ret)
 {
   proc_queue_t *const queue = &mlfq_manager.queue[lev];
   struct proc *p;
-
+  cprintf("mlfq_dequeuemlfq_dequeuemlfq_dequeuemlfq_dequeuemlfq_dequeuemlfq_dequeuemlfq_dequeue\n");
   // if queue is empty return  -1(error);
   if (queue->size == 0)
     return -1;
@@ -109,7 +110,7 @@ int mlfq_dequeue(int lev, struct proc** ret)
   --queue->size;
   //size -1
   p->level = -1;
-
+  cprintf("*****$$$$$*$$$**$$*$*$**$$$*$*\n")
   if (ret != 0)
     *ret = p;
 
@@ -197,6 +198,7 @@ mlfq_select()
       if(!is_runnable(ret)) {
         mlfq_dequeue(lev, 0); //remove first process in queue (lev).
         mlfq_enqueue(lev, ret); //add again in the end of queue (lev).
+        cprintf("(((((((((((((((((())))))))))))))))))\n"); //! TODO set priority 
       } 
       else {
         goto found;
@@ -210,11 +212,12 @@ mlfq_select()
 found: //if runnable process found. 
   ++ret->executed_ticks;
   ++mlfq_manager.global_executed_ticks;
-
+  cprintf("FOUND_FOUND\n");
   //pass the process to lev+1 queue.
   //case L0, L1 && if executed_ticks full.
   if (lev < MLFQ_NUM - 1 && ret->executed_ticks >= MLFQ_TIME_QUANTUM[lev])
   {
+    cprintf("IFIFIFIFIIFIFIIFIFIIIF\n"); 
     //dequeue ret from current tree
     mlfq_dequeue(lev, 0);
     //enqueue ret to current lev + 1 queue
@@ -225,6 +228,7 @@ found: //if runnable process found.
 
     //if L2, adjust priority
     if(ret->priority > 0 && lev == 2) {
+      cprintf("PRIPRI\n"); 
       ret->priority--; //prority -1
     }
 
@@ -566,7 +570,7 @@ scheduler(void)
     sti();
     // Loop over process table looking for process to run.
     acquire(&ptable.lock);
-    cprintf("priority ********"); //! TODO set priority 
+    cprintf("priority ********\n"); //! TODO set priority 
     p = mlfq_select(); //select mlfq which to execute.
     cprintf("&&&&&&&&&&&&"); //! TODO set priority 
     if(p != 0)
