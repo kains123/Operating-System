@@ -192,11 +192,12 @@ mlfq_select()
 
 
     size = mlfq_manager.queue[lev].size;    
-
+    cprintf("1&&&&&&&&&&&&&\n");
     for (i = 0; i < size; ++i)
     {
       ret = mlfq_front(lev);
       if(!is_runnable(ret)) {
+        cprintf("2&&&&&&&&&&&&&\n");
         mlfq_dequeue(lev, 0); //remove first process in queue (lev).
         mlfq_enqueue(lev, ret); //add again in the end of queue (lev).
       }
@@ -210,6 +211,7 @@ mlfq_select()
   }
 
 found: //if runnable process found. 
+  cprintf("3&&&&&&&&&&&&&\n");
   ++ret->executed_ticks;
   ++mlfq_manager.global_executed_ticks;
   //pass the process to lev+1 queue.
@@ -219,16 +221,19 @@ found: //if runnable process found.
     
     //dequeue ret from current tree
     mlfq_dequeue(lev, 0);
+    cprintf("4&&&&&&&&&&&&&\n");
     //enqueue ret to current lev + 1 queue
     mlfq_enqueue(lev + 1, ret);
 
     //executed_ticks reset to 0
     ret->executed_ticks = 0;
+    cprintf("5&&&&&&&&&&&&&\n");
 
     //if L2, adjust priority
     if(ret->priority > 0 && lev == 2) {
-    
-      --ret->priority; //prority -1
+      cprintf("6&&&&&&&&&&&&&\n");
+      --ret->priority; //prority -
+      cprintf("7&&&&&&&&&&&&&\n");
     }
 
   //case L2 && if executed_ticks full.
@@ -236,11 +241,11 @@ found: //if runnable process found.
   {
     mlfq_dequeue(lev, 0);
     mlfq_enqueue(lev, ret);
-
+    cprintf("8&&&&&&&&&&&&&\n");
     if (lev == MLFQ_NUM - 1)
       ret->executed_ticks = 0;
   }
-
+  cprintf("9&&&&&&&&&&&&&\n");
   return ret;
 }
 
