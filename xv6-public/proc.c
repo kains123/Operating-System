@@ -147,6 +147,7 @@ void mlfq_remove(struct proc *p)
 static void
 mlfq_priority_boost(void)
 {
+  cprintf("*****************");
   struct proc *p;
   int lev;
   for (lev = 1; lev < MLFQ_NUM; ++lev)
@@ -178,6 +179,7 @@ mlfq_select()
 
   while (1)
   {
+    cprintf("%d^^^^^^^^^^^^^^^^^^^^^", lev);
     //each queue size check 
     for (; lev < MLFQ_NUM; ++lev)
     {
@@ -187,6 +189,7 @@ mlfq_select()
     // no process in the mlfq (empty)
     if (lev == MLFQ_NUM)
       return 0;
+
 
     size = mlfq_manager.queue[lev].size;    
 
@@ -378,11 +381,8 @@ userinit(void)
   // run this process. the acquire forces the above
   // writes to be visible, and the lock is also needed
   // because the assignment might not be atomic.
-  acquire(&ptable.lock);
-  
+  acquire(&ptable.lock);  
   p->state = RUNNABLE;
-  cprintf("userinituserinituserinituserinituserinit");
-
   release(&ptable.lock);
 }
 
