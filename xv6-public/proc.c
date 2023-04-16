@@ -656,7 +656,16 @@ sched(void)
 //same as before
 void
 yield(void)
-{ 
+{
+  struct proc *p = myproc();
+  if (p->state != RUNNABLE)
+  {
+    panic("why you call me...?");
+  }
+  if(((1 + p->executed_ticks) % MLFQ_TIME_QUANTUM[p->level]) != 0) {
+    ++p->executed_ticks;
+    ++mlfq_manager.global_executed_ticks;
+  }
   cprintf("********************^^^^^^^^^^^*\n");  
   acquire(&ptable.lock); //DOC: yieldlock
   myproc()->state = RUNNABLE;
