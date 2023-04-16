@@ -650,8 +650,8 @@ sched(void)
 void
 yield(void)
 {
-  cprintf("%d (((((((((())))))))))", MLFQ_TIME_QUANTUM[p->level]);
   struct proc *p = myproc();
+  cprintf("%d (((((((((())))))))))", MLFQ_TIME_QUANTUM[p->level]);
   if(((1 + p->executed_ticks) % MLFQ_TIME_QUANTUM[p->level]) != 0) {
     ++p->executed_ticks;
     ++mlfq_manager.global_executed_ticks;
