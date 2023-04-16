@@ -603,7 +603,7 @@ scheduler(void)
       switchuvm(p);
       p->state = RUNNING;
       cprintf("10&&&&&&&&&&&&&\n");
-      swtch(&(c->scheduler), p->context);
+      // swtch(&(c->scheduler), p->context);
       cprintf("11&&&&&&&&&&&&&\n");
       switchkvm();
       cprintf("12&&&&&&&&&&&&&\n");
@@ -656,11 +656,6 @@ void
 yield(void)
 { 
   struct proc *p = myproc();
-
-  if (p->state != RUNNABLE)
-  {
-    panic("why you call me...?");
-  }/***/
   acquire(&ptable.lock); //DOC: yieldlock
   myproc()->state = RUNNABLE;
   myproc()->level = 0;
