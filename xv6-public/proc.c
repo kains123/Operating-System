@@ -221,29 +221,23 @@ found: //if runnable process found.
     
     //dequeue ret from current tree
     mlfq_dequeue(lev, 0);
-    cprintf("4&&&&&&&&&&&&&\n");
     //enqueue ret to current lev + 1 queue
     mlfq_enqueue(lev + 1, ret);
 
     //executed_ticks reset to 0
     ret->executed_ticks = 0;
-    cprintf("5&&&&&&&&&&&&&\n");
 
     //if L2, adjust priority
     if(ret->priority > 0 && lev == 2) {
-      cprintf("6&&&&&&&&&&&&&\n");
       --ret->priority; //prority -
-      cprintf("7&&&&&&&&&&&&&\n");
     }
   } else if (ret->executed_ticks % MLFQ_TIME_QUANTUM[lev] == 0)
   {
     mlfq_dequeue(lev, 0);
     mlfq_enqueue(lev, ret);
-    cprintf("8&&&&&&&&&&&&&\n");
     if (lev == MLFQ_NUM - 1)
       ret->executed_ticks = 0;
   }
-  cprintf("9&&&&&&&&&&&&&\n");
   return ret;
 }
 
@@ -532,6 +526,7 @@ wait(void)
         p->name[0] = 0;
         p->killed = 0;
         p->state = UNUSED;
+        p->priority = 3;
         release(&ptable.lock);
         
         return pid;
@@ -589,7 +584,8 @@ scheduler(void)
     // Loop over process table looking for process to run.
     acquire(&ptable.lock);
     p = mlfq_select(); //select mlfq which to execute.
-  
+    if(p->state != RUNNABLE)
+      continue;
     if(p != 0)
     {
       // if(p->state != RUNNABLE)
@@ -632,7 +628,6 @@ scheduler(void)
 void
 sched(void)
 {
-  cprintf("!!!!!!!!!!!!!!!!\n");
   int intena;
   struct proc *p = myproc();
   cprintf("~~~~~~~~~~~~~~~~~~\n");
@@ -655,6 +650,7 @@ sched(void)
 void
 yield(void)
 {
+  cprintf("%d (((((((((())))))))))", MLFQ_TIME_QUANTUM[p->level]);
   struct proc *p = myproc();
   if(((1 + p->executed_ticks) % MLFQ_TIME_QUANTUM[p->level]) != 0) {
     ++p->executed_ticks;
