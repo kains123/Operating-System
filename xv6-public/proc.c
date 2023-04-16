@@ -603,7 +603,7 @@ scheduler(void)
       switchuvm(p);
       p->state = RUNNING;
       cprintf("10&&&&&&&&&&&&&\n");
-      // swtch(&(c->scheduler), p->context);
+      swtch(&(c->scheduler), p->context);
       cprintf("11&&&&&&&&&&&&&\n");
       switchkvm();
       cprintf("12&&&&&&&&&&&&&\n");
@@ -646,6 +646,7 @@ sched(void)
   if(readeflags()&FL_IF)
     panic("sched interruptible");
   intena = mycpu()->intena;
+  cpirntf("*********************");
   swtch(&p->context, mycpu()->scheduler);
   mycpu()->intena = intena;
 }
