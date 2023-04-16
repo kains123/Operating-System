@@ -187,7 +187,7 @@ UPROGS=\
 	_wc\
 	_zombie\
 	_my_userapp\
-	_test_scheduler\
+	_mlfq_test\
 
 
 fs.img: mkfs README $(UPROGS)
