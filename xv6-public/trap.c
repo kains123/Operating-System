@@ -56,26 +56,26 @@ trap(struct trapframe *tf)
       exit();
     return;
   }
-  else if(tf->trapno == T_INT129){
-    if(myproc()->killed)
-      exit();
-    myproc()->tf = tf;
-    cprintf("user interrupt 129 called!\n");
-    //schedulerLock
-    if(myproc()->killed)
-      exit();
-    return;
-  }
-    else if(tf->trapno == T_INT130){
-    if(myproc()->killed)
-      exit();
-    myproc()->tf = tf;
-    cprintf("user interrupt 130 called!\n");
-    //schedulerUnLock
-    if(myproc()->killed)
-      exit();
-    return;
-  }
+  // else if(tf->trapno == T_INT129){
+  //   if(myproc()->killed)
+  //     exit();
+  //   myproc()->tf = tf;
+  //   cprintf("user interrupt 129 called!\n");
+  //   //schedulerLock
+  //   if(myproc()->killed)
+  //     exit();
+  //   return;
+  // }
+  //   else if(tf->trapno == T_INT130){
+  //   if(myproc()->killed)
+  //     exit();
+  //   myproc()->tf = tf;
+  //   cprintf("user interrupt 130 called!\n");
+  //   //schedulerUnLock
+  //   if(myproc()->killed)
+  //     exit();
+  //   return;
+  // }
   switch(tf->trapno){
   case T_IRQ0 + IRQ_TIMER:
     if(cpuid() == 0){

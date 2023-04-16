@@ -594,8 +594,8 @@ scheduler(void)
   
     if(p != 0)
     {
-      // if(p->state != RUNNABLE)
-      //   continue;
+      if(p->state != RUNNABLE)
+        continue;
       // Switch to chosen process.  It is the process's job
       // to release ptable.lock and then reacquire it
       // before jumping back to us.
@@ -657,6 +657,8 @@ yield(void)
 { 
   acquire(&ptable.lock); //DOC: yieldlock
   myproc()->state = RUNNABLE;
+  myproc()->level = 0;
+  
   sched();
   release(&ptable.lock);
 }
