@@ -147,7 +147,7 @@ void mlfq_remove(struct proc *p)
 static void
 mlfq_priority_boost(void)
 {
-  cprintf("*****************");
+  
   struct proc *p;
   int lev;
   for (lev = 1; lev < MLFQ_NUM; ++lev)
@@ -179,7 +179,7 @@ mlfq_select()
 
   while (1)
   {
-    cprintf("%d^^^^^^^^^^^^^^^^^^^^^", lev);
+    cprintf("%d^^^^^^^^^^^^^^^^^^^^^\n", lev);
     //each queue size check 
     for (; lev < MLFQ_NUM; ++lev)
     {
@@ -228,7 +228,7 @@ found: //if runnable process found.
     //if L2, adjust priority
     if(ret->priority > 0 && lev == 2) {
     
-      ret->priority--; //prority -1
+      --ret->priority; //prority -1
     }
 
   //case L2 && if executed_ticks full.
