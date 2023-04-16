@@ -655,10 +655,16 @@ sched(void)
 void
 yield(void)
 { 
+  struct proc *p = myproc();
+
+  if (p->state != RUNNABLE)
+  {
+    panic("why you call me...?");
+  }/***/
   acquire(&ptable.lock); //DOC: yieldlock
   myproc()->state = RUNNABLE;
   myproc()->level = 0;
-  
+
   sched();
   release(&ptable.lock);
 }
