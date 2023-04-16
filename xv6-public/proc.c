@@ -326,7 +326,7 @@ found:
   p->priority = 3; //if Priority boosting work, prioriy reset to 3.
 
   //schduling reset.
-  cprintf("!@#!@#!@#!@#!@#!@#!@#!@#!@#")
+  cprintf("!@#!@#!@#!@#!@#!@#!@#!@#!@#");
   if (mlfq_enqueue(0, p) != 0)
   {
     release(&ptable.lock);
