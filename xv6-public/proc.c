@@ -634,6 +634,7 @@ scheduler(void)
 void
 sched(void)
 {
+  cprintf("!!!!!!!!!!!!!!!!\n");
   int intena;
   struct proc *p = myproc();
   cprintf("~~~~~~~~~~~~~~~~~~\n");
