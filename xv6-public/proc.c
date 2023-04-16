@@ -189,8 +189,6 @@ mlfq_select()
     // no process in the mlfq (empty)
     if (lev == MLFQ_NUM)
       return 0;
-
-
     size = mlfq_manager.queue[lev].size;    
     cprintf("1&&&&&&&&&&&&&\n");
     for (i = 0; i < size; ++i)
@@ -651,7 +649,6 @@ void
 yield(void)
 {
   struct proc *p = myproc();
-  cprintf("%d (((((((((())))))))))", MLFQ_TIME_QUANTUM[p->level]);
   if(((1 + p->executed_ticks) % MLFQ_TIME_QUANTUM[p->level]) != 0) {
     ++p->executed_ticks;
     ++mlfq_manager.global_executed_ticks;
