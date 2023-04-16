@@ -223,21 +223,13 @@ found: //if runnable process found.
     //executed_ticks reset to 0
     ret->executed_ticks = 0;
 
+    //if L2, adjust priority
+    if(ret->priority > 0 && lev == 2) {
+      ret->priority--; //prority -1
+    }
+
   //case L2 && if executed_ticks full.
   } 
-  else if (lev == MLFQ_NUM - 1 && ret->executed_ticks >= MLFQ_TIME_QUANTUM[lev])
-  {
-    //dequeue ret from current tree
-    mlfq_dequeue(lev, 0);
-    //enqueue ret to current lev + 1 queue
-    mlfq_enqueue(lev + 1, ret);
-    
-    //executed_ticks reset to 0
-    ret->executed_ticks = 0;
-    if(ret->priority > 0) {
-      --ret->priority; //prority -1
-    }
-  }
   
   if (ret->executed_ticks % MLFQ_TIME_QUANTUM[lev] == 0)
   {
