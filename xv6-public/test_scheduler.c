@@ -66,7 +66,7 @@ main(int argc, char *argv[])
 	int pid;
 	int i;
 
-  cprintf("****TEST_SCHEDULER****");
+  printf(1, "****TEST_SCHEDULER****");
 
 	#define WORKLOAD_NUM (2)
 	/* Workload list */
