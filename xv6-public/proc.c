@@ -307,12 +307,12 @@ found:
 
   cprintf("initialized %d\n", p->pid );
   //first push p in queue
-  if (mlfq_enqueue(0, p) != 0)
-  {
-    cprintf("allocation error %d\n", p->pid );
-    release(&ptable.lock);
-    return 0;
-  }
+  // if (mlfq_enqueue(0, p) != 0)
+  // {
+  //   cprintf("allocation error %d\n", p->pid );
+  //   release(&ptable.lock);
+  //   return 0;
+  // }
 
   release(&ptable.lock);
 
