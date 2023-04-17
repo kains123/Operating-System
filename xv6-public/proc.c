@@ -456,8 +456,10 @@ exit(void)
   struct proc *p;
   int fd;
 
+  //TODO WHY
   if(curproc == initproc)
     panic("init exiting");
+
 
   // Close all open files.
   for(fd = 0; fd < NOFILE; fd++){
@@ -546,8 +548,8 @@ void print_mlfq_info()
   cprintf("[mlfq info]\n");
   for (lev = 0; lev < MLFQ_NUM; ++lev)
   {
-    cprintf("<level %d>\n", lev);
-    cprintf("size: %d\n", mlfq_manager.queue[lev].size);
+    cprintf("[level %d]\n", lev);
+    cprintf("SIZE: %d\n", mlfq_manager.queue[lev].size);
 
     for (i = 0; i < mlfq_manager.queue[lev].size; ++i)
       cprintf("%d ", mlfq_manager.queue[lev].data[(mlfq_manager.queue[lev].front + i) % NPROC] ? mlfq_manager.queue[lev].data[(mlfq_manager.queue[lev].front + i) % NPROC]->pid : -1);
@@ -591,7 +593,9 @@ scheduler(void)
       c->proc = p;
       switchuvm(p);
       p->state = RUNNING;
+      cprintf("*****************");
       swtch(&(c->scheduler), p->context);
+      cprintf("&&&&&&&&&&&&&");
       switchkvm();
       // Process is done running for now.
       // It should have changed its p->state before coming back.
