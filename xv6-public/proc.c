@@ -157,6 +157,13 @@ mlfq_priority_boost(void)
   mlfq_manager.global_executed_ticks = 0;
 }
 
+// struct proc *mlfq_front(int lev)
+// {
+//   proc_queue_t *const queue = &mlfq_manager.queue[lev];
+
+//   return queue->data[queue->front];
+// }
+
 struct proc *
 mlfq_select()
 {
@@ -211,7 +218,7 @@ found: //if runnable process found.
 
     //if L2, adjust priority
     if(ret->priority > 0 && lev == 2) {
-      ret->priority = ret->priority -1; //prority -
+      --ret->priority; //prority -
     }
   }
   // else if (ret->executed_ticks >= MLFQ_TIME_QUANTUM[lev] == 0)
@@ -626,6 +633,9 @@ sched(void)
 void
 yield(void)
 { 
+  struct proc *p = myproc();
+
+
   acquire(&ptable.lock); //DOC: yieldlock
   myproc()->executed_ticks +=1;
   myproc()->state = RUNNABLE;
