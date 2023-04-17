@@ -61,6 +61,12 @@ extern void trapret(void);
 
 static void wakeup1(void *chan);
 
+int
+queue_size(proc_queue_t *queue)
+{
+  return queue->rear >= queue->front ? queue->rear - queue->front : (NPROC + 1) + queue->rear - queue->front;
+}
+
 
 int mlfq_enqueue(int lev, struct proc *p)
 {
