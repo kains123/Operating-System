@@ -78,7 +78,7 @@ int main(int argc, char *argv[])
 
   parent = getpid();
 
-//schedulerLock test
+  //schedulerLock test
   // __asm__("int $129");
   // exit(); 
   // //schedulerLock test

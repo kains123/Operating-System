@@ -186,8 +186,6 @@ mlfq_select()
       if (mlfq_manager.queue[lev].size > 0)
         break;
     }
-    cprintf("%d^^^^^^^^^^^^^^^^^^^^^\n", lev);
-    cprintf("%d*********************\n", mlfq_manager.queue[lev].size);
     // no process in the mlfq (empty)
     if (lev == MLFQ_NUM)
       return 0;
@@ -585,8 +583,8 @@ scheduler(void)
       continue;
     if(p != 0)
     {
-      // if(p->state != RUNNABLE)
-      //   continue;
+      if(p->state != RUNNABLE)
+        continue;
       // Switch to chosen process.  It is the process's job
       // to release ptable.lock and then reacquire it
       // before jumping back to us.
@@ -640,7 +638,6 @@ void
 yield(void)
 { 
   acquire(&ptable.lock); //DOC: yieldlock
-  ++mlfq_manager.global_executed_ticks;
   myproc()->executed_ticks +=1;
   myproc()->state = RUNNABLE;
   sched();
