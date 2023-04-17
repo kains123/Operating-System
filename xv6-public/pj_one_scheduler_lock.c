@@ -21,7 +21,7 @@ schedulerLock(int password)
 int
 sys_schedulerLock(void)
 {
-        int password;
+        int password = 0;
         schedulerLock(password);
 	return 0;
 }

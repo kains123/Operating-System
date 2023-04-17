@@ -79,10 +79,12 @@ int main(int argc, char *argv[])
   parent = getpid();
 
 //schedulerLock test
-  //schedulerLock test
-  //10sec sleep and then systemcall 130
-  sleep(10);
-  __asm__("int $130");
+  // __asm__("int $129");
+  // exit(); 
+  // //schedulerLock test
+  // //10sec sleep and then systemcall 130
+  // sleep(10);
+  // __asm__("int $130");
   exit(); 
   printf(1, "MLFQ test start\n");
 
