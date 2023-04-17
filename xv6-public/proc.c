@@ -42,8 +42,8 @@ void mlfq_init()
   {
     queue = &mlfq_manager.queue[lev];
 
+//TODO
     memset(queue->data, 0, sizeof(struct proc *) * NPROC);
-
     queue->front = 1;
     queue->rear = 0;
     queue->size = 0;
@@ -75,7 +75,7 @@ int mlfq_enqueue(int lev, struct proc *p)
     return -1;
   queue->rear = (queue->rear + 1) % NPROC;
   queue->data[queue->rear] = p;
-  ++queue->size;
+  (queue->size)++;
 
   p->level = lev;
   
@@ -111,6 +111,7 @@ int mlfq_dequeue(int lev, struct proc** ret)
 
 void mlfq_remove(struct proc *p)
 {
+  cprintf("REMOVE %d REMOVE", p->pid);
   proc_queue_t *const queue = &mlfq_manager.queue[p->level];
 
   int i;
@@ -147,8 +148,8 @@ mlfq_priority_boost(void)
     while (mlfq_manager.queue[lev].size) //if each queue is not empty
     {
       //dequeue and then enqueue to L0.
-      mlfq_dequeue(lev, &p); 
-      mlfq_enqueue(0, p);
+        mlfq_dequeue(lev, &p); 
+        mlfq_enqueue(0, p);
       p->priority = 3;
       p->executed_ticks = 0; //time quantum reset.
     }
@@ -187,8 +188,8 @@ mlfq_select()
       ret = queue->data[queue->front];
 
       if(ret->state != RUNNABLE) {
-        mlfq_dequeue(lev, 0); //remove first process in queue (lev).
-        mlfq_enqueue(lev, ret); //add again in the end of queue (lev).
+        // mlfq_dequeue(lev, 0); //remove first process in queue (lev).
+        // mlfq_enqueue(lev, ret); //add again in the end of queue (lev).
       }
       else {
         goto found;
@@ -453,7 +454,6 @@ exit(void)
   struct proc *p;
   int fd;
 
-  //TODO WHY
   if(curproc == initproc)
     panic("init exiting");
 
@@ -508,9 +508,8 @@ wait(void)
         continue;
       havekids = 1;
       if(p->state == ZOMBIE){
-        if (p->pid >= 3) {
-          mlfq_remove(p);
-        }
+        mlfq_remove(p);
+        
         // Found one.
         pid = p->pid;
         kfree(p->kstack);
