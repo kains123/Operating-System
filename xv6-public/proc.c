@@ -205,6 +205,7 @@ found: //if runnable process found.
   ++mlfq_manager.global_executed_ticks;
   //pass the process to lev+1 queue.
   //case L0, L1 && if executed_ticks full.
+  ret->state = RUNNABLE;
   if (lev < MLFQ_NUM - 1 && ret->executed_ticks >= MLFQ_TIME_QUANTUM[lev])
   {
     
@@ -220,8 +221,6 @@ found: //if runnable process found.
     if(ret->priority > 0 && lev == 2) {
       --ret->priority; //prority -
     }
-  } else if(ret->state != ZOMBIE){
-      // mlfq_enqueue(lev, ret);
   }
   // else if (ret->executed_ticks >= MLFQ_TIME_QUANTUM[lev] == 0)
   // {
