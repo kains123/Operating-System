@@ -584,7 +584,9 @@ scheduler(void)
       c->proc = p;
       switchuvm(p);
       p->state = RUNNING;
+      printf("********&&&&^^^^\n");
       swtch(&(c->scheduler), p->context);
+      printf("@@@@@@@@@@\n");
       switchkvm();
 
       // Process is done running for now.
