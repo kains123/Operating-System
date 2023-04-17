@@ -180,11 +180,13 @@ mlfq_select()
     if (lev == MLFQ_NUM)
       return 0;
     size = mlfq_manager.queue[lev].size;    
-    for (i = 0; i < size; ++i)
+    proc_queue_t *const queue = &mlfq_manager.queue[lev];
+    for (i = 0; i < NPROC; ++i)
     {
-      proc_queue_t *const queue = &mlfq_manager.queue[lev];
-      ret = queue->data[queue->front];
-
+      ret = queue->data[i];
+      // if(ret->state == RUNNABLE) {
+      //   return ret;
+      // }
       // if(ret->state != RUNNABLE) {
       //   mlfq_dequeue(lev, 0); //remove first process in queue (lev).
       //   mlfq_enqueue(lev, ret); //add again in the end of queue (lev).
@@ -590,9 +592,7 @@ scheduler(void)
       c->proc = p;
       switchuvm(p);
       p->state = RUNNING;
-      cprintf("********&&&&^^^^\n");
       swtch(&(c->scheduler), p->context);
-      cprintf("@@@@@@@@@@\n");
       switchkvm();
 
       // Process is done running for now.
