@@ -175,7 +175,7 @@ mlfq_select()
     proc_queue_t *const queue = &mlfq_manager.queue[lev];
     for (i = 0; i < size; ++i)
     {
-      ret = queue->data[size];
+      ret = queue->data[queue->front];
       if(ret->state != RUNNABLE) {
         mlfq_dequeue(lev, 0); //remove first process in queue (lev).
         mlfq_enqueue(lev, ret); //add again in the end of queue (lev).
