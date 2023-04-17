@@ -179,7 +179,7 @@ mlfq_select()
     // no process in the mlfq (empty)
     if (lev == MLFQ_NUM)
       return 0;
-    size = mlfq_manager.queue[lev].size;    
+    // size = mlfq_manager.queue[lev].size;    
     proc_queue_t *const queue = &mlfq_manager.queue[lev];
     for (i = 0; i < NPROC; ++i)
     {
