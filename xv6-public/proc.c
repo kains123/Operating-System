@@ -541,7 +541,7 @@ void print_mlfq_info()
 {
   int lev, i;
 
-  cprintf("[mlfq info]\n");
+  cprintf("[mlfq]\n");
   for (lev = 0; lev < MLFQ_NUM; ++lev)
   {
     cprintf("[level %d]\n", lev);
@@ -588,10 +588,10 @@ scheduler(void)
       p->state = RUNNING;
       swtch(&(c->scheduler), p->context);
       switchkvm();
-      if(p->executed_ticks >= MLFQ_TIME_QUANTUM[p->level]) {
-        p->executed_ticks = 0;
-        p->level = p->level + 1;
-      }
+      // if(p->executed_ticks >= MLFQ_TIME_QUANTUM[p->level]) {
+      //   p->executed_ticks = 0;
+      //   p->level = p->level + 1;
+      // }
       // Process is done running for now.
       // It should have changed its p->state before coming back.
       c->proc = 0;
