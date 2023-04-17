@@ -53,7 +53,6 @@ void mlfq_init()
   
 }
 
-
 static struct proc *initproc;
 
 int nextpid = 1;
@@ -134,7 +133,7 @@ void mlfq_remove(struct proc *p)
   queue->data[queue->front] = 0;
 
   queue->front = (queue->front + 1) % NPROC;
-  --queue->size;
+  queue->size = queue->size -1;
 }
 
 
@@ -158,12 +157,12 @@ mlfq_priority_boost(void)
   mlfq_manager.global_executed_ticks = 0;
 }
 
-struct proc *mlfq_front(int lev)
-{
-  proc_queue_t *const queue = &mlfq_manager.queue[lev];
+// struct proc *mlfq_front(int lev)
+// {
+//   proc_queue_t *const queue = &mlfq_manager.queue[lev];
 
-  return queue->data[queue->front];
-}
+//   return queue->data[queue->front];
+// }
 
 struct proc *
 mlfq_select()
@@ -173,7 +172,6 @@ mlfq_select()
 
   while (1)
   {
- 
     //each queue size check 
     for (; lev < MLFQ_NUM; ++lev)
     {
@@ -186,7 +184,9 @@ mlfq_select()
     size = mlfq_manager.queue[lev].size;    
     for (i = 0; i < size; ++i)
     {
-      ret = mlfq_front(lev);
+      proc_queue_t *const queue = &mlfq_manager.queue[lev];
+      ret = queue->data[queue->front];
+
       if(ret->state != RUNNABLE) {
         mlfq_dequeue(lev, 0); //remove first process in queue (lev).
         mlfq_enqueue(lev, ret); //add again in the end of queue (lev).
@@ -218,7 +218,7 @@ found: //if runnable process found.
 
     //if L2, adjust priority
     if(ret->priority > 0 && lev == 2) {
-      --ret->priority; //prority -
+      ret->priority = ret->priority -1; //prority -
     }
   }
   // else if (ret->executed_ticks >= MLFQ_TIME_QUANTUM[lev] == 0)
@@ -634,11 +634,6 @@ void
 yield(void)
 { 
   struct proc *p = myproc();
-
-  if (p->state != RUNNABLE)
-  {
-    panic("why you call me...?");
-  }
   acquire(&ptable.lock); //DOC: yieldlock
   myproc()->executed_ticks +=1;
   myproc()->state = RUNNABLE;
