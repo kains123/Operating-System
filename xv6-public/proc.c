@@ -129,7 +129,6 @@ void mlfq_remove(struct proc *p)
     i = i ? i - 1 : NPROC - 1;
   }
   queue->data[queue->front] = 0;
-
   queue->front = (queue->front + 1) % NPROC;
   queue->size = queue->size -1;
 }
@@ -155,18 +154,11 @@ mlfq_priority_boost(void)
   mlfq_manager.global_executed_ticks = 0;
 }
 
-// struct proc *mlfq_front(int lev)
-// {
-//   proc_queue_t *const queue = &mlfq_manager.queue[lev];
-
-//   return queue->data[queue->front];
-// }
-
 struct proc *
 mlfq_select()
 {
   struct proc *ret;
-  int lev = 0, i;
+  int lev = 0, size, i;
 
   while (1)
   {
@@ -179,24 +171,21 @@ mlfq_select()
     // no process in the mlfq (empty)
     if (lev == MLFQ_NUM)
       return 0;
-    // size = mlfq_manager.queue[lev].size;    
+    size = mlfq_manager.queue[lev].size;    
     proc_queue_t *const queue = &mlfq_manager.queue[lev];
-    for (i = 0; i < NPROC; ++i)
+    for (i = 0; i < size; ++i)
     {
       ret = queue->data[i];
-      // if(ret->state == RUNNABLE) {
-      //   return ret;
-      // }
-      // if(ret->state != RUNNABLE) {
-      //   mlfq_dequeue(lev, 0); //remove first process in queue (lev).
-      //   mlfq_enqueue(lev, ret); //add again in the end of queue (lev).
-      // }
-      // else {
-      if(ret->state == RUNNABLE) {
-        cprintf("[%d] name: %s\n", ret->pid, ret->name);
-        goto found;
+      if(ret->state != RUNNABLE) {
+        mlfq_dequeue(lev, 0); //remove first process in queue (lev).
+        mlfq_enqueue(lev, ret); //add again in the end of queue (lev).
       }
-      // }
+      else {
+        if(ret->state == RUNNABLE) {
+          cprintf("[%d] name: %s\n", ret->pid, ret->name);
+          goto found;
+        }
+      }
     }
     // queue has no runnable process
     // then find candidate at next lower queue
