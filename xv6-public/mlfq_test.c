@@ -81,7 +81,7 @@ int main(int argc, char *argv[])
 //   int count[MAX_LEVEL] = {0};
 // //  int child;
 
-//   parent = getpid();
+  parent = getpid();
 
   printf(1, "MLFQ test start\n");
 
