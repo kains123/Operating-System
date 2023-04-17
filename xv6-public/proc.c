@@ -69,12 +69,6 @@ queue_size(proc_queue_t *queue)
 }
 
 
-// static int is_runnable(struct proc *p){
-//   if(p->state == RUNNABLE)
-//      return 1;
-//   return 0;
-// }
-
 int mlfq_enqueue(int lev, struct proc *p)
 {
   proc_queue_t *const queue = &mlfq_manager.queue[lev];
@@ -592,10 +586,12 @@ scheduler(void)
       c->proc = p;
       switchuvm(p);
       p->state = RUNNING;
-      cprintf("*****************\n");
       swtch(&(c->scheduler), p->context);
-      cprintf("&&&&&&&&&&&&&");
       switchkvm();
+      if(p->executed_ticks >= MLFQ_TIME_QUANTUM[p->level]) {
+        p->executed_ticks = 0;
+        p->level = p->level + 1;
+      }
       // Process is done running for now.
       // It should have changed its p->state before coming back.
       c->proc = 0;
