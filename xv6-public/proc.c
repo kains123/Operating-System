@@ -543,7 +543,7 @@ void print_mlfq_info()
 {
   int lev, i;
 
-  cprintf("[mlfq]\n");
+  cprintf("\n\n[mlfq]\n");
   for (lev = 0; lev < MLFQ_NUM; ++lev)
   {
     cprintf("[level %d]\n", lev);
