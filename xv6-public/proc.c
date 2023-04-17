@@ -149,7 +149,6 @@ mlfq_priority_boost(void)
       //dequeue and then enqueue to L0.
       mlfq_dequeue(lev, &p); 
       mlfq_enqueue(0, p);
-      cprintf(p->state);
       p->priority = 3;
       p->executed_ticks = 0; //time quantum reset.
     }
