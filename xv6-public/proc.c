@@ -580,7 +580,7 @@ scheduler(void)
     sti();
     // Loop over process table looking for process to run.
     acquire(&ptable.lock);
-    // p = mlfq_select(); //select mlfq which to execute.
+    p = mlfq_select(); //select mlfq which to execute.
 
     if(p != 0)
     {
