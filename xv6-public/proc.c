@@ -214,13 +214,13 @@ found: //if runnable process found.
       ret->priority = ret->priority -1; //prority -
     }
   }
-  else if (ret->executed_ticks >= MLFQ_TIME_QUANTUM[lev] == 0)
-  {
-    mlfq_dequeue(lev, 0);
-    mlfq_enqueue(lev, ret);
-    if (lev == MLFQ_NUM - 1)
-      ret->executed_ticks = 0;
-  }
+  // else if (ret->executed_ticks >= MLFQ_TIME_QUANTUM[lev] == 0)
+  // {
+  //   mlfq_dequeue(lev, 0);
+  //   mlfq_enqueue(lev, ret);
+  //   if (lev == MLFQ_NUM - 1)
+  //     ret->executed_ticks = 0;
+  // }
   return ret;
 }
 
