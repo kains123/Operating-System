@@ -166,7 +166,7 @@ struct proc *
 mlfq_select()
 {
   struct proc *ret;
-  int lev = 0, size, i;
+  int lev = 0, i;
 
   while (1)
   {
