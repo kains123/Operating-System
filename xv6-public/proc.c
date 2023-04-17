@@ -633,8 +633,6 @@ sched(void)
 void
 yield(void)
 { 
-  struct proc *p = myproc();
-
 
   acquire(&ptable.lock); //DOC: yieldlock
   myproc()->executed_ticks +=1;
