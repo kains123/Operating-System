@@ -204,7 +204,7 @@ found: //if runnable process found.
   ++ret->executed_ticks;
   ++mlfq_manager.global_executed_ticks;
   //pass the process to lev+1 queue.
-  //case L0, L1, L2 && if executed_ticks full.
+  //case L0, L1 && if executed_ticks full.
   if (lev < MLFQ_NUM - 1 && ret->executed_ticks >= MLFQ_TIME_QUANTUM[lev])
   {
     
@@ -218,16 +218,16 @@ found: //if runnable process found.
 
     //if L2, adjust priority
     if(ret->priority > 0 && lev == 2) {
-      --ret->priority; //prority -
+      (ret->priority)--; //prority -
     }
   }
-  // else if (ret->executed_ticks >= MLFQ_TIME_QUANTUM[lev] == 0)
-  // {
-  //   mlfq_dequeue(lev, 0);
-  //   mlfq_enqueue(lev, ret);
-  //   if (lev == MLFQ_NUM - 1)
-  //     ret->executed_ticks = 0;
-  // }
+  else if (ret->executed_ticks >= MLFQ_TIME_QUANTUM[lev] == 0)
+  {
+    mlfq_dequeue(lev, 0);
+    mlfq_enqueue(lev, ret);
+    if (lev == MLFQ_NUM - 1)
+      ret->executed_ticks = 0;
+  }
   return ret;
 }
 
@@ -580,7 +580,7 @@ scheduler(void)
     sti();
     // Loop over process table looking for process to run.
     acquire(&ptable.lock);
-    p = mlfq_select(); //select mlfq which to execute.
+    // p = mlfq_select(); //select mlfq which to execute.
 
     if(p != 0)
     {
