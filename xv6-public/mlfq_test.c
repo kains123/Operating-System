@@ -72,11 +72,6 @@ void exit_children()
 
 int main(int argc, char *argv[])
 {
-  char *buf = "Hello xv6!";
-	int ret_val; 
-	ret_val = myfunction(buf);
-	printf(1, "Return value : 0x%x\n", ret_val);
-	exit();
   // int i, pid;
   // int count[MAX_LEVEL] = {0};
 //  int child;
@@ -91,7 +86,7 @@ int main(int argc, char *argv[])
   // sleep(10);
   // __asm__("int $130");
   // exit(); 
-  // printf(1, "MLFQ test start\n");
+  printf(1, "MLFQ test start\n");
 
   // printf(1, "[Test 1] default\n");
   // pid = fork_children();
@@ -115,5 +110,5 @@ int main(int argc, char *argv[])
   // exit_children();
   // printf(1, "[Test 1] finished\n");
   // printf(1, "done\n");
-  // exit();
+  exit();
 }
