@@ -227,13 +227,13 @@ found: //if runnable process found.
       --ret->priority; //prority -
     }
   }
-  else if (ret->executed_ticks % MLFQ_TIME_QUANTUM[lev] == 0)
-  {
-    mlfq_dequeue(lev, 0);
-    mlfq_enqueue(lev, ret);
-    if (lev == MLFQ_NUM - 1)
-      ret->executed_ticks = 0;
-  }
+  // else if (ret->executed_ticks % MLFQ_TIME_QUANTUM[lev] == 0)
+  // {
+  //   mlfq_dequeue(lev, 0);
+  //   mlfq_enqueue(lev, ret);
+  //   if (lev == MLFQ_NUM - 1)
+  //     ret->executed_ticks = 0;
+  // }
   return ret;
 }
 
@@ -581,12 +581,9 @@ scheduler(void)
     // Loop over process table looking for process to run.
     acquire(&ptable.lock);
     p = mlfq_select(); //select mlfq which to execute.
-    if(p->state != RUNNABLE)
-      continue;
+
     if(p != 0)
     {
-      if(p->state != RUNNABLE)
-        continue;
       // Switch to chosen process.  It is the process's job
       // to release ptable.lock and then reacquire it
       // before jumping back to us.
