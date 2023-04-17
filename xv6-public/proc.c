@@ -508,7 +508,9 @@ wait(void)
         continue;
       havekids = 1;
       if(p->state == ZOMBIE){
-        mlfq_remove(p);
+        if (p->pid >= 3) {
+          mlfq_remove(p);
+        }
         // Found one.
         pid = p->pid;
         kfree(p->kstack);
