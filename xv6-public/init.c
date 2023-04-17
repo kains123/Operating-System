@@ -18,13 +18,10 @@ main(void)
   }
   dup(0);  // stdout
   dup(0);  // stderr
-
-  printf(1, "1*************\n");
   for(;;){
     printf(1, "init: starting sh\n");
     pid = fork();
     if(pid < 0){
-      printf(1, "2*************\n");
       printf(1, "init: fork failed\n");
       exit();
     }
