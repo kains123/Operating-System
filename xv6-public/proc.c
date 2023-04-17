@@ -179,23 +179,23 @@ mlfq_select()
 
   while (1)
   {
-    cprintf("%d^^^^^^^^^^^^^^^^^^^^^\n", lev);
+ 
     //each queue size check 
     for (; lev < MLFQ_NUM; ++lev)
     {
       if (mlfq_manager.queue[lev].size > 0)
         break;
     }
+    cprintf("%d^^^^^^^^^^^^^^^^^^^^^\n", lev);
+    cprintf("%d*********************\n", mlfq_manager.queue[lev].size);
     // no process in the mlfq (empty)
     if (lev == MLFQ_NUM)
       return 0;
     size = mlfq_manager.queue[lev].size;    
-    cprintf("1&&&&&&&&&&&&&\n");
     for (i = 0; i < size; ++i)
     {
       ret = mlfq_front(lev);
       if(!is_runnable(ret)) {
-        cprintf("2&&&&&&&&&&&&&\n");
         mlfq_dequeue(lev, 0); //remove first process in queue (lev).
         mlfq_enqueue(lev, ret); //add again in the end of queue (lev).
       }
