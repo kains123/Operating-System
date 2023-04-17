@@ -399,7 +399,7 @@ growproc(int n)
 int
 fork(void)
 {
-  cprintf("&&&&&&&&&&&&&&&&&&&");
+
   int i, pid;
   struct proc *np;
   struct proc *curproc = myproc();
@@ -454,7 +454,6 @@ exit(void)
   //TODO WHY
   if(curproc == initproc)
     panic("init exiting");
-
 
   // Close all open files.
   for(fd = 0; fd < NOFILE; fd++){
