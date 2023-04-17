@@ -70,7 +70,7 @@ int mlfq_enqueue(int lev, struct proc *p)
 {
   proc_queue_t *const queue = &mlfq_manager.queue[lev];
   if (queue->size == NPROC)
-    return -1;
+    return -1; //process full
   queue->rear = (queue->rear + 1) % NPROC;
   queue->data[queue->rear] = p;
   (queue->size)++;
@@ -575,7 +575,7 @@ scheduler(void)
   c->proc = 0;
   
   for(;;){
-    print_mlfq_info();
+    // print_mlfq_info();
     // Enable interrupts on this processor.
     sti();
     // Loop over process table looking for process to run.
