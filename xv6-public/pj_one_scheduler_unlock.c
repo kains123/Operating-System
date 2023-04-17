@@ -10,11 +10,13 @@
 
 
 //schedulerUnlock  system call
-
 void
 schedulerUnlock(int password)
 {
-
+        if(password == 2019087192) {
+                __asm__("int $130");
+                exit(); 
+        }
 }
 
 int

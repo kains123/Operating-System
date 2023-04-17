@@ -311,12 +311,12 @@ found:
   p->pid = nextpid++;
   p->priority = 3; //if Priority boosting work, prioriy reset to 3.
 
-  // //schduling reset.
-  // if (mlfq_enqueue(0, p) != 0)
-  // {
-  //   release(&ptable.lock);
-  //   return 0;
-  // }
+  //first push p in queue
+  if (mlfq_enqueue(0, p) != 0)
+  {
+    release(&ptable.lock);
+    return 0;
+  }
 
   release(&ptable.lock);
 

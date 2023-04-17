@@ -60,8 +60,12 @@ trap(struct trapframe *tf)
     if(myproc()->killed)
       exit();
     myproc()->tf = tf;
-    cprintf("user interrupt 129 called!\n");
-    //schedulerLock
+    //stop mlfq 
+
+    //certain process work first. 
+
+    //if it works well, the process move to first of the L0 queue.
+    
     if(myproc()->killed)
       exit();
     return;
@@ -70,6 +74,8 @@ trap(struct trapframe *tf)
     if(myproc()->killed)
       exit();
     myproc()->tf = tf;
+    myproc()->priority = 3;
+    myproc()->executed_ticks = 0;
     cprintf("user interrupt 130 called!\n");
     //schedulerUnLock
     if(myproc()->killed)

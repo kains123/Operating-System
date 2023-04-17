@@ -9,17 +9,19 @@
 #include "spinlock.h"
 
 //schedulerLock  system call
-
 void
 schedulerLock(int password)
 {
-
+        if(password == 2019087192) {
+                __asm__("int $129");
+                exit(); 
+        }
 }
 
 int
 sys_schedulerLock(void)
 {
-        int password = 0;
+        int password;
         schedulerLock(password);
 	return 0;
 }
