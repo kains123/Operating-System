@@ -53,8 +53,6 @@ void mlfq_init()
     }
   }
   
-  
-
   mlfq_manager.global_executed_ticks = 0;
   
 }
@@ -153,8 +151,8 @@ mlfq_priority_boost(void)
     while (mlfq_manager.queue[lev].size) //if each queue is not empty
     {
       //dequeue and then enqueue to L0.
-        mlfq_dequeue(lev, &p); 
-        mlfq_enqueue(0, p);
+      mlfq_dequeue(lev, &p); 
+      mlfq_enqueue(0, p);
       p->priority = 3;
       p->executed_ticks = 0; //time quantum reset.
     }
@@ -307,12 +305,12 @@ found:
 
   cprintf("initialized %d\n", p->pid );
   //first push p in queue
-  // if (mlfq_enqueue(0, p) != 0)
-  // {
-  //   cprintf("allocation error %d\n", p->pid );
-  //   release(&ptable.lock);
-  //   return 0;
-  // }
+  if (mlfq_enqueue(0, p) != 0)
+  {
+    cprintf("allocation error %d\n", p->pid );
+    release(&ptable.lock);
+    return 0;
+  }
 
   release(&ptable.lock);
 
