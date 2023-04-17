@@ -649,9 +649,9 @@ void
 yield(void)
 {
   
-  ++mlfq_manager.global_executed_ticks;
   
   acquire(&ptable.lock); //DOC: yieldlock
+  ++mlfq_manager.global_executed_ticks;
   myproc()->executed_ticks +=1;
   myproc()->state = RUNNABLE;
   sched();
