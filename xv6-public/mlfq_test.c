@@ -72,11 +72,11 @@ void exit_children()
 
 int main(int argc, char *argv[])
 {
-  int i, pid;
-  int count[MAX_LEVEL] = {0};
+  // int i, pid;
+  // int count[MAX_LEVEL] = {0};
 //  int child;
 
-  parent = getpid();
+  // parent = getpid();
 
   // //schedulerLock test
   // __asm__("int $129");
@@ -86,7 +86,7 @@ int main(int argc, char *argv[])
   // sleep(10);
   // __asm__("int $130");
   // exit(); 
-  // printf(1, "MLFQ test start\n");
+  printf(1, "MLFQ test start\n");
 
   // printf(1, "[Test 1] default\n");
   // pid = fork_children();
