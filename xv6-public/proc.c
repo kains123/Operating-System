@@ -75,11 +75,10 @@ queue_size(proc_queue_t *queue)
 int mlfq_enqueue(int lev, struct proc *p)
 {
   proc_queue_t *const queue = &mlfq_manager.queue[lev];
-  cprintf("%d ***************\n\n" ,queue->size);
+
   if (queue->size == NPROC)
     return -1; //process full
   queue->rear = (queue->rear + 1) % NPROC;
-  cprintf("%d ******&&&&&*********\n\n" ,queue->rear);
   queue->data[queue->rear] = p;
   (queue->size)++;
   
@@ -117,7 +116,6 @@ int mlfq_dequeue(int lev, struct proc** ret)
 
 void mlfq_remove(struct proc *p)
 {
-  cprintf("REMOVE %d REMOVE", p->pid);
   proc_queue_t *const queue = &mlfq_manager.queue[p->level];
 
   int i;
