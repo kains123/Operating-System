@@ -74,7 +74,7 @@ int main(int argc, char *argv[])
 {
   int i, pid;
   int count[MAX_LEVEL] = {0};
-  int child;
+  // int child;
 
   parent = getpid();
 
