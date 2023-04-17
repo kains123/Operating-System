@@ -61,12 +61,6 @@ extern void trapret(void);
 
 static void wakeup1(void *chan);
 
-int
-queue_size(proc_queue_t *queue)
-{
-  return queue->rear >= queue->front ? queue->rear - queue->front : (NPROC + 1) + queue->rear - queue->front;
-}
-
 
 int mlfq_enqueue(int lev, struct proc *p)
 {
@@ -157,13 +151,6 @@ mlfq_priority_boost(void)
   mlfq_manager.global_executed_ticks = 0;
 }
 
-// struct proc *mlfq_front(int lev)
-// {
-//   proc_queue_t *const queue = &mlfq_manager.queue[lev];
-
-//   return queue->data[queue->front];
-// }
-
 struct proc *
 mlfq_select()
 {
@@ -221,13 +208,13 @@ found: //if runnable process found.
       ret->priority = ret->priority -1; //prority -
     }
   }
-  // else if (ret->executed_ticks >= MLFQ_TIME_QUANTUM[lev] == 0)
-  // {
-  //   mlfq_dequeue(lev, 0);
-  //   mlfq_enqueue(lev, ret);
-  //   if (lev == MLFQ_NUM - 1)
-  //     ret->executed_ticks = 0;
-  // }
+  else if (ret->executed_ticks >= MLFQ_TIME_QUANTUM[lev] == 0)
+  {
+    mlfq_dequeue(lev, 0);
+    mlfq_enqueue(lev, ret);
+    if (lev == MLFQ_NUM - 1)
+      ret->executed_ticks = 0;
+  }
   return ret;
 }
 
