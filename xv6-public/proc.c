@@ -71,7 +71,6 @@ queue_size(proc_queue_t *queue)
 int mlfq_enqueue(int lev, struct proc *p)
 {
   proc_queue_t *const queue = &mlfq_manager.queue[lev];
-  // if queue is full, return failure
   if (queue->size == NPROC)
     return -1;
   queue->rear = (queue->rear + 1) % NPROC;
@@ -150,6 +149,7 @@ mlfq_priority_boost(void)
       //dequeue and then enqueue to L0.
       mlfq_dequeue(lev, &p); 
       mlfq_enqueue(0, p);
+      cprintf(p->state);
       p->priority = 3;
       p->executed_ticks = 0; //time quantum reset.
     }
@@ -303,9 +303,11 @@ found:
   p->pid = nextpid++;
   p->priority = 3; //if Priority boosting work, prioriy reset to 3.
 
+  cprintf("initialized %d\n", p->pid );
   //first push p in queue
   if (mlfq_enqueue(0, p) != 0)
   {
+    cprintf("allocation error %d\n", p->pid );
     release(&ptable.lock);
     return 0;
   }
@@ -369,6 +371,7 @@ userinit(void)
   // because the assignment might not be atomic.
   acquire(&ptable.lock);  
   p->state = RUNNABLE;
+  cprintf("process runnable %d\n", p->pid);
   release(&ptable.lock);
 }
 
@@ -633,7 +636,6 @@ sched(void)
 void
 yield(void)
 { 
-
   acquire(&ptable.lock); //DOC: yieldlock
   myproc()->executed_ticks +=1;
   myproc()->state = RUNNABLE;
