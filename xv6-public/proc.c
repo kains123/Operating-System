@@ -302,6 +302,8 @@ found:
   p->state = EMBRYO;
   p->pid = nextpid++;
   p->priority = 3; //if Priority boosting work, prioriy reset to 3.
+  p->executed_ticks=0;
+  p->level=0;
 
   cprintf("initialized %d\n", p->pid );
   //first push p in queue
