@@ -648,16 +648,25 @@ sched(void)
 void
 yield(void)
 {
-  struct proc *p = myproc();
-  if(((1 + p->executed_ticks) % MLFQ_TIME_QUANTUM[p->level]) != 0) {
-    ++p->executed_ticks;
-    ++mlfq_manager.global_executed_ticks;
-  }
-  acquire(&ptable.lock); //DOC: yieldlock
-  myproc()->state = RUNNABLE;
-  myproc()->level = 0;
-  sched();
+  // struct proc *p = myproc();
+  // if(((1 + p->executed_ticks) % MLFQ_TIME_QUANTUM[p->level]) != 0) {
+  //   ++p->executed_ticks;
+  //   ++mlfq_manager.global_executed_ticks;
+  //   sched();
+  // } else {
+  //   acquire(&ptable.lock); //DOC: yieldlock
+  //   p->state = RUNNABLE;
+  //   sched();
+  //   release(&ptable.lock);
+  // }
+  // acquire(&ptable.lock); //DOC: yieldlock
+  // myproc()->state = RUNNABLE;
+  // myproc()->level = 0;
 
+  // release(&ptable.lock);
+  acquire(&ptable.lock);  //DOC: yieldlock
+  myproc()->state = RUNNABLE;
+  sched();
   release(&ptable.lock);
 }
 
