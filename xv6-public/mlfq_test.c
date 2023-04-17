@@ -83,7 +83,7 @@ int main(int argc, char *argv[])
 
 //   parent = getpid();
 
-//   printf(1, "MLFQ test start\n");
+  printf(1, "MLFQ test start\n");
 
 //   printf(1, "[Test 1] default\n");
 //   pid = fork_children();
