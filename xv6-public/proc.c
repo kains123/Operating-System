@@ -197,7 +197,7 @@ mlfq_select()
         mlfq_dequeue(lev, 0); //remove first process in queue (lev).
         mlfq_enqueue(lev, ret); //add again in the end of queue (lev).
       }
-      else {
+      else if(ret->state == RUNNABLE) {
         goto found;
       }
     }
