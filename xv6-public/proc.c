@@ -41,8 +41,6 @@ void mlfq_init()
   for (lev = 0; lev < MLFQ_NUM; ++lev)
   {
     queue = &mlfq_manager.queue[lev];
-
-//TODO
     memset(queue->data, 0, sizeof(struct proc *) * NPROC);
     queue->front = 1;
     queue->rear = 0;
@@ -98,7 +96,7 @@ int mlfq_dequeue(int lev, struct proc** ret)
 
   queue->front = (queue->front + 1) % NPROC;
   //front + 1;
-  --queue->size;
+  (queue->size)--;
   //size -1
   p->level = -1;
   
@@ -187,13 +185,15 @@ mlfq_select()
       proc_queue_t *const queue = &mlfq_manager.queue[lev];
       ret = queue->data[queue->front];
 
-      if(ret->state != RUNNABLE) {
-        // mlfq_dequeue(lev, 0); //remove first process in queue (lev).
-        // mlfq_enqueue(lev, ret); //add again in the end of queue (lev).
-      }
-      else {
+      // if(ret->state != RUNNABLE) {
+      //   mlfq_dequeue(lev, 0); //remove first process in queue (lev).
+      //   mlfq_enqueue(lev, ret); //add again in the end of queue (lev).
+      // }
+      // else {
+      if(ret->state == RUNNABLE) {
         goto found;
       }
+      // }
     }
     // queue has no runnable process
     // then find candidate at next lower queue
@@ -204,7 +204,7 @@ found: //if runnable process found.
   ++ret->executed_ticks;
   ++mlfq_manager.global_executed_ticks;
   //pass the process to lev+1 queue.
-  //case L0, L1 && if executed_ticks full.
+  //case L0, L1, L2 && if executed_ticks full.
   if (lev < MLFQ_NUM - 1 && ret->executed_ticks >= MLFQ_TIME_QUANTUM[lev])
   {
     
@@ -450,10 +450,13 @@ fork(void)
 void
 exit(void)
 {
+
   struct proc *curproc = myproc();
   struct proc *p;
   int fd;
-
+  if(curproc->pid <=2) {
+    return;
+  }
   if(curproc == initproc)
     panic("init exiting");
 
