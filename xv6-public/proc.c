@@ -47,6 +47,13 @@ void mlfq_init()
     queue->size = 0;
   }
 
+  int i = 0;
+  for(i = 0; i < NPROC; i++)
+  {
+    if(queue->data[i] == 0 && (queue->data[i] == mlfq_manager.queue[lev].data[i]))
+      cprintf("[L%d], Successfully allocated at index %d\n", lev, i);
+  }
+
   mlfq_manager.global_executed_ticks = 0;
   
 }
