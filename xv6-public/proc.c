@@ -226,8 +226,10 @@ found: //if runnable process found.
     if(ret->priority > 0 && lev == 2) {
       --ret->priority; //prority -
     }
+  } else if(ret->state != ZOMBIE){
+    mlfq_enqueue(lev, ret);
   }
-  // else if (ret->executed_ticks % MLFQ_TIME_QUANTUM[lev] == 0)
+  // else if (ret->executed_ticks >= MLFQ_TIME_QUANTUM[lev] == 0)
   // {
   //   mlfq_dequeue(lev, 0);
   //   mlfq_enqueue(lev, ret);
