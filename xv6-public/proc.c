@@ -221,7 +221,7 @@ found: //if runnable process found.
       --ret->priority; //prority -
     }
   } else if(ret->state != ZOMBIE){
-    mlfq_enqueue(lev, ret);
+      // mlfq_enqueue(lev, ret);
   }
   // else if (ret->executed_ticks >= MLFQ_TIME_QUANTUM[lev] == 0)
   // {
@@ -588,10 +588,7 @@ scheduler(void)
       p->state = RUNNING;
       swtch(&(c->scheduler), p->context);
       switchkvm();
-      // if(p->executed_ticks >= MLFQ_TIME_QUANTUM[p->level]) {
-      //   p->executed_ticks = 0;
-      //   p->level = p->level + 1;
-      // }
+
       // Process is done running for now.
       // It should have changed its p->state before coming back.
       c->proc = 0;
