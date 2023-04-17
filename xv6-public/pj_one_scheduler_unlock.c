@@ -16,13 +16,19 @@ schedulerUnlock(int password)
         if(password == 2019087192) {
                 __asm__("int $130");
                 exit(); 
+        } else {
+                cprintf("Password not matched!");
+                cprintf("PID: %d TIME_QUANTUM: %d CURRENT_LEVEL: %d", myproc()->pid, myproc()->executed_ticks, myproc()->level);
+                kill(myproc()->pid);
         }
 }
 
 int
 sys_schedulerUnlock(void)
 {
-        int password = 0;
-        schedulerUnlock(password);
+        int password;
+        if(argint(0, &password) <0) 
+		return -1;
+        schedulerLock(password);
 	return 0;
 }

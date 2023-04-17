@@ -11,10 +11,14 @@
 //schedulerLock  system call
 void
 schedulerLock(int password)
-{
+{        
         if(password == 2019087192) {
                 __asm__("int $129");
                 exit(); 
+        } else {
+                cprintf("Password not matched!");
+                cprintf("PID: %d TIME_QUANTUM: %d CURRENT_LEVEL: %d", myproc()->pid, myproc()->executed_ticks, myproc()->level);
+                kill(myproc()->pid);
         }
 }
 
