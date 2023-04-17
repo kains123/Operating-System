@@ -653,6 +653,7 @@ yield(void)
     ++p->executed_ticks;
     ++mlfq_manager.global_executed_ticks;
     acquire(&ptable.lock); //DOC: yieldlock
+    p->state = RUNNABLE;
     sched();
     release(&ptable.lock);
   } else {
