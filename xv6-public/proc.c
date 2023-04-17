@@ -69,11 +69,11 @@ queue_size(proc_queue_t *queue)
 }
 
 
-static int is_runnable(struct proc *p){
-  if(p->state == RUNNABLE)
-     return 1;
-  return 0;
-}
+// static int is_runnable(struct proc *p){
+//   if(p->state == RUNNABLE)
+//      return 1;
+//   return 0;
+// }
 
 int mlfq_enqueue(int lev, struct proc *p)
 {
