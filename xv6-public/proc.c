@@ -456,9 +456,7 @@ exit(void)
   struct proc *curproc = myproc();
   struct proc *p;
   int fd;
-  if(curproc->pid <=2) {
-    return;
-  }
+
   if(curproc == initproc)
     panic("init exiting");
 
