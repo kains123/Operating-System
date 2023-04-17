@@ -39,6 +39,7 @@ sys_kill(void)
 int
 sys_getpid(void)
 {
+  cprintf("sys_getpid working!");
   return myproc()->pid;
 }
 
