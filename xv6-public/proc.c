@@ -228,14 +228,14 @@ found: //if runnable process found.
     if(ret->priority > 0 && lev == 2) {
       --ret->priority; //prority -
     }
-  } 
-  // else if (ret->executed_ticks % MLFQ_TIME_QUANTUM[lev] == 0)
-  // {
-  //   mlfq_dequeue(lev, 0);
-  //   mlfq_enqueue(lev, ret);
-  //   if (lev == MLFQ_NUM - 1)
-  //     ret->executed_ticks = 0;
-  // }
+  }
+  else if (ret->executed_ticks % MLFQ_TIME_QUANTUM[lev] == 0)
+  {
+    mlfq_dequeue(lev, 0);
+    mlfq_enqueue(lev, ret);
+    if (lev == MLFQ_NUM - 1)
+      ret->executed_ticks = 0;
+  }
   return ret;
 }
 
@@ -311,13 +311,12 @@ found:
   p->pid = nextpid++;
   p->priority = 3; //if Priority boosting work, prioriy reset to 3.
 
-  //schduling reset.
-  if (mlfq_enqueue(0, p) != 0)
-  {
-    release(&ptable.lock);
-    return 0;
-  }
-
+  // //schduling reset.
+  // if (mlfq_enqueue(0, p) != 0)
+  // {
+  //   release(&ptable.lock);
+  //   return 0;
+  // }
 
   release(&ptable.lock);
 
