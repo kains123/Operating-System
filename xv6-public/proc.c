@@ -539,7 +539,7 @@ wait(void)
   }
 }
 
-void print_mlfq_info()
+void print_mlfq()
 {
   int lev, i;
 
@@ -573,7 +573,8 @@ scheduler(void)
   c->proc = 0;
   
   for(;;){
-    // print_mlfq_info();
+
+    // print_mlfq();
     // Enable interrupts on this processor.
     sti();
     // Loop over process table looking for process to run.
