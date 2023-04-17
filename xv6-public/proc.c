@@ -209,7 +209,6 @@ mlfq_select()
   }
 
 found: //if runnable process found. 
-  cprintf("3&&&&&&&&&&&&&\n");
   ++ret->executed_ticks;
   ++mlfq_manager.global_executed_ticks;
   //pass the process to lev+1 queue.
@@ -229,13 +228,14 @@ found: //if runnable process found.
     if(ret->priority > 0 && lev == 2) {
       --ret->priority; //prority -
     }
-  } else if (ret->executed_ticks % MLFQ_TIME_QUANTUM[lev] == 0)
-  {
-    mlfq_dequeue(lev, 0);
-    mlfq_enqueue(lev, ret);
-    if (lev == MLFQ_NUM - 1)
-      ret->executed_ticks = 0;
-  }
+  } 
+  // else if (ret->executed_ticks % MLFQ_TIME_QUANTUM[lev] == 0)
+  // {
+  //   mlfq_dequeue(lev, 0);
+  //   mlfq_enqueue(lev, ret);
+  //   if (lev == MLFQ_NUM - 1)
+  //     ret->executed_ticks = 0;
+  // }
   return ret;
 }
 
@@ -594,23 +594,17 @@ scheduler(void)
       c->proc = p;
       switchuvm(p);
       p->state = RUNNING;
-      cprintf("10&&&&&&&&&&&&&\n");
       swtch(&(c->scheduler), p->context);
-      cprintf("11&&&&&&&&&&&&&\n");
       switchkvm();
-      cprintf("12&&&&&&&&&&&&&\n");
       // Process is done running for now.
       // It should have changed its p->state before coming back.
       c->proc = 0;
     }
 
-    
     if(mlfq_manager.global_executed_ticks >= MLFQ_GLOBAL_BOOSTING_TICK_INTERVAL) {
-      cprintf("13&&&&&&&&&&&&&\n");
       mlfq_priority_boost();
-      cprintf("14&&&&&&&&&&&&&\n");
     }
-    cprintf("15&&&&&&&&&&&&&\n");
+    
     release(&ptable.lock);
 
   }
@@ -628,7 +622,6 @@ sched(void)
 {
   int intena;
   struct proc *p = myproc();
-  cprintf("~~~~~~~~~~~~~~~~~~\n");
   if(!holding(&ptable.lock)) // make sure the ptable is locked.
     panic("sched ptable.lock");
   if(mycpu()->ncli != 1) // make sure interrupt is disabled.
@@ -638,7 +631,6 @@ sched(void)
   if(readeflags()&FL_IF)
     panic("sched interruptible");
   intena = mycpu()->intena;
-  cprintf("*********************\n");
   swtch(&p->context, mycpu()->scheduler);
   mycpu()->intena = intena;
 }
@@ -647,9 +639,7 @@ sched(void)
 //same as before
 void
 yield(void)
-{
-  
-  
+{ 
   acquire(&ptable.lock); //DOC: yieldlock
   ++mlfq_manager.global_executed_ticks;
   myproc()->executed_ticks +=1;
