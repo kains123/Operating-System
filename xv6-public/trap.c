@@ -70,8 +70,8 @@ trap(struct trapframe *tf)
     if(myproc()->killed)
       exit();
     myproc()->tf = tf;
-    myproc()->priority = 3;
-    myproc()->executed_ticks = 0;
+    // myproc()->priority = 3;
+    // myproc()->executed_ticks = 0;
     cprintf("user interrupt 130 called!\n");
     //schedulerUnLock
     if(myproc()->killed)
