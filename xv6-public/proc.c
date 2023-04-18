@@ -146,7 +146,6 @@ void mlfq_remove(struct proc *p)
 static void
 mlfq_priority_boost(void)
 {
-  cprintf("!!!!!!!!!!BOOSTING!!!!!!!!!!\n");
   struct proc *p;
   int lev;
   for (lev = 1; lev < MLFQ_NUM; ++lev)
@@ -251,7 +250,7 @@ mlfq_select()
         }
         else {
           if(ret->state == RUNNABLE) {
-            cprintf("[%d] name: %s\n", ret->pid, ret->name);
+            // cprintf("[%d] name: %s\n", ret->pid, ret->name);
             goto found;
           }
         }
