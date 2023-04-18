@@ -815,6 +815,7 @@ sleep(void *chan, struct spinlock *lk)
   }
   // Go to sleep.
   p->chan = chan;
+  cprintf("SET SLEEPING");
   p->state = SLEEPING;
 
   sched();
