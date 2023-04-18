@@ -296,16 +296,19 @@ found: //if runnable process found.
     //executed_ticks reset to 0
     ret->executed_ticks = 0;
   }
-  else if (ret->executed_ticks  % MLFQ_TIME_QUANTUM[lev] == 0)
+  if (ret->executed_ticks  % MLFQ_TIME_QUANTUM[lev] == 0)
   {
     mlfq_dequeue(lev, 0);
     mlfq_enqueue(lev, ret);
+    //if L2
     if (lev == MLFQ_NUM - 1) {
+      cprintf("reset L2 ^^^^^^^^^^^\n");
       ret->executed_ticks = 0;
       (ret->priority)--; //prority -
       //if L2, adjust priority
     }
   }
+
   return ret;
 }
 
