@@ -147,7 +147,7 @@ void mlfq_remove(struct proc *p)
 static void
 mlfq_priority_boost(void)
 {
-  
+  cprintf("!!!!!!!!!!BOOSTING!!!!!!!!!!\n");
   struct proc *p;
   int lev;
   for (lev = 1; lev < MLFQ_NUM; ++lev)
@@ -247,6 +247,7 @@ mlfq_select()
       {
         ret = queue->data[queue->front];
         if(ret->state != RUNNABLE) {
+          cprintf("!!!!!!!!!![3]!!!!!!!!!!\n");
           mlfq_dequeue(lev, 0); //remove first process in queue (lev).
           mlfq_enqueue(lev, ret); //add again in the end of queue (lev).
         }
@@ -291,6 +292,7 @@ found: //if runnable process found.
   //case L0, L1 && if executed_ticks full.
   if (lev < MLFQ_NUM - 1 && ret->executed_ticks >= MLFQ_TIME_QUANTUM[lev])
   {
+    cprintf("!!!!!!!!!![1]!!!!!!!!!!\n");
     //dequeue ret from current tree
     mlfq_dequeue(lev, 0);
     //enqueue ret to current lev + 1 queue
@@ -309,6 +311,7 @@ found: //if runnable process found.
     
   } else if (ret->executed_ticks  % MLFQ_TIME_QUANTUM[lev] == 0)
   {
+    cprintf("!!!!!!!!!![2]!!!!!!!!!!\n");
     mlfq_dequeue(lev, 0);
     mlfq_enqueue(lev, ret);
   }
