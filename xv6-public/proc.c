@@ -255,6 +255,7 @@ mlfq_select()
         }
       }
     } else if (lev == 2) {
+        cprintf("********level %d*****\n", lev);
         //find the lowest priority in L2 queue
         int priority = 10000;
         int found_idx = 10000;
@@ -262,6 +263,7 @@ mlfq_select()
         for(int i = 0; i < size; i++){  
           int idx = (queue->front + i) % NPROC;
           ret = queue->data[idx];
+          //only ret->state == RUNNABLE -> found_idx can be changed.
           if(ret->state == RUNNABLE && ret->priority < priority) {
             found_idx = idx;
             priority = ret->priority;
