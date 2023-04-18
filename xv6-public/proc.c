@@ -673,6 +673,10 @@ scheduler(void)
     if(lockedproc != 0) {
       if(lockedproc->state != RUNNING) 
       {
+        if(mlfq_manager.global_executed_ticks >= MLFQ_GLOBAL_BOOSTING_TICK_INTERVAL){
+          //if there is a lock just remove it!
+          withdraw_lock();
+        }
         if(lockedproc->state == RUNNABLE) {
           (mlfq_manager.global_executed_ticks)++;
           lockedproc->state = RUNNING;
@@ -701,9 +705,7 @@ scheduler(void)
       }
       if(mlfq_manager.global_executed_ticks >= MLFQ_GLOBAL_BOOSTING_TICK_INTERVAL) {
         mlfq_priority_boost();
-        //if there is a lock just remove it!
-        // withdraw_lock();
-        // release(&ptable.lock);
+       
       }
     }
     
