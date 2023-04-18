@@ -251,6 +251,18 @@ mlfq_select()
         if(ret->state != RUNNABLE) {
           
           cprintf("!!!!!!!!!![3: RET_PID: %d]!!!!!!!!!!\n", ret->pid);
+          if(ret->state == RUNNING) {
+            cprintf("RUNNING\n");
+          }
+          if(ret->state == SLEEPING) {
+            cprintf("SLEEPING\n");
+          }
+          if(ret->state == ZOMBIE) {
+            cprintf("ZOMBIE\n");
+          }
+          if(ret->state == UNUSED) {
+            cprintf("UNUSED\n");
+          }
           mlfq_dequeue(lev, 0); //remove first process in queue (lev).
           mlfq_enqueue(lev, ret); //add again in the end of queue (lev).
         }
