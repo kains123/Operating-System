@@ -281,14 +281,13 @@ mlfq_select()
   }
 
 found: //if runnable process found. 
-  cprintf("FOUND PID: %d\n", ret->pid);
+  cprintf("\n\nFOUND PID: %d\n", ret->pid);
   (ret->executed_ticks)++;
   (mlfq_manager.global_executed_ticks)++;
   //pass the process to lev+1 queue.
   //case L0, L1 && if executed_ticks full.
   if (lev < MLFQ_NUM - 1 && ret->executed_ticks >= MLFQ_TIME_QUANTUM[lev])
   {
-    
     //dequeue ret from current tree
     mlfq_dequeue(lev, 0);
     //enqueue ret to current lev + 1 queue
@@ -297,12 +296,15 @@ found: //if runnable process found.
     //executed_ticks reset to 0
     ret->executed_ticks = 0;
   } if(lev == MLFQ_NUM -1  && ret->executed_ticks >= MLFQ_TIME_QUANTUM[lev]) {
-      cprintf("reset L2 ^^^^^^^^^^^\n");
+      cprintf("^^^^^^^^^^^ reset L2 ^^^^^^^^^^^\n");
       ret->executed_ticks = 0;
-      ret->priority = ret->priority -1; //prority -
+      //if ret->priority == 0, just keep 
+      if(ret->priority >= 0) {
+        ret->priority = ret->priority -1; //prority -
+      }
       //if L2, adjust priority
     
-  }else if (ret->executed_ticks  % MLFQ_TIME_QUANTUM[lev] == 0)
+  } else if (ret->executed_ticks  % MLFQ_TIME_QUANTUM[lev] == 0)
   {
     mlfq_dequeue(lev, 0);
     mlfq_enqueue(lev, ret);
