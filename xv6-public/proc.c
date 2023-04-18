@@ -160,6 +160,7 @@ mlfq_priority_boost(void)
       mlfq_enqueue(0, p);
       p->priority = 3;
       p->executed_ticks = 0; //time quantum reset.
+      p->state = RUNNABLE;
     }
   }
   mlfq_manager.global_executed_ticks = 0;
