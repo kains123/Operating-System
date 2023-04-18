@@ -675,7 +675,6 @@ scheduler(void)
       cprintf("!!!!!!!!!![global_executed_ticks %d]!!!!!!!!!!\n",mlfq_manager.global_executed_ticks);
       if(lockedproc->state != RUNNING) 
       {
-        lockedproc->state = RUNNING;
         if(lockedproc->state == RUNNABLE) {
           lockedproc->state = RUNNING;
         } else {
