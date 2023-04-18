@@ -260,24 +260,17 @@ mlfq_select()
         int priority = 10000;
         int found_idx = 10000;
         //start front to end rear;
-        for(int i = 0; i < size; i++){  
+        for(int i = 0; i < size; i++){
           int idx = (queue->front + i) % NPROC;
           ret = queue->data[idx];
-          cprintf("********priority %d********\n", ret->priority);
-          if(ret->state == RUNNABLE) {
-            cprintf("RUNNABLE\n");
-          }
-          if(ret->state == RUNNING) {
-            cprintf("RUNNING\n");
-          }
           //only ret->state == RUNNABLE -> found_idx can be changed.
           if(ret->state == RUNNABLE && ret->priority < priority) {
-              cprintf("&&&&&&&&&&&&&&&&&&&&&&&&&&&&\n");
             found_idx = idx;
             priority = ret->priority;
           }
         }
         if(priority != 10000 && found_idx != 10000) {
+          cprintf("&&&&&&&&&&&&&&&&&&&&&&&&&&&&\n");
           ret = queue->data[found_idx];
           goto found;
         }
