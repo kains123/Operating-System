@@ -216,6 +216,10 @@ void set_global_tick_zero() {
   mlfq_manager.global_executed_ticks = 0;
 }
 
+void set_lockedproc() {
+  lockedproc = myproc();
+}
+
 struct proc *
 mlfq_select()
 {

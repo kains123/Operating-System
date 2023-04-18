@@ -17,7 +17,7 @@ schedulerLock(int password)
         cprintf("SchedulerLock is called...");
         if(password == 2019087192) {
                 myproc()->lock = LOCKED;
-                // lockedproc = myproc();
+                set_lockedproc();
                 //global_tick_reset to 0.
                 set_global_tick_zero();
                 __asm__("int $129");

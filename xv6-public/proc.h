@@ -73,4 +73,5 @@ struct proc {
 
 void withdraw_lock();
 void set_global_tick_zero();
+void set_lockedproc();
 //if lockedproc is 0, it means NULL.
