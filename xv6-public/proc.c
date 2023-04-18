@@ -33,8 +33,7 @@ struct
   int global_executed_ticks; //MFLQ scheduler worked ticks
 } mlfq_manager; // There is a global tick in mlfq (3-level feedback queue).
 
-//if lockedproc is 0, it means NULL.
-struct proc *lockedproc = 0;
+
 
 void mlfq_init()
 {
