@@ -604,6 +604,8 @@ scheduler(void)
 
     if(mlfq_manager.global_executed_ticks >= MLFQ_GLOBAL_BOOSTING_TICK_INTERVAL) {
       mlfq_priority_boost();
+      //if there is a lock just remove it!
+      withdraw_lock();
     }
     
     release(&ptable.lock);
@@ -792,6 +794,7 @@ procdump(void)
 
 void 
 withdraw_lock(void) {
+  cprintf("withdraw_lock is called...");
   int err = 0;
   if(lockedproc != 0) {
     //remove the lockedproc from the certain queue.

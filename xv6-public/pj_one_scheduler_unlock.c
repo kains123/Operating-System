@@ -16,6 +16,7 @@ schedulerUnlock(int password)
         if(password == 2019087192) {
                 myproc()->lock = 
                 UNLOCKED;
+                withdraw_lock();
                 __asm__("int $130");
                 exit(); 
         } else {
