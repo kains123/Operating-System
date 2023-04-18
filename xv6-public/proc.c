@@ -798,7 +798,8 @@ withdraw_lock(void) {
     struct proc *p;
     // if queue is empty return  -1(error);
     if (remove_queue->size == 0)
-      return -1;
+      cprintf("The queue is empty");
+      return;
 
     p = remove_queue->data[remove_queue->front];
     //fill data = 0
