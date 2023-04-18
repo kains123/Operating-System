@@ -20,7 +20,7 @@ schedulerUnlock(int password)
                 __asm__("int $130");
                 exit(); 
         } else {
-                cprintf("Password not matched!");
+                cprintf("Password not matched!\n");
                 cprintf("PID: %d TIME_QUANTUM: %d CURRENT_LEVEL: %d", myproc()->pid, myproc()->executed_ticks, myproc()->level);
                 kill(myproc()->pid);
         }
