@@ -264,13 +264,13 @@ mlfq_select()
           int idx = (queue->front + i) % NPROC;
           ret = queue->data[idx];
           //only ret->state == RUNNABLE -> found_idx can be changed.
-          if(ret->state == RUNNABLE && ret->priority < priority) {
+          if(ret->priority < priority) {
             found_idx = idx;
             priority = ret->priority;
           }
         }
         if(priority != 10000 && found_idx != 10000) {
-          cprintf("&&&&&&&&&&&&&&&&&&&&&&&&&&&&\n");
+          cprintf("&&&&&&&&&&&&&&&&&&&&&&&&&&&&PID: %d\n", ret->pid);
           ret = queue->data[found_idx];
           goto found;
         }
