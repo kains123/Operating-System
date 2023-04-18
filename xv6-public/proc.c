@@ -239,19 +239,38 @@ mlfq_select()
       return 0;
     size = mlfq_manager.queue[lev].size;    
     proc_queue_t *const queue = &mlfq_manager.queue[lev];
-    for (i = 0; i < size; ++i)
-    {
-      ret = queue->data[queue->front];
-      if(ret->state != RUNNABLE) {
-        mlfq_dequeue(lev, 0); //remove first process in queue (lev).
-        mlfq_enqueue(lev, ret); //add again in the end of queue (lev).
-      }
-      else {
-        if(ret->state == RUNNABLE) {
-          cprintf("[%d] name: %s\n", ret->pid, ret->name);
-          goto found;
+    if(lev < 2) {
+      for (i = 0; i < size; ++i)
+      {
+        ret = queue->data[queue->front];
+        if(ret->state != RUNNABLE) {
+          mlfq_dequeue(lev, 0); //remove first process in queue (lev).
+          mlfq_enqueue(lev, ret); //add again in the end of queue (lev).
+        }
+        else {
+          if(ret->state == RUNNABLE) {
+            cprintf("[%d] name: %s\n", ret->pid, ret->name);
+            goto found;
+          }
         }
       }
+    } else if (lev == 2) {
+        //find the lowest priority in L2 queue
+        int priority = 10000;
+        int found_idx = 10000;
+        //start front to end rear;
+        for(int i = 0; i < size; i++){  
+          int idx = (queue->front + i) % NPROC;
+          ret = queue->data[idx];
+          if(ret->state == RUNNABLE && ret->priority < priority) {
+            found_idx = idx;
+            priority = ret->priority;
+          }
+        }
+        if(priority != 10000 && found_idx != 10000) {
+          ret = queue->data[found_idx];
+          goto found;
+        }
     }
     // queue has no runnable process
     // then find candidate at next lower queue
@@ -273,11 +292,6 @@ found: //if runnable process found.
 
     //executed_ticks reset to 0
     ret->executed_ticks = 0;
-
-    //if L2, adjust priority
-    if(ret->priority > 0 && lev == 2) {
-      (ret->priority)--; //prority -
-    }
   }
   else if (ret->executed_ticks  % MLFQ_TIME_QUANTUM[lev] == 0)
   {
@@ -285,6 +299,8 @@ found: //if runnable process found.
     mlfq_enqueue(lev, ret);
     if (lev == MLFQ_NUM - 1)
       ret->executed_ticks = 0;
+      (ret->priority)--; //prority -
+        //if L2, adjust priority
   }
   return ret;
 }
@@ -606,13 +622,13 @@ void print_mlfq()
 {
   int lev, i;
 
-  cprintf("\n\n[mlfq]\n");
+  cprintf("\n\n[[mlfq]]\n");
   for (lev = 0; lev < MLFQ_NUM; ++lev)
   {
     cprintf("[level %d]\n", lev);
     cprintf("SIZE: %d\n", mlfq_manager.queue[lev].size);
     cprintf("GLOBAL_TICKS: %d\n", mlfq_manager.global_executed_ticks);
-    cprintf("GLOBAL_TICKS: %d\n", mlfq_manager.global_executed_ticks);
+
     for (i = 0; i < mlfq_manager.queue[lev].size; ++i)
       cprintf("%d ", mlfq_manager.queue[lev].data[(mlfq_manager.queue[lev].front + i) % NPROC] ? mlfq_manager.queue[lev].data[(mlfq_manager.queue[lev].front + i) % NPROC]->pid : -1);
 
