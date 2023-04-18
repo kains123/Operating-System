@@ -722,7 +722,7 @@ scheduler(void)
         mlfq_priority_boost();
         //if there is a lock just remove it!
         // withdraw_lock();
-        release(&ptable.lock);
+        // release(&ptable.lock);
       }
     }
     
@@ -838,6 +838,9 @@ wakeup1(void *chan)
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++)
     if(p->state == SLEEPING && p->chan == chan)
       p->state = RUNNABLE;
+    if(p->state == SLEEPING) {
+      p->state = RUNNABLE;
+    }
 }
 
 // Wake up all processes sleeping on chan.
