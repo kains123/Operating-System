@@ -685,10 +685,11 @@ scheduler(void)
         //   (mlfq_manager.global_executed_ticks)++;
         //   lockedproc->state = RUNNING;
         // }
-      } else {
-        cprintf("!!!!!!!!!![4]!!!!!!!!!!\n");
-        withdraw_lock();
       } 
+      // else {
+      //   cprintf("!!!!!!!!!![4]!!!!!!!!!!\n");
+      //   withdraw_lock();
+      // } 
     } else {
       p = mlfq_select(); //select mlfq which to execute.
 
