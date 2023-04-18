@@ -674,6 +674,7 @@ scheduler(void)
     if(lockedproc != 0) {
       if(lockedproc->state != RUNNING) 
       {
+        cprintf("!!!!!!!!!![global_executed_ticks %d]!!!!!!!!!!\n",mlfq_manager.global_executed_ticks);
         if(mlfq_manager.global_executed_ticks >= MLFQ_GLOBAL_BOOSTING_TICK_INTERVAL){
           //if there is a lock just remove it!
           withdraw_lock();
