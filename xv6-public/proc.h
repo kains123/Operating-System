@@ -72,6 +72,6 @@ struct proc {
 #define MLFQ_GLOBAL_BOOSTING_TICK_INTERVAL 100
 
 void withdraw_lock();
-// void set_global_tick_zero();
+void set_global_tick_zero();
 //if lockedproc is 0, it means NULL.
 struct proc *lockedproc = 0;
