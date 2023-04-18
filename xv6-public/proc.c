@@ -297,10 +297,11 @@ found: //if runnable process found.
   {
     mlfq_dequeue(lev, 0);
     mlfq_enqueue(lev, ret);
-    if (lev == MLFQ_NUM - 1)
+    if (lev == MLFQ_NUM - 1) {
       ret->executed_ticks = 0;
       (ret->priority)--; //prority -
         //if L2, adjust priority
+    }
   }
   return ret;
 }
