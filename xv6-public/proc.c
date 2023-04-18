@@ -722,6 +722,7 @@ scheduler(void)
         mlfq_priority_boost();
         //if there is a lock just remove it!
         // withdraw_lock();
+        release(&ptable.lock);
       }
     }
     
@@ -812,7 +813,6 @@ sleep(void *chan, struct spinlock *lk)
   }
   // Go to sleep.
   p->chan = chan;
-  cprintf("SET SLEEPING");
   p->state = SLEEPING;
 
   sched();
