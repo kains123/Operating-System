@@ -300,7 +300,7 @@ found: //if runnable process found.
     if (lev == MLFQ_NUM - 1) {
       ret->executed_ticks = 0;
       (ret->priority)--; //prority -
-        //if L2, adjust priority
+      //if L2, adjust priority
     }
   }
   return ret;
@@ -631,7 +631,7 @@ void print_mlfq()
     cprintf("GLOBAL_TICKS: %d\n", mlfq_manager.global_executed_ticks);
 
     for (i = 0; i < mlfq_manager.queue[lev].size; ++i)
-      cprintf("%d ", mlfq_manager.queue[lev].data[(mlfq_manager.queue[lev].front + i) % NPROC] ? mlfq_manager.queue[lev].data[(mlfq_manager.queue[lev].front + i) % NPROC]->pid : -1);
+      cprintf("%d [priority : %d]", mlfq_manager.queue[lev].data[(mlfq_manager.queue[lev].front + i) % NPROC] ? mlfq_manager.queue[lev].data[(mlfq_manager.queue[lev].front + i) % NPROC]->pid : -1, mlfq_manager.queue[lev].data[(mlfq_manager.queue[lev].front + i) % NPROC] ? mlfq_manager.queue[lev].data[(mlfq_manager.queue[lev].front + i) % NPROC]->priority : -1);
 
     cprintf("\n");
   }
