@@ -671,7 +671,6 @@ scheduler(void)
     // Loop over process table looking for process to run.
     acquire(&ptable.lock);
     if(lockedproc != 0) {
-      cprintf("Locked state");
       if(lockedproc->state != RUNNING) 
       {
         if(lockedproc->state == RUNNABLE) {
