@@ -12,7 +12,6 @@
 //NPROC is the maximum number of processes per user.
 static const uint MLFQ_TIME_QUANTUM[MLFQ_NUM] = {4, 6, 8};
 
-
 struct {
   struct spinlock lock;
   struct proc proc[NPROC];
@@ -26,6 +25,7 @@ typedef struct proc_queue
   int size;
 } proc_queue_t;
 
+struct proc *lockedproc = 0;
 struct
 {
   //multi-level
