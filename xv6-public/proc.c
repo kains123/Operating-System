@@ -259,8 +259,8 @@ mlfq_select()
   }
 
 found: //if runnable process found. 
-  ++ret->executed_ticks;
-  ++mlfq_manager.global_executed_ticks;
+  (ret->executed_ticks)++;
+  (mlfq_manager.global_executed_ticks)++;
   //pass the process to lev+1 queue.
   //case L0, L1 && if executed_ticks full.
   if (lev < MLFQ_NUM - 1 && ret->executed_ticks >= MLFQ_TIME_QUANTUM[lev])
@@ -364,7 +364,7 @@ found:
   p->level=0;
   p->lock = UNLOCKED;
 
-  cprintf("initialized %d\n", p->pid );
+  cprintf("initialized %d\n", p->pid);
   //first push p in queue
   if (mlfq_enqueue(0, p) != 0)
   {
