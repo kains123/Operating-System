@@ -104,6 +104,7 @@ int main(int argc, char *argv[])
     for (i = 0; i < MAX_LEVEL; i++)
       printf(1, "L%d: %d\n", i, count[i]);
   }
+  printf(1, "[TTTTTTTTT]\n");
   exit_children();
   printf(1, "[Test 1] finished\n");
   printf(1, "done\n");
