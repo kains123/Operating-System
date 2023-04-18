@@ -672,24 +672,22 @@ scheduler(void)
     // Loop over process table looking for process to run.
     acquire(&ptable.lock);
     if(lockedproc != 0) {
+      cprintf("!!!!!!!!!![global_executed_ticks %d]!!!!!!!!!!\n",mlfq_manager.global_executed_ticks);
       if(lockedproc->state != RUNNING) 
       {
-        cprintf("!!!!!!!!!![global_executed_ticks %d]!!!!!!!!!!\n",mlfq_manager.global_executed_ticks);
-        (mlfq_manager.global_executed_ticks)++;
         lockedproc->state = RUNNING;
+        if(lockedproc->state == RUNNABLE) {
+          lockedproc->state = RUNNING;
+        } else {
+          withdraw_lock();
+        }
+      } else {
+        (mlfq_manager.global_executed_ticks)++;
         if(mlfq_manager.global_executed_ticks >= MLFQ_GLOBAL_BOOSTING_TICK_INTERVAL){
           //if there is a lock just remove it!
           withdraw_lock();
         }
-        // if(lockedproc->state == RUNNABLE) {
-        //   (mlfq_manager.global_executed_ticks)++;
-        //   lockedproc->state = RUNNING;
-        // }
-      } 
-      // else {
-      //   cprintf("!!!!!!!!!![4]!!!!!!!!!!\n");
-      //   withdraw_lock();
-      // } 
+      }
     } else {
       p = mlfq_select(); //select mlfq which to execute.
 
