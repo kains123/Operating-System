@@ -94,13 +94,12 @@ int mlfq_enqueue(int lev, struct proc *p)
 //if ret == 0, it's nothing, if ret = &p, it work.
 int mlfq_dequeue(int lev, struct proc** ret)
 {
-  cprintf("DEQUEUE\n");
   proc_queue_t *const queue = &mlfq_manager.queue[lev];
   struct proc *p;
   // if queue is empty return  -1(error);
   if (queue->size == 0)
     return -1;
-  cprintf("DEQUEUE %d\n SIZE: %d ", queue->front, queue->size);
+  cprintf("DEQUEUE %d SIZE: %d \n", queue->front, queue->size);
   p = queue->data[queue->front];
   //fill data = 0
   queue->data[queue->front] = 0;
@@ -312,12 +311,13 @@ found: //if runnable process found.
       }
       //if L2, adjust priority
     
-  } else if (ret->executed_ticks  % MLFQ_TIME_QUANTUM[lev] == 0)
-  {
-    cprintf("!!!!!!!!!![2]!!!!!!!!!!\n");
-    mlfq_dequeue(lev, 0);
-    mlfq_enqueue(lev, ret);
   }
+  // if (ret->executed_ticks  % MLFQ_TIME_QUANTUM[lev] == 0)
+  // {
+  //   cprintf("!!!!!!!!!![2]!!!!!!!!!!\n");
+  //   mlfq_dequeue(lev, 0);
+  //   mlfq_enqueue(lev, ret);
+  // }
 
   return ret;
 }
