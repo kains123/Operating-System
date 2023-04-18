@@ -13,9 +13,9 @@
 void
 schedulerUnlock(int password)
 {
+        cprintf("SchedulerUnLock is called...");
         if(password == 2019087192) {
-                myproc()->lock = 
-                UNLOCKED;
+                myproc()->lock = UNLOCKED;
                 withdraw_lock();
                 __asm__("int $130");
                 exit(); 
