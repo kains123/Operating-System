@@ -678,10 +678,13 @@ scheduler(void)
         if(lockedproc->state ==SLEEPING) {
           cprintf("SLEEPING");
         }
+        if(lockedproc->state ==ZOMBIE) {
+          cprintf("ZOMBIE");
+        }
         if(lockedproc->state == RUNNABLE) {
           lockedproc->state = RUNNING;
         } else {
-          withdraw_lock();
+          // withdraw_lock();
         }
       } else {
         (mlfq_manager.global_executed_ticks)++;
