@@ -266,10 +266,10 @@ mlfq_select()
           cprintf("********priority %d********\n", ret->priority);
           if(ret->state == RUNNABLE) {
             cprintf("RUNNABLE\n");
-
           }
           //only ret->state == RUNNABLE -> found_idx can be changed.
           if(ret->state == RUNNABLE && ret->priority < priority) {
+              cprintf("&&&&&&&&&&&&&&&&&&&&&&&&&&&&\n");
             found_idx = idx;
             priority = ret->priority;
           }
