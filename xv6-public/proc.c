@@ -625,7 +625,7 @@ void print_mlfq()
 {
   int lev, i;
 
-  cprintf("\n\n[[mlfq]]\n");
+  cprintf("\n\n######################[mlfq]#####################\n");
   for (lev = 0; lev < MLFQ_NUM; ++lev)
   {
     cprintf("[level %d]\n", lev);
