@@ -74,7 +74,7 @@ int main(int argc, char *argv[])
 {
 	schedulerLock(2019087192);
   sleep(2);
-  schedulerUnLock(2019087192);
+  schedulerUnlock(2019087192);
   // int i, pid;
   // int count[MAX_LEVEL] = {0};
   // // int child;
