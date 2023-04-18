@@ -675,14 +675,16 @@ scheduler(void)
       if(lockedproc->state != RUNNING) 
       {
         cprintf("!!!!!!!!!![global_executed_ticks %d]!!!!!!!!!!\n",mlfq_manager.global_executed_ticks);
+        (mlfq_manager.global_executed_ticks)++;
+        lockedproc->state = RUNNING;
         if(mlfq_manager.global_executed_ticks >= MLFQ_GLOBAL_BOOSTING_TICK_INTERVAL){
           //if there is a lock just remove it!
           withdraw_lock();
         }
-        if(lockedproc->state == RUNNABLE) {
-          (mlfq_manager.global_executed_ticks)++;
-          lockedproc->state = RUNNING;
-        }
+        // if(lockedproc->state == RUNNABLE) {
+        //   (mlfq_manager.global_executed_ticks)++;
+        //   lockedproc->state = RUNNING;
+        // }
       } else {
         cprintf("!!!!!!!!!![4]!!!!!!!!!!\n");
         withdraw_lock();
