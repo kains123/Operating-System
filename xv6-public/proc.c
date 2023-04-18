@@ -792,44 +792,48 @@ procdump(void)
 
 void 
 withdraw_lock(void) {
+  int err = 0;
   if(lockedproc != 0) {
     //remove the lockedproc from the certain queue.
     proc_queue_t *const remove_queue = &mlfq_manager.queue[lockedproc->level];
     struct proc *p;
     // if queue is empty return  -1(error);
-    if (remove_queue->size == 0)
+    if(remove_queue->size == 0) {
       cprintf("The queue is empty");
-      return;
-
-    p = remove_queue->data[remove_queue->front];
-    //fill data = 0
-    remove_queue->data[remove_queue->front] = 0;
-
-    remove_queue->front = (remove_queue->front + 1) % NPROC;
-    //front + 1;
-    (remove_queue->size)--;
-    //size -1
-    p->level = 0;
-    /*pass the process to first of L0.*/
-    proc_queue_t *const add_queue = &mlfq_manager.queue[0];
-    if (add_queue->size == NPROC)
-      cprintf("The queue is full");
-      return;
-    if(add_queue->front == 0) {
-      add_queue->front = NPROC -1;
-      //add_queue->data[63];
+      err = 1;
     } else {
-      add_queue->front = (add_queue->front - 1) % NPROC;
+      p = remove_queue->data[remove_queue->front];
+      //fill data = 0
+      remove_queue->data[remove_queue->front] = 0;
+
+      remove_queue->front = (remove_queue->front + 1) % NPROC;
+      //front + 1;
+      (remove_queue->size)--;
+      //size -1
+      p->level = 0;
     }
-    add_queue->data[add_queue->front] = lockedproc;
-    (add_queue->size)++;
-    p->level = 0;
-  
-    //reset the certain process's time quantum.
-    lockedproc->executed_ticks = 0;
-    //reset the process's priority to 3
-    lockedproc->priority = 3;
-    lockedproc->lock = UNLOCKED;
-    
+    if(err != 1) {
+      /*pass the process to first of L0.*/
+      proc_queue_t *const add_queue = &mlfq_manager.queue[0];
+      if (add_queue->size == NPROC) {
+        cprintf("The queue is full");
+      } else {
+        if(add_queue->front == 0) {
+          add_queue->front = NPROC -1;
+          //add_queue->data[63];
+        } else {
+          add_queue->front = (add_queue->front - 1) % NPROC;
+        }
+        add_queue->data[add_queue->front] = lockedproc;
+        (add_queue->size)++;
+        p->level = 0;
+      
+        //reset the certain process's time quantum.
+        lockedproc->executed_ticks = 0;
+        //reset the process's priority to 3
+        lockedproc->priority = 3;
+        lockedproc->lock = UNLOCKED;
+      }
+    }
   }
 }
