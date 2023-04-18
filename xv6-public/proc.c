@@ -306,8 +306,10 @@ found: //if runnable process found.
       cprintf("^^^^^^^^^^^ reset L2 ^^^^^^^^^^^\n");
       ret->executed_ticks = 0;
       //if ret->priority == 0, just keep 
-      if(ret->priority >= 0) {
+      if(ret->priority > 0) {
         ret->priority = ret->priority -1; //prority -
+      } else {
+        ret->priority = 0;
       }
       //if L2, adjust priority
     
