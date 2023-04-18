@@ -315,7 +315,12 @@ found: //if runnable process found.
 
     //executed_ticks reset to 0
     ret->executed_ticks = 0;
-  } if(lev == MLFQ_NUM -1  && ret->executed_ticks >= MLFQ_TIME_QUANTUM[lev]) {
+  } else if (ret->executed_ticks  % MLFQ_TIME_QUANTUM[lev] == 0)
+  {
+    cprintf("!!!!!!!!!![2]!!!!!!!!!!\n");
+    mlfq_dequeue(lev, 0);
+    mlfq_enqueue(lev, ret);
+  } else if(lev == MLFQ_NUM -1  && ret->executed_ticks >= MLFQ_TIME_QUANTUM[lev]) {
       cprintf("^^^^^^^^^^^ reset L2 ^^^^^^^^^^^\n");
       ret->executed_ticks = 0;
       //if ret->priority == 0, just keep 
@@ -324,15 +329,7 @@ found: //if runnable process found.
       } else {
         ret->priority = 0;
       }
-      //if L2, adjust priority
-    
-  }
-  // if (ret->executed_ticks  % MLFQ_TIME_QUANTUM[lev] == 0)
-  // {
-  //   cprintf("!!!!!!!!!![2]!!!!!!!!!!\n");
-  //   mlfq_dequeue(lev, 0);
-  //   mlfq_enqueue(lev, ret);
-  // }
+  } 
 
   return ret;
 }
