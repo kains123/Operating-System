@@ -644,7 +644,6 @@ scheduler(void)
     acquire(&ptable.lock);
     if(lockedproc != 0) {
       cprintf("Locked state");
-
       if(lockedproc->state != RUNNING) 
       {
         if(lockedproc->state == RUNNABLE) {
@@ -653,7 +652,6 @@ scheduler(void)
         }
       } else {
         withdraw_lock();
-        break;
       } 
     } else {
       p = mlfq_select(); //select mlfq which to execute.
