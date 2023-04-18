@@ -68,3 +68,5 @@ struct proc {
 //   expandable heap
 #define MLFQ_NUM 3 //MLFQ의 큐는 3개로 이루어져 있다. 
 #define MLFQ_GLOBAL_BOOSTING_TICK_INTERVAL 100
+
+void withdraw_lock();
