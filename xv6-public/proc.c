@@ -274,7 +274,6 @@ mlfq_select()
         }
       }
     } else if (lev == 2) {
-        cprintf("********level %d********\n", lev);
         //find the lowest priority in L2 queue
         int priority = 10000;
         int found_idx = 10000;
@@ -289,7 +288,6 @@ mlfq_select()
           }
         }
         if(priority != 10000 && found_idx != 10000) {
-          cprintf("&&&&&&&&&&&&&&&&&&&&&&&&&&&&PID: %d\n", ret->pid);
           ret = queue->data[found_idx];
           goto found;
         }
@@ -307,7 +305,6 @@ found: //if runnable process found.
   //case L0, L1 && if executed_ticks full.
   if (lev < MLFQ_NUM - 1 && ret->executed_ticks >= MLFQ_TIME_QUANTUM[lev])
   {
-    cprintf("!!!!!!!!!![1]!!!!!!!!!!\n");
     //dequeue ret from current tree
     mlfq_dequeue(lev, 0);
     //enqueue ret to current lev + 1 queue
@@ -316,7 +313,6 @@ found: //if runnable process found.
     //executed_ticks reset to 0
     ret->executed_ticks = 0;
   } if(lev == MLFQ_NUM -1  && ret->executed_ticks >= MLFQ_TIME_QUANTUM[lev]) {
-      cprintf("^^^^^^^^^^^ reset L2 ^^^^^^^^^^^\n");
       ret->executed_ticks = 0;
       //if ret->priority == 0, just keep 
       if(ret->priority > 0) {

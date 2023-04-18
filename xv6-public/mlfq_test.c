@@ -77,35 +77,35 @@ int main(int argc, char *argv[])
 	ret_val = myfunction(buf);
 	printf(1, "Return value : 0x%x\n", ret_val);
 	
-//   int i, pid;
-//   int count[MAX_LEVEL] = {0};
-// //  int child;
+  int i, pid;
+  int count[MAX_LEVEL] = {0};
+  // int child;
 
   parent = getpid();
 
   printf(1, "MLFQ test start\n");
 
-//   printf(1, "[Test 1] default\n");
-//   pid = fork_children();
+  printf(1, "[Test 1] default\n");
+  pid = fork_children();
 
-//   if (pid != parent)
-//   {
-//     for (i = 0; i < NUM_LOOP; i++)
-//     {
-//       int x = getLevel();
-//       if (x < 0 || x > 4)
-//       {
-//         printf(1, "Wrong level: %d\n", x);
-//         exit();
-//       }
-//       count[x]++;
-//     }
-//     printf(1, "Process %d\n", pid);
-//     for (i = 0; i < MAX_LEVEL; i++)
-//       printf(1, "L%d: %d\n", i, count[i]);
-//   }
-//   exit_children();
-//   printf(1, "[Test 1] finished\n");
-//   printf(1, "done\n");
+  if (pid != parent)
+  {
+    for (i = 0; i < NUM_LOOP; i++)
+    {
+      int x = getLevel();
+      if (x < 0 || x > 4)
+      {
+        printf(1, "Wrong level: %d\n", x);
+        exit();
+      }
+      count[x]++;
+    }
+    printf(1, "Process %d\n", pid);
+    for (i = 0; i < MAX_LEVEL; i++)
+      printf(1, "L%d: %d\n", i, count[i]);
+  }
+  exit_children();
+  printf(1, "[Test 1] finished\n");
+  printf(1, "done\n");
   exit();
 }
