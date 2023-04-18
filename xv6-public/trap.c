@@ -59,12 +59,12 @@ trap(struct trapframe *tf)
   }
   else if(tf->trapno == T_INT129){
     if(myproc()->killed)
-      exit();
-    myproc()->tf = tf;
-    
-    if(myproc()->killed)
-      exit();
-    return;
+        exit();
+      myproc()->tf = tf;
+      cprintf("user interrupt 129 called!\n");
+      if(myproc()->killed)
+        exit();
+      return;
   }
     else if(tf->trapno == T_INT130){
     if(myproc()->killed)
