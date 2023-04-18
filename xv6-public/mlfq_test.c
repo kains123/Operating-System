@@ -72,9 +72,9 @@ void exit_children()
 
 int main(int argc, char *argv[])
 {
-	schedulerLock(2019087192);
+	schedulerLock(201992);
   sleep(2);
-  schedulerUnlock(2019087192);
+  schedulerUnlock(201908);
   // int i, pid;
   // int count[MAX_LEVEL] = {0};
   // // int child;
