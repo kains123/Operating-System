@@ -248,7 +248,7 @@ mlfq_select()
       }
       else {
         if(ret->state == RUNNABLE) {
-          // cprintf("[%d] name: %s\n", ret->pid, ret->name);
+          cprintf("[%d] name: %s\n", ret->pid, ret->name);
           goto found;
         }
       }
