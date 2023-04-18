@@ -34,6 +34,9 @@ struct context {
 
 enum procstate { UNUSED, EMBRYO, SLEEPING, RUNNABLE, RUNNING, ZOMBIE };
 
+enum lockstate {
+  LOCKED, UNLOCKED
+};
 // Per-process state
 struct proc {
   uint sz;                     // Size of process memory (bytes)
@@ -54,6 +57,8 @@ struct proc {
   uint level;  //Queue Level of the process (0, 1, 2 중 1)
   uint executed_ticks; //executed tick count at specific level.
   int priority;
+
+  enum lockstate lock;
 };
 
 // Process memory is laid out contiguously, low addresses first:

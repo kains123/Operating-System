@@ -12,6 +12,7 @@
 void
 schedulerLock(int password)
 {        
+        cprintf("SchedulerLock is called...");
         if(password == 2019087192) {
                 __asm__("int $129");
                 exit(); 
