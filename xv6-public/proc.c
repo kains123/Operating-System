@@ -198,15 +198,16 @@ withdraw_lock(void) {
         } else {
           add_queue->front = (add_queue->front - 1) % NPROC;
         }
-        add_queue->data[add_queue->front] = lockedproc;
-        (add_queue->size)++;
-        p->level = 0;
-
         //reset the certain process's time quantum.
         lockedproc->executed_ticks = 0;
         //reset the process's priority to 3
         lockedproc->priority = 3;
         lockedproc->lock = UNLOCKED;
+        add_queue->data[add_queue->front] = lockedproc;
+        (add_queue->size)++;
+        p->level = 0;
+
+        lockedproc = 0;
       }
     }
   }
