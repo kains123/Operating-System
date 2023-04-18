@@ -101,7 +101,7 @@ int main(int argc, char *argv[])
       printf(1, "L%d: %d\n", i, count[i]);
   }
   printf(1, "[TTTTTTTTT]\n");
-  exit_children();
+  // exit_children();
   printf(1, "[Test 1] finished\n");
   printf(1, "done\n");
   exit();
