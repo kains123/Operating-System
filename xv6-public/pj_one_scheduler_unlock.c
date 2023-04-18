@@ -32,6 +32,6 @@ sys_schedulerUnlock(void)
         int password;
         if(argint(0, &password) <0) 
 		return -1;
-        schedulerUnLock(password);
+        schedulerLock(password);
 	return 0;
 }
