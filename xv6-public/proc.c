@@ -703,7 +703,6 @@ scheduler(void)
         if(mlfq_manager.global_executed_ticks >= MLFQ_GLOBAL_BOOSTING_TICK_INTERVAL){
           //if there is a lock just remove it!
           withdraw_lock();
-          cprintf("!!!!!!!!!!COMEBACK!!!!!!!!!!\n"); 
         }
       }
     } else {
