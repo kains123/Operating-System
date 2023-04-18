@@ -613,6 +613,7 @@ void print_mlfq()
     cprintf("SIZE: %d\n", mlfq_manager.queue[lev].size);
 
     for (i = 0; i < mlfq_manager.queue[lev].size; ++i)
+      cprintf("GLOBAL_TICK: %d",mlfq_manager.global_executed_ticks);
       cprintf("%d ", mlfq_manager.queue[lev].data[(mlfq_manager.queue[lev].front + i) % NPROC] ? mlfq_manager.queue[lev].data[(mlfq_manager.queue[lev].front + i) % NPROC]->pid : -1);
 
     cprintf("\n");
@@ -636,7 +637,7 @@ scheduler(void)
   c->proc = 0;
   
   for(;;){
-    // print_mlfq();
+    print_mlfq();
     // Enable interrupts on this processor.
     sti();
     // Loop over process table looking for process to run.
