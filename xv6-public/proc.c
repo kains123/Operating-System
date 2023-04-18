@@ -244,25 +244,10 @@ mlfq_select()
     size = mlfq_manager.queue[lev].size;    
     proc_queue_t *const queue = &mlfq_manager.queue[lev];
     if(lev < 2) {
-      cprintf("**************[SIZE%d]**************\n", size);
       for (i = 0; i < size; ++i)
       {
         ret = queue->data[queue->front];
         if(ret->state != RUNNABLE) {
-          
-          cprintf("!!!!!!!!!![3: RET_PID: %d]!!!!!!!!!!\n", ret->pid);
-          if(ret->state == RUNNING) {
-            cprintf("RUNNING\n");
-          }
-          if(ret->state == SLEEPING) {
-            cprintf("SLEEPING\n");
-          }
-          if(ret->state == ZOMBIE) {
-            cprintf("ZOMBIE\n");
-          }
-          if(ret->state == UNUSED) {
-            cprintf("UNUSED\n");
-          }
           mlfq_dequeue(lev, 0); //remove first process in queue (lev).
           mlfq_enqueue(lev, ret); //add again in the end of queue (lev).
         }
@@ -298,7 +283,7 @@ mlfq_select()
   }
 
 found: //if runnable process found. 
-  cprintf("\n\nFOUND PID: %d\n", ret->pid);
+  // cprintf("\n\nFOUND PID: %d\n", ret->pid);
   (ret->executed_ticks)++;
   (mlfq_manager.global_executed_ticks)++;
   //pass the process to lev+1 queue.
