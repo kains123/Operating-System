@@ -684,6 +684,7 @@ scheduler(void)
     // Loop over process table looking for process to run.
     acquire(&ptable.lock);
     if(lockedproc != 0) {
+      LOCKED:
       cprintf("!!!!!!!!!![global_executed_ticks %d]!!!!!!!!!!\n",mlfq_manager.global_executed_ticks); 
       if(lockedproc->state != RUNNING) 
       {
@@ -697,6 +698,7 @@ scheduler(void)
           lockedproc->state = RUNNING;
         } else {
            cprintf("WHAT TO DO?");
+           goto SCHEDULER;
         }
       }
       //Context Switching
@@ -715,6 +717,7 @@ scheduler(void)
           withdraw_lock();
       }
     } else {
+      SCHEDULER:
       p = mlfq_select(); //select mlfq which to execute.
 
       if(p != 0)
@@ -734,10 +737,8 @@ scheduler(void)
       }
       if(mlfq_manager.global_executed_ticks >= MLFQ_GLOBAL_BOOSTING_TICK_INTERVAL) {
         mlfq_priority_boost();
-       
       }
     }
-    
     release(&ptable.lock);
   }
 }
