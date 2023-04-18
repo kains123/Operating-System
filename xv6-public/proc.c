@@ -692,6 +692,7 @@ scheduler(void)
         }
         if(lockedproc->state ==ZOMBIE) {
           cprintf("ZOMBIE");
+          lockedproc->state = RUNNABLE
         }
         if(lockedproc->state == RUNNABLE) {
           lockedproc->state = RUNNING;
