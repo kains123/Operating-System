@@ -315,12 +315,7 @@ found: //if runnable process found.
 
     //executed_ticks reset to 0
     ret->executed_ticks = 0;
-  } else if (ret->executed_ticks  % MLFQ_TIME_QUANTUM[lev] == 0)
-  {
-    cprintf("!!!!!!!!!![2]!!!!!!!!!!\n");
-    mlfq_dequeue(lev, 0);
-    mlfq_enqueue(lev, ret);
-  } else if(lev == MLFQ_NUM -1  && ret->executed_ticks >= MLFQ_TIME_QUANTUM[lev]) {
+  } if(lev == MLFQ_NUM -1  && ret->executed_ticks >= MLFQ_TIME_QUANTUM[lev]) {
       cprintf("^^^^^^^^^^^ reset L2 ^^^^^^^^^^^\n");
       ret->executed_ticks = 0;
       //if ret->priority == 0, just keep 
@@ -329,7 +324,13 @@ found: //if runnable process found.
       } else {
         ret->priority = 0;
       }
-  } 
+  }
+  // if (ret->executed_ticks  % MLFQ_TIME_QUANTUM[lev] == 0)
+  // {
+  //   cprintf("!!!!!!!!!![2]!!!!!!!!!!\n");
+  //   mlfq_dequeue(lev, 0);
+  //   mlfq_enqueue(lev, ret);
+  // }
 
   return ret;
 }
@@ -717,11 +718,10 @@ scheduler(void)
         // It should have changed its p->state before coming back.
         c->proc = 0;
       }
-
       if(mlfq_manager.global_executed_ticks >= MLFQ_GLOBAL_BOOSTING_TICK_INTERVAL) {
         mlfq_priority_boost();
         //if there is a lock just remove it!
-        withdraw_lock();
+        // withdraw_lock();
       }
     }
     
