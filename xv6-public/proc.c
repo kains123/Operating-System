@@ -267,6 +267,9 @@ mlfq_select()
           if(ret->state == RUNNABLE) {
             cprintf("RUNNABLE\n");
           }
+          if(ret->state == RUNNING) {
+            cprintf("RUNNING\n");
+          }
           //only ret->state == RUNNABLE -> found_idx can be changed.
           if(ret->state == RUNNABLE && ret->priority < priority) {
               cprintf("&&&&&&&&&&&&&&&&&&&&&&&&&&&&\n");
