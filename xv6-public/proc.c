@@ -220,7 +220,16 @@ void set_global_tick_zero() {
 void set_lockedproc() {
   lockedproc = myproc();
   if(myproc()->state == ZOMBIE){
-      cprintf("KKKKKKKK");
+      cprintf("******ZOMBIE******\n");
+  }
+  if(myproc()->state == RUNNABLE){
+     cprintf("******RUNNABLE******\n");
+  }
+  if(myproc()->state == SLEEPING){
+     cprintf("******SLEEPING******\n");
+  }
+  if(myproc()->state == RUNNING){
+     cprintf("******RUNNING******\n");
   }
 }
 
