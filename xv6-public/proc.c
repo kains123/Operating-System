@@ -211,6 +211,7 @@ withdraw_lock(void) {
       }
     }
   }
+  cprintf("withdraw_lock is finished...");
 }
 
 void set_global_tick_zero() {
@@ -696,8 +697,6 @@ scheduler(void)
         }
         if(lockedproc->state == RUNNABLE) {
           lockedproc->state = RUNNING;
-        } else {
-          // withdraw_lock();
         }
       } else {
         (mlfq_manager.global_executed_ticks)++;
