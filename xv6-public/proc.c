@@ -201,7 +201,7 @@ withdraw_lock(void) {
         add_queue->data[add_queue->front] = lockedproc;
         (add_queue->size)++;
         p->level = 0;
-      
+
         //reset the certain process's time quantum.
         lockedproc->executed_ticks = 0;
         //reset the process's priority to 3
@@ -611,9 +611,9 @@ void print_mlfq()
   {
     cprintf("[level %d]\n", lev);
     cprintf("SIZE: %d\n", mlfq_manager.queue[lev].size);
-    cprintf("GLOBAL_TICK: %d\n", mlfq_manager.global_executed_ticks);
+    cprintf("GLOBAL_TICKS: %d\n", mlfq_manager.global_executed_ticks);
+    cprintf("GLOBAL_TICKS: %d\n", mlfq_manager.global_executed_ticks);
     for (i = 0; i < mlfq_manager.queue[lev].size; ++i)
-      
       cprintf("%d ", mlfq_manager.queue[lev].data[(mlfq_manager.queue[lev].front + i) % NPROC] ? mlfq_manager.queue[lev].data[(mlfq_manager.queue[lev].front + i) % NPROC]->pid : -1);
 
     cprintf("\n");
@@ -643,44 +643,45 @@ scheduler(void)
     // Loop over process table looking for process to run.
     acquire(&ptable.lock);
     if(lockedproc != 0) {
-      while(1) {
-        if(lockedproc->state != RUNNING) 
-        {
-          if(lockedproc->state == RUNNABLE) {
-            lockedproc->state = RUNNING;
-          }
-        } else {
-          break;
-          withdraw_lock();
+      cprintf("Locked state");
+
+      if(lockedproc->state != RUNNING) 
+      {
+        if(lockedproc->state == RUNNABLE) {
+          (mlfq_manager.global_executed_ticks)++;
+          lockedproc->state = RUNNING;
         }
-      }  
-    }
-    p = mlfq_select(); //select mlfq which to execute.
+      } else {
+        withdraw_lock();
+        break;
+      } 
+    } else {
+      p = mlfq_select(); //select mlfq which to execute.
 
-    if(p != 0)
-    {
-      // Switch to chosen process.  It is the process's job
-      // to release ptable.lock and then reacquire it
-      // before jumping back to us.
-      c->proc = p;
-      switchuvm(p);
-      p->state = RUNNING;
-      swtch(&(c->scheduler), p->context);
-      switchkvm();
+      if(p != 0)
+      {
+        // Switch to chosen process.  It is the process's job
+        // to release ptable.lock and then reacquire it
+        // before jumping back to us.
+        c->proc = p;
+        switchuvm(p);
+        p->state = RUNNING;
+        swtch(&(c->scheduler), p->context);
+        switchkvm();
 
-      // Process is done running for now.
-      // It should have changed its p->state before coming back.
-      c->proc = 0;
-    }
+        // Process is done running for now.
+        // It should have changed its p->state before coming back.
+        c->proc = 0;
+      }
 
-    if(mlfq_manager.global_executed_ticks >= MLFQ_GLOBAL_BOOSTING_TICK_INTERVAL) {
-      mlfq_priority_boost();
-      //if there is a lock just remove it!
-      withdraw_lock();
+      if(mlfq_manager.global_executed_ticks >= MLFQ_GLOBAL_BOOSTING_TICK_INTERVAL) {
+        mlfq_priority_boost();
+        //if there is a lock just remove it!
+        withdraw_lock();
+      }
     }
     
     release(&ptable.lock);
-
   }
 }
 
