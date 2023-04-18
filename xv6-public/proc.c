@@ -165,7 +165,7 @@ mlfq_priority_boost(void)
 
 void 
 withdraw_lock(void) {
-  cprintf("withdraw_lock is called...");
+  cprintf("withdraw_lock is called...\n");
   int err = 0;
   if(lockedproc != 0) {
     //remove the lockedproc from the certain queue.
@@ -210,7 +210,7 @@ withdraw_lock(void) {
       }
     }
   }
-  cprintf("withdraw_lock is finished...");
+  cprintf("withdraw_lock is finished...\n");
 }
 
 void set_global_tick_zero() {
