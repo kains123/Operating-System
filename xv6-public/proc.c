@@ -76,6 +76,7 @@ queue_size(proc_queue_t *queue)
 
 int mlfq_enqueue(int lev, struct proc *p)
 {
+  cprintf("ENQUEUE\n");
   proc_queue_t *const queue = &mlfq_manager.queue[lev];
 
   if (queue->size == NPROC)
@@ -93,6 +94,7 @@ int mlfq_enqueue(int lev, struct proc *p)
 //if ret == 0, it's nothing, if ret = &p, it work.
 int mlfq_dequeue(int lev, struct proc** ret)
 {
+  cprintf("DEQUEUE\n");
   proc_queue_t *const queue = &mlfq_manager.queue[lev];
   struct proc *p;
   // if queue is empty return  -1(error);
@@ -237,6 +239,7 @@ mlfq_select()
     // no process in the mlfq (empty)
     if (lev == MLFQ_NUM)
       return 0;
+
     size = mlfq_manager.queue[lev].size;    
     proc_queue_t *const queue = &mlfq_manager.queue[lev];
     if(lev < 2) {
