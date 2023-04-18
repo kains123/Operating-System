@@ -281,6 +281,7 @@ mlfq_select()
   }
 
 found: //if runnable process found. 
+  cprintf("FOUND PID: %d\n", ret->pid);
   (ret->executed_ticks)++;
   (mlfq_manager.global_executed_ticks)++;
   //pass the process to lev+1 queue.
