@@ -246,17 +246,17 @@ mlfq_select()
       for (i = 0; i < size; ++i)
       {
         ret = queue->data[queue->front];
-        if(ret->state != RUNNABLE) {
-          cprintf("!!!!!!!!!![3]!!!!!!!!!!\n");
-          mlfq_dequeue(lev, 0); //remove first process in queue (lev).
-          mlfq_enqueue(lev, ret); //add again in the end of queue (lev).
+        // if(ret->state != RUNNABLE) {
+        //   cprintf("!!!!!!!!!![3]!!!!!!!!!!\n");
+        //   mlfq_dequeue(lev, 0); //remove first process in queue (lev).
+        //   mlfq_enqueue(lev, ret); //add again in the end of queue (lev).
+        // }
+        // else {
+        if(ret->state == RUNNABLE) {
+          cprintf("[%d] name: %s\n", ret->pid, ret->name);
+          goto found;
         }
-        else {
-          if(ret->state == RUNNABLE) {
-            cprintf("[%d] name: %s\n", ret->pid, ret->name);
-            goto found;
-          }
-        }
+        // }
       }
     } else if (lev == 2) {
         cprintf("********level %d********\n", lev);
