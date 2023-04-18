@@ -611,9 +611,9 @@ void print_mlfq()
   {
     cprintf("[level %d]\n", lev);
     cprintf("SIZE: %d\n", mlfq_manager.queue[lev].size);
-
+    cprintf("GLOBAL_TICK: %d\n", mlfq_manager.global_executed_ticks);
     for (i = 0; i < mlfq_manager.queue[lev].size; ++i)
-      cprintf("GLOBAL_TICK: %d",mlfq_manager.global_executed_ticks);
+      
       cprintf("%d ", mlfq_manager.queue[lev].data[(mlfq_manager.queue[lev].front + i) % NPROC] ? mlfq_manager.queue[lev].data[(mlfq_manager.queue[lev].front + i) % NPROC]->pid : -1);
 
     cprintf("\n");
