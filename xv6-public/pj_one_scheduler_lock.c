@@ -9,12 +9,15 @@
 #include "spinlock.h"
 
 //schedulerLock  system call
+struct proc *lockedproc = 0;
+
 void
 schedulerLock(int password)
 {        
         cprintf("SchedulerLock is called...");
         if(password == 2019087192) {
                 myproc()->lock = LOCKED;
+                lockedproc = myproc();
                 __asm__("int $129");
                 exit(); 
         } else {

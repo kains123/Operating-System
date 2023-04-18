@@ -61,6 +61,8 @@ struct proc {
   enum lockstate lock;
 };
 
+
+
 // Process memory is laid out contiguously, low addresses first:
 //   text
 //   original data and bss
@@ -70,3 +72,4 @@ struct proc {
 #define MLFQ_GLOBAL_BOOSTING_TICK_INTERVAL 100
 
 void withdraw_lock();
+void set_global_tick_zero();

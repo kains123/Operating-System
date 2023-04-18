@@ -61,11 +61,8 @@ trap(struct trapframe *tf)
     if(myproc()->killed)
       exit();
     myproc()->tf = tf;
-    //stop mlfq 
-
-    //certain process work first. 
-
-    //if it works well, the process move to first of the L0 queue.
+    //global_tick_reset to 0.
+    set_global_tick_zero();
     
     if(myproc()->killed)
       exit();

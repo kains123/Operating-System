@@ -213,6 +213,9 @@ withdraw_lock(void) {
   }
 }
 
+void set_global_tick_zero() {
+  mlfq_manager.global_executed_ticks = 0;
+}
 
 struct proc *
 mlfq_select()
@@ -630,12 +633,24 @@ scheduler(void)
   c->proc = 0;
   
   for(;;){
-
     // print_mlfq();
     // Enable interrupts on this processor.
     sti();
     // Loop over process table looking for process to run.
     acquire(&ptable.lock);
+    if(lockedproc != 0) {
+      while(1) {
+        if(lockedproc->state != RUNNING) 
+        {
+          if(lockedproc->state == RUNNABLE) {
+            lockedproc->state = RUNNING;
+          }
+        } else {
+          break;
+          withdraw_lock();
+        }
+      }  
+    }
     p = mlfq_select(); //select mlfq which to execute.
 
     if(p != 0)
