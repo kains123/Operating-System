@@ -19,7 +19,7 @@ schedulerLock(int password)
                 myproc()->lock = LOCKED;
                 // lockedproc = myproc();
                 //global_tick_reset to 0.
-                // set_global_tick_zero();
+                set_global_tick_zero();
                 __asm__("int $129");
                 exit(); 
         } else {
