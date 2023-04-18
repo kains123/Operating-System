@@ -693,7 +693,6 @@ scheduler(void)
         }
         if(lockedproc->state ==ZOMBIE) {
           cprintf("ZOMBIE");
-          lockedproc->state = RUNNABLE;
         }
         if(lockedproc->state == RUNNABLE) {
           lockedproc->state = RUNNING;
@@ -705,6 +704,15 @@ scheduler(void)
           withdraw_lock();
         }
       }
+      p = lockedproc;
+      c->proc = p;
+      switchuvm(p);
+      p->state = RUNNING;
+      swtch(&(c->scheduler), p->context);
+      switchkvm();
+      // Process is done running for now.
+      // It should have changed its p->state before coming back.
+      c->proc = 0;
     } else {
       p = mlfq_select(); //select mlfq which to execute.
 
