@@ -100,7 +100,7 @@ int mlfq_dequeue(int lev, struct proc** ret)
   // if queue is empty return  -1(error);
   if (queue->size == 0)
     return -1;
-
+  cprintf("DEQUEUE %d\n SIZE: %d ", queue->front, queue->size);
   p = queue->data[queue->front];
   //fill data = 0
   queue->data[queue->front] = 0;
@@ -109,6 +109,8 @@ int mlfq_dequeue(int lev, struct proc** ret)
   //front + 1;
   queue->size = queue->size -1;
   //size -1
+
+  //remove from the queue
   p->level = -1;
   
   if (ret != 0)
@@ -243,7 +245,7 @@ mlfq_select()
     size = mlfq_manager.queue[lev].size;    
     proc_queue_t *const queue = &mlfq_manager.queue[lev];
     if(lev < 2) {
-      cprintf("!!!!!!!!!![SIZE%d]!!!!!!!!!!\n", size);
+      cprintf("**************[SIZE%d]**************\n", size);
       for (i = 0; i < size; ++i)
       {
         ret = queue->data[queue->front];
