@@ -219,6 +219,9 @@ void set_global_tick_zero() {
 
 void set_lockedproc() {
   lockedproc = myproc();
+  if(myproc()->state == "ZOMBIE"){
+      cprintf("KKKKKKKK");
+  }
 }
 
 struct proc *
