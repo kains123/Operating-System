@@ -264,7 +264,7 @@ mlfq_select()
           int idx = (queue->front + i) % NPROC;
           ret = queue->data[idx];
           cprintf("********priority %d********\n", ret->priority);
-          cprintf("********priority %c********\n", ret->state);
+          cprintf("********priority %s********\n", ret->state);
           //only ret->state == RUNNABLE -> found_idx can be changed.
           if(ret->state == RUNNABLE && ret->priority < priority) {
             found_idx = idx;
