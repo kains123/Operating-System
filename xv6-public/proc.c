@@ -696,7 +696,6 @@ scheduler(void)
         if(lockedproc->state == RUNNABLE) {
           lockedproc->state = RUNNING;
         } else {
-           cprintf("WHAT TO DO?");
            goto SCHEDULER;
         }
       }
