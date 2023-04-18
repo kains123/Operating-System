@@ -606,9 +606,13 @@ wait(void)
         p->name[0] = 0;
         p->killed = 0;
         p->state = UNUSED;
+        
+        
         //reset of MLFQ
         p->priority = 3;
         p->lock = UNLOCKED;
+        p->level = 0;
+        p->executed_ticks = 0;
         release(&ptable.lock);
         
         return pid;
