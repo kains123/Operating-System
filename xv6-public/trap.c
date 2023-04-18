@@ -62,7 +62,7 @@ trap(struct trapframe *tf)
       exit();
     myproc()->tf = tf;
     //global_tick_reset to 0.
-    set_global_tick_zero()
+    set_global_tick_zero();
     
     if(myproc()->killed)
       exit();
