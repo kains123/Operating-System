@@ -107,7 +107,7 @@ int mlfq_dequeue(int lev, struct proc** ret)
 
   queue->front = (queue->front + 1) % NPROC;
   //front + 1;
-  (queue->size)--;
+  queue->size = queue->size -1;
   //size -1
   p->level = -1;
   
@@ -243,6 +243,7 @@ mlfq_select()
     size = mlfq_manager.queue[lev].size;    
     proc_queue_t *const queue = &mlfq_manager.queue[lev];
     if(lev < 2) {
+      cprintf("!!!!!!!!!![SIZE%d]!!!!!!!!!!\n", size);
       for (i = 0; i < size; ++i)
       {
         ret = queue->data[queue->front];
