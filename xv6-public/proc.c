@@ -695,7 +695,6 @@ scheduler(void)
     if(lockedproc != 0) {
       // print_mlfq();
       (mlfq_manager.global_executed_ticks)++;
-      cprintf("*****%d \n\n", mlfq_manager.global_executed_ticks);
       if(mlfq_manager.global_executed_ticks >= MLFQ_GLOBAL_BOOSTING_TICK_INTERVAL){
           //if there is a lock just remove it!
           print_mlfq();
@@ -706,10 +705,10 @@ scheduler(void)
         if(lockedproc->state == RUNNABLE) {
           lockedproc->state = RUNNING;
         } 
-        // else {
-        //    withdraw_lock();
-        //    goto SCHEDULER;
-        // }
+        else {
+           withdraw_lock();
+           goto SCHEDULER;
+        }
       }
       //Context Switching
       p = lockedproc;
@@ -722,7 +721,7 @@ scheduler(void)
       // It should have changed its p->state before coming back.
       c->proc = 0;
     } else {
-      // SCHEDULER:
+      SCHEDULER:
         p = mlfq_select(); //select mlfq which to execute.
         if(p != 0)
         {
@@ -852,7 +851,7 @@ wakeup1(void *chan)
   struct proc *p;
 
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++)
-    if(p->state == SLEEPING && p->chan == chan) {
+    if(p->state == SLEEPING) {
       p->state = RUNNABLE;
     }
 }
