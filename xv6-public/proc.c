@@ -320,12 +320,12 @@ found: //if runnable process found.
     // if queue is empty return  -1(error);
     if (queue->size == 0)
     p = queue->data[queue->front];
+    p->level = -1;
     //fill data = 0
     cprintf("DEQUEUE [PID: %d]\n", p->pid);
     queue->data[queue->front] = 0;
 
     queue->front = (queue->front + 1) % NPROC;
-    p->level = -1;
     //   return -1; //The queue is full.
     queue->rear = (queue->rear + 1) % NPROC;
     queue->data[queue->rear] = ret;
