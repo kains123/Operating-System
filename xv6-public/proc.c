@@ -228,10 +228,10 @@ withdraw_lock(void) {
         add_queue->data[add_queue->front] = lockedproc;
         (add_queue->size)++;
         p->level = 0;
-        lockedproc = 0;
       }
     }
   }
+  lockedproc = 0;
   cprintf("withdraw_lock is finished...\n");
 }
 
