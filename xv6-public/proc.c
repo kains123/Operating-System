@@ -76,7 +76,7 @@ queue_size(proc_queue_t *queue)
 
 int mlfq_enqueue(int lev, struct proc *p)
 {
-  cprintf("ENQUEUE");
+  cprintf("ENQUEUE\n");
   proc_queue_t *const queue = &mlfq_manager.queue[lev];
 
   if (queue->size == NPROC)
@@ -94,7 +94,7 @@ int mlfq_enqueue(int lev, struct proc *p)
 //if ret == 0, it's nothing, if ret = &p, it work.
 int mlfq_dequeue(int lev, struct proc** ret)
 {
-  cprintf("DEQUEUE");
+  cprintf("DEQUEUE\n");
   proc_queue_t *const queue = &mlfq_manager.queue[lev];
   struct proc *p;
   // if queue is empty return  -1(error);
@@ -248,6 +248,7 @@ mlfq_select()
       {
         ret = queue->data[queue->front];
         if(ret->state != RUNNABLE) {
+          cprintf("************[2]************\n")
           mlfq_dequeue(lev, 0); //remove first process in queue (lev).
           mlfq_enqueue(lev, ret); //add again in the end of queue (lev).
         }
@@ -309,7 +310,7 @@ found: //if runnable process found.
       mlfq_dequeue(lev, 0);
       mlfq_enqueue(lev, ret);
   } else if (ret->executed_ticks % 1 == 0){
-    cprintf("***********[1]****************");
+    cprintf("***********[1]****************\n");
     mlfq_dequeue(lev, 0);
     mlfq_enqueue(lev, ret);
   }
