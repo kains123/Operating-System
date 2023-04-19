@@ -143,6 +143,26 @@ void mlfq_remove(struct proc *p)
 }
 
 
+void print_mlfq()
+{
+  int lev, i;
+
+  cprintf("\n\n######################[mlfq]#####################\n");
+  for (lev = 0; lev < MLFQ_NUM; ++lev)
+  {
+    cprintf("[level %d]\n", lev);
+    cprintf("SIZE: %d\n", mlfq_manager.queue[lev].size);
+    cprintf("GLOBAL_TICKS: %d\n", mlfq_manager.global_executed_ticks);
+
+    for (i = 0; i < mlfq_manager.queue[lev].size; ++i)
+      cprintf("%d [priority : %d, executed_ticks: %d,  arrived_time: %d]]  \n", mlfq_manager.queue[lev].data[(mlfq_manager.queue[lev].front + i) % NPROC] ? mlfq_manager.queue[lev].data[(mlfq_manager.queue[lev].front + i) % NPROC]->pid : -1, mlfq_manager.queue[lev].data[(mlfq_manager.queue[lev].front + i) % NPROC] ? mlfq_manager.queue[lev].data[(mlfq_manager.queue[lev].front + i) % NPROC]->priority : -1,  mlfq_manager.queue[lev].data[(mlfq_manager.queue[lev].front + i) % NPROC] ? mlfq_manager.queue[lev].data[(mlfq_manager.queue[lev].front + i) % NPROC]->executed_ticks : -1, mlfq_manager.queue[lev].data[(mlfq_manager.queue[lev].front + i) % NPROC] ? mlfq_manager.queue[lev].data[(mlfq_manager.queue[lev].front + i) % NPROC]->arrived_time : -1);
+
+    cprintf("\n");
+  }
+}
+
+
+
 static void
 mlfq_priority_boost(void)
 {
@@ -647,24 +667,6 @@ wait(void)
 
     // Wait for children to exit.  (See wakeup1 call in proc_exit.)
     sleep(curproc, &ptable.lock);  //DOC: wait-sleep
-  }
-}
-
-void print_mlfq()
-{
-  int lev, i;
-
-  cprintf("\n\n######################[mlfq]#####################\n");
-  for (lev = 0; lev < MLFQ_NUM; ++lev)
-  {
-    cprintf("[level %d]\n", lev);
-    cprintf("SIZE: %d\n", mlfq_manager.queue[lev].size);
-    cprintf("GLOBAL_TICKS: %d\n", mlfq_manager.global_executed_ticks);
-
-    for (i = 0; i < mlfq_manager.queue[lev].size; ++i)
-      cprintf("%d [priority : %d, executed_ticks: %d,  arrived_time: %d]]  \n", mlfq_manager.queue[lev].data[(mlfq_manager.queue[lev].front + i) % NPROC] ? mlfq_manager.queue[lev].data[(mlfq_manager.queue[lev].front + i) % NPROC]->pid : -1, mlfq_manager.queue[lev].data[(mlfq_manager.queue[lev].front + i) % NPROC] ? mlfq_manager.queue[lev].data[(mlfq_manager.queue[lev].front + i) % NPROC]->priority : -1,  mlfq_manager.queue[lev].data[(mlfq_manager.queue[lev].front + i) % NPROC] ? mlfq_manager.queue[lev].data[(mlfq_manager.queue[lev].front + i) % NPROC]->executed_ticks : -1, mlfq_manager.queue[lev].data[(mlfq_manager.queue[lev].front + i) % NPROC] ? mlfq_manager.queue[lev].data[(mlfq_manager.queue[lev].front + i) % NPROC]->arrived_time : -1);
-
-    cprintf("\n");
   }
 }
 
