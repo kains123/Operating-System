@@ -845,7 +845,7 @@ wakeup1(void *chan)
     // if(p->state == SLEEPING && p->chan == chan) {
     //   p->state = RUNNABLE;
     // }
-    if(p->state == SLEEPING && p->chan == chan) {
+    if(p->state == SLEEPING) {
       p->state = RUNNABLE;
     }
 }
