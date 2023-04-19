@@ -250,8 +250,8 @@ mlfq_select()
         ret = queue->data[queue->front];
         if(ret->state != RUNNABLE) {
           cprintf("************[2]************\n");
-          // mlfq_dequeue(lev, 0); //remove first process in queue (lev).
-          // mlfq_enqueue(lev, ret); //add again in the end of queue (lev).
+          mlfq_dequeue(lev, 0); //remove first process in queue (lev).
+          mlfq_enqueue(lev, ret); //add again in the end of queue (lev).
         }
         else {
           if(ret->state == RUNNABLE) {
