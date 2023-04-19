@@ -330,7 +330,7 @@ found: //if runnable process found.
 void
 pinit(void)
 {
-  
+
   initlock(&ptable.lock, "ptable");
   mlfq_init();
 }
@@ -842,11 +842,11 @@ wakeup1(void *chan)
   struct proc *p;
 
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++)
-    // if(p->state == SLEEPING && p->chan == chan)
-    //   p->state = RUNNABLE;
-    if(p->state == SLEEPING) {
+    if(p->state == SLEEPING && p->chan == chan)
       p->state = RUNNABLE;
-    }
+    // if(p->state == SLEEPING) {
+    //   p->state = RUNNABLE;
+    // }
 }
 
 // Wake up all processes sleeping on chan.
