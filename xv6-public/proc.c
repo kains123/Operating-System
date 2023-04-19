@@ -249,7 +249,7 @@ mlfq_select()
         if(ret->state == RUNNABLE) {
           goto found;
         } else {
-          cprinf("****************");
+          cprintf("****************");
         }
       }
     } else if (lev == 2) {
