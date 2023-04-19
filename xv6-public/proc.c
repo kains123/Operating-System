@@ -722,7 +722,7 @@ scheduler(void)
       // It should have changed its p->state before coming back.
       c->proc = 0;
     } else {
-      SCHEDULER:
+      // SCHEDULER:
         p = mlfq_select(); //select mlfq which to execute.
         if(p != 0)
         {
