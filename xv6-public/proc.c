@@ -270,7 +270,7 @@ mlfq_select()
         if(priority != 10000 && found_i != 10000) {
           //for found_idx and found_idx를 맨 앞으로 보내라.
           int i = 0;
-          while(1) {
+          while(i < 10000) {
             ret =  queue->data[queue->front];
             if (i == found_i) {
               break;
