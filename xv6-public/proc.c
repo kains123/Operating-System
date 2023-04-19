@@ -250,8 +250,8 @@ mlfq_select()
         ret = queue->data[queue->front];
         if(ret->state != RUNNABLE) {
           cprintf("************[2]************\n");
-          mlfq_dequeue(lev, 0); //remove first process in queue (lev).
-          mlfq_enqueue(lev, ret); //add again in the end of queue (lev).
+          // mlfq_dequeue(lev, 0); //remove first process in queue (lev).
+          // mlfq_enqueue(lev, ret); //add again in the end of queue (lev).
         }
         else {
           if(ret->state == RUNNABLE) {
@@ -308,6 +308,8 @@ found: //if runnable process found.
       } else {
         ret->priority = 0;
       }
+      mlfq_dequeue(lev, 0);
+      mlfq_enqueue(lev, ret);
   } else if (ret->executed_ticks % 1 == 0 && lev < MLFQ_NUM -1){
     //if the queue size > 2
     //go to the end of the queue. 
