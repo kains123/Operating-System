@@ -312,8 +312,8 @@ found: //if runnable process found.
       mlfq_enqueue(lev, ret);
   } else if (ret->executed_ticks % 1 == 0){
     cprintf("***********[1]****************\n");
-    mlfq_dequeue(lev, 0);
-    mlfq_enqueue(lev, ret);
+    // mlfq_dequeue(lev, 0);
+    // mlfq_enqueue(lev, ret);
   }
   return ret;
 }
