@@ -309,9 +309,9 @@ found: //if runnable process found.
         ret->priority = 0;
       }
   } else if (ret->executed_ticks % 1 == 0 && lev < MLFQ_NUM - 1 && size > 1){
-    cprintf("***********[1]****************\n");
-    mlfq_dequeue(lev, 0);
-    mlfq_enqueue(lev, ret);
+    // cprintf("***********[1]****************\n");
+    // mlfq_dequeue(lev, 0);
+    // mlfq_enqueue(lev, ret);
   }
   return ret;
 }
