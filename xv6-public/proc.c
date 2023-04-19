@@ -228,10 +228,10 @@ withdraw_lock(void) {
         add_queue->data[add_queue->front] = lockedproc;
         (add_queue->size)++;
         p->level = 0;
+        lockedproc = 0;
       }
     }
   }
-  lockedproc = 0;
   cprintf("withdraw_lock is finished...\n");
 }
 
@@ -693,13 +693,14 @@ scheduler(void)
     // Loop over process table looking for process to run.
     acquire(&ptable.lock);
     if(lockedproc != 0) {
-      // print_mlfq();
+      print_mlfq();
       (mlfq_manager.global_executed_ticks)++;
       cprintf("*****%d \n\n", mlfq_manager.global_executed_ticks);
       if(mlfq_manager.global_executed_ticks >= MLFQ_GLOBAL_BOOSTING_TICK_INTERVAL){
           //if there is a lock just remove it!
           print_mlfq();
           withdraw_lock();
+          goto SCHEDULER;
       }
       if(lockedproc->state != RUNNING) 
       {
