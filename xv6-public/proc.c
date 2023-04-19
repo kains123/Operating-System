@@ -681,7 +681,7 @@ scheduler(void)
   c->proc = 0;
   
   for(;;){
-    print_mlfq();
+    // print_mlfq();
     // Enable interrupts on this processor.
     sti();
     // Loop over process table looking for process to run.
