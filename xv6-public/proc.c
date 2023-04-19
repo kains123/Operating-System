@@ -308,10 +308,11 @@ found: //if runnable process found.
       } else {
         ret->priority = 0;
       }
-  } else if (ret->executed_ticks % 1 == 0 && lev < MLFQ_NUM - 1 && size > 1){
-    // cprintf("***********[1]****************\n");
-    // mlfq_dequeue(lev, 0);
-    // mlfq_enqueue(lev, ret);
+  } else if (ret->executed_ticks % 1 == 0){
+    //if the queue size > 2
+    //go to the end of the queue. 
+    mlfq_dequeue(lev, 0);
+    //if in priority 2, also need switch with same priority
   }
   return ret;
 }
