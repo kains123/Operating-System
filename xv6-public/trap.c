@@ -21,7 +21,7 @@ tvinit(void)
 
   for(i = 0; i < 256; i++)
     SETGATE(idt[i], 0, SEG_KCODE<<3, vectors[i], 0);
-  SETGATE(idt[T_SYSCALL], 1, SEG_KCODE<<3, vectors[T_SYSCALL], DPL_USER);
+  // SETGATE(idt[T_SYSCALL], 1, SEG_KCODE<<3, vectors[T_SYSCALL], DPL_USER);
   SETGATE(idt[T_INT128], 1, SEG_KCODE<<3, vectors[T_INT128], DPL_USER);
   SETGATE(idt[T_INT129], 1, SEG_KCODE<<3, vectors[T_INT129], DPL_USER);
   SETGATE(idt[T_INT130], 1, SEG_KCODE<<3, vectors[T_INT130], DPL_USER);

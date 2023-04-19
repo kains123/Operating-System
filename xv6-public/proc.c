@@ -25,7 +25,6 @@ typedef struct proc_queue
   int size;
 } proc_queue_t;
 
-struct proc *lockedproc = 0;
 struct
 {
   //multi-level
@@ -33,6 +32,7 @@ struct
   int global_executed_ticks; //MFLQ scheduler worked ticks
 } mlfq_manager; // There is a global tick in mlfq (3-level feedback queue).
 
+struct proc *lockedproc = 0;
 
 
 void mlfq_init()
@@ -666,7 +666,7 @@ scheduler(void)
   c->proc = 0;
   
   for(;;){
-    // print_mlfq();
+    print_mlfq();
     // Enable interrupts on this processor.
     sti();
     // Loop over process table looking for process to run.
