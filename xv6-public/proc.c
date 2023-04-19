@@ -83,7 +83,7 @@ int mlfq_enqueue(int lev, struct proc *p)
     return -1; //The queue is full.
   queue->rear = (queue->rear + 1) % NPROC;
   queue->data[queue->rear] = p;
-  (queue->size)++;
+  queue->size = queue->size +1;
   
   p->level = lev;
   
@@ -310,10 +310,28 @@ found: //if runnable process found.
       }
       mlfq_dequeue(lev, 0);
       mlfq_enqueue(lev, ret);
-  } else if (ret->executed_ticks % 1 == 0){
+  } else if (ret->executed_ticks % 1 == 0 && lev < MLFQ_NUM - 1 && size > 1){
     cprintf("***********[1]****************\n");
     // mlfq_dequeue(lev, 0);
     // mlfq_enqueue(lev, ret);
+    proc_queue_t *const queue = &mlfq_manager.queue[lev];
+    cprintf("DEQUEUE [FRONT_IDX: %d]\n", queue->front);
+    struct proc *p;
+    // if queue is empty return  -1(error);
+    if (queue->size == 0)
+    p = queue->data[queue->front];
+    //fill data = 0
+    cprintf("DEQUEUE [PID: %d]\n", p->pid);
+    queue->data[queue->front] = 0;
+
+    queue->front = (queue->front + 1) % NPROC;
+    p->level = -1;
+    //   return -1; //The queue is full.
+    queue->rear = (queue->rear + 1) % NPROC;
+    queue->data[queue->rear] = ret;
+    queue->size = queue->size +1;
+    
+    ret->level = lev;
   }
   return ret;
 }
