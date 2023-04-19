@@ -317,13 +317,14 @@ found: //if runnable process found.
       }
     mlfq_dequeue(lev, 0);
     mlfq_enqueue(lev, ret);
-  } else if (ret->executed_ticks % 1 == 0){
-    // cprintf("************[1]************\n");
-    //change the sequence of the queue.
-    mlfq_dequeue(lev, 0);
-    mlfq_enqueue(lev, ret);
-  }
-  return ret;
+  } 
+  // else if (ret->executed_ticks % 1 == 0){
+  //   // cprintf("************[1]************\n");
+  //   //change the sequence of the queue.
+  //   mlfq_dequeue(lev, 0);
+  //   mlfq_enqueue(lev, ret);
+  // }
+  // return ret;
 }
 
 
@@ -713,7 +714,6 @@ scheduler(void)
     } else {
       SCHEDULER:
         p = mlfq_select(); //select mlfq which to execute.
-
         if(p != 0)
         {
           // Switch to chosen process.  It is the process's job
@@ -842,10 +842,7 @@ wakeup1(void *chan)
   struct proc *p;
 
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++)
-    // if(p->state == SLEEPING && p->chan == chan) {
-    //   p->state = RUNNABLE;
-    // }
-    if(p->state == SLEEPING) {
+    if(p->state == SLEEPING && p->chan == chan) {
       p->state = RUNNABLE;
     }
 }
