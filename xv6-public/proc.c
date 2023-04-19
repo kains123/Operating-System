@@ -312,6 +312,7 @@ found: //if runnable process found.
     //if the queue size > 2
     //go to the end of the queue. 
     mlfq_dequeue(lev, 0);
+    mlfq_enqueue(lev, ret);
     //if in priority 2, also need switch with same priority
   }
   return ret;
