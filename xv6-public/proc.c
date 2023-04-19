@@ -304,12 +304,15 @@ found: //if runnable process found.
       } else {
         ret->priority = 0;
       }
+      mlfq_dequeue(lev, 0);
+      mlfq_enqueue(lev, ret);
+  } else {
+    mlfq_dequeue(lev, 0);
+    mlfq_enqueue(lev, ret);
   }
   // if (ret->executed_ticks  % MLFQ_TIME_QUANTUM[lev] == 0)
   // {
   //   cprintf("!!!!!!!!!![2]!!!!!!!!!!\n");
-  mlfq_dequeue(lev, 0);
-  mlfq_enqueue(lev, ret);
   // }
 
   return ret;
