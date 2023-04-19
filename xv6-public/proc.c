@@ -76,7 +76,6 @@ queue_size(proc_queue_t *queue)
 
 int mlfq_enqueue(int lev, struct proc *p)
 {
-  cprintf("ENQUEUE\n");
   proc_queue_t *const queue = &mlfq_manager.queue[lev];
 
   if (queue->size == NPROC)
@@ -256,19 +255,31 @@ mlfq_select()
     } else if (lev == 2) {
         //find the lowest priority in L2 queue
         int priority = 10000;
-        int found_idx = 10000;
+        int found_i = 10000;
         //start front to end rear;
         for(int i = 0; i < size; i++){
           int idx = (queue->front + i) % NPROC;
           ret = queue->data[idx];
           //only ret->state == RUNNABLE -> found_idx can be changed.
           if(ret->priority < priority) {
-            found_idx = idx;
+            found_i = i;
             priority = ret->priority;
           }
         }
-        if(priority != 10000 && found_idx != 10000) {
-          ret = queue->data[found_idx];
+        if(priority != 10000 && found_i != 10000) {
+          //for found_idx and found_idx를 맨 앞으로 보내라.
+          int i = 0;
+          while(1) {
+            ret =  queue->data[queue->front];
+            if (i == found_i) {
+              break;
+            } else {
+              mlfq_dequeue(lev, 0);
+              mlfq_enqueue(lev, ret);
+            }
+            i++;
+          }
+          // ret = queue->data[found_idx];
           goto found;
         }
     }
