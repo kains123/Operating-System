@@ -94,14 +94,12 @@ int mlfq_enqueue(int lev, struct proc *p)
 int mlfq_dequeue(int lev, struct proc** ret)
 {
   proc_queue_t *const queue = &mlfq_manager.queue[lev];
-  cprintf("DEQUEUE [FRONT_IDX: %d]\n", queue->front);
   struct proc *p;
   // if queue is empty return  -1(error);
   if (queue->size == 0)
     return -1;
   p = queue->data[queue->front];
   //fill data = 0
-  cprintf("DEQUEUE [PID: %d]\n", p->pid);
   queue->data[queue->front] = 0;
 
   queue->front = (queue->front + 1) % NPROC;
@@ -320,7 +318,7 @@ found: //if runnable process found.
     mlfq_dequeue(lev, 0);
     mlfq_enqueue(lev, ret);
   } else if (ret->executed_ticks % 1 == 0){
-    cprintf("************[1]************\n");
+    // cprintf("************[1]************\n");
     //change the sequence of the queue.
     mlfq_dequeue(lev, 0);
     mlfq_enqueue(lev, ret);
@@ -404,11 +402,11 @@ found:
   p->lock = UNLOCKED;
   p->arrived_time = 0;
 
-  cprintf("initialized %d\n", p->pid);
+  // cprintf("initialized %d\n", p->pid);
   //first push p in queue
   if (mlfq_enqueue(0, p) != 0)
   {
-    cprintf("allocation error %d\n", p->pid );
+    // cprintf("allocation error %d\n", p->pid );
     release(&ptable.lock);
     return 0;
   }
@@ -682,7 +680,7 @@ scheduler(void)
   c->proc = 0;
   
   for(;;){
-    print_mlfq();
+    // print_mlfq();
     // Enable interrupts on this processor.
     sti();
     // Loop over process table looking for process to run.
