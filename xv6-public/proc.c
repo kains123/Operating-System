@@ -713,8 +713,10 @@ scheduler(void)
       // It should have changed its p->state before coming back.
       c->proc = 0;
       (mlfq_manager.global_executed_ticks)++;
+      cprintf("*****%d \n\n", mlfq_manager.global_executed_ticks);
       if(mlfq_manager.global_executed_ticks >= MLFQ_GLOBAL_BOOSTING_TICK_INTERVAL){
           //if there is a lock just remove it!
+          print_mlfq();
           cprintf("CALLED");
           withdraw_lock();
       }
