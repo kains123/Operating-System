@@ -693,9 +693,9 @@ scheduler(void)
     // Loop over process table looking for process to run.
     acquire(&ptable.lock);
     if(lockedproc != 0) {
-      print_mlfq();
+      // print_mlfq();
       (mlfq_manager.global_executed_ticks)++;
-      cprintf("*****%d \n\n", mlfq_manager.global_executed_ticks);
+      // cprintf("*****%d \n\n", mlfq_manager.global_executed_ticks);
       if(mlfq_manager.global_executed_ticks >= MLFQ_GLOBAL_BOOSTING_TICK_INTERVAL){
           //if there is a lock just remove it!
           print_mlfq();
