@@ -310,13 +310,14 @@ found: //if runnable process found.
       ret->arrived_time = mlfq_manager.global_executed_ticks;
     }
   } else if(lev == MLFQ_NUM -1  && ret->executed_ticks >= MLFQ_TIME_QUANTUM[lev]) {
-      ret->executed_ticks = 0;
-      //if ret->priority == 0, just keep 
-      if(ret->priority > 0) {
-        ret->priority = ret->priority -1; //prority -
-      } else {
-        ret->priority = 0;
-      }
+    ret->executed_ticks = 0;
+    //if ret->priority == 0, just keep 
+    if(ret->priority > 0) {
+      ret->priority = ret->priority -1; //prority -
+    } else {
+      ret->priority = 0;
+    }
+    ret->arrived_time =  mlfq_manager.global_executed_ticks;
     mlfq_dequeue(lev, 0);
     mlfq_enqueue(lev, ret);
   } else if (ret->executed_ticks % 1 == 0){
