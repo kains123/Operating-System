@@ -705,10 +705,11 @@ scheduler(void)
       {
         if(lockedproc->state == RUNNABLE) {
           lockedproc->state = RUNNING;
-        } else {
-           withdraw_lock();
-           goto SCHEDULER;
-        }
+        } 
+        // else {
+        //    withdraw_lock();
+        //    goto SCHEDULER;
+        // }
       }
       //Context Switching
       p = lockedproc;
