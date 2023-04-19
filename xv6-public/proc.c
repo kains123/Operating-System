@@ -321,8 +321,8 @@ found: //if runnable process found.
     if (queue->size == 0)
     p = queue->data[queue->front];
     p->level = -1;
-    //fill data = 0
     cprintf("DEQUEUE [PID: %d]\n", p->pid);
+    //fill data = 0
     queue->data[queue->front] = 0;
 
     queue->front = (queue->front + 1) % NPROC;
