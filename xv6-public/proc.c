@@ -301,6 +301,8 @@ found: //if runnable process found.
       } else {
         ret->priority = 0;
       }
+    mlfq_dequeue(lev, 0);
+    mlfq_enqueue(lev, ret);
   } else if (ret->executed_ticks % 1 == 0){
     cprintf("************[1]************\n");
     //change the sequence of the queue.
