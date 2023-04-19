@@ -94,14 +94,15 @@ int mlfq_enqueue(int lev, struct proc *p)
 //if ret == 0, it's nothing, if ret = &p, it work.
 int mlfq_dequeue(int lev, struct proc** ret)
 {
-  cprintf("DEQUEUE\n");
   proc_queue_t *const queue = &mlfq_manager.queue[lev];
+  cprintf("DEQUEUE [FRONT_IDX: %d]\n", queue->front);
   struct proc *p;
   // if queue is empty return  -1(error);
   if (queue->size == 0)
     return -1;
   p = queue->data[queue->front];
   //fill data = 0
+  cprintf("DEQUEUE [PID: %d]\n", p->pid);
   queue->data[queue->front] = 0;
 
   queue->front = (queue->front + 1) % NPROC;
