@@ -722,7 +722,11 @@ scheduler(void)
       }
     } else {
       SCHEDULER:
-        p = mlfq_select(); //select mlfq which to execute.
+        if(lockedproc  != 0) {
+          p = lockedproc;
+        } else {
+          p = mlfq_select(); //select mlfq which to execute.
+        }
         if(p != 0)
         {
           // Switch to chosen process.  It is the process's job
