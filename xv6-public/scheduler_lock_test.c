@@ -4,6 +4,6 @@
 
 int main(int argc, char *argv[])
 {
-	schedulerLock(2019087192);
+	schedulerLock(201908);
   exit();
 }
