@@ -233,6 +233,7 @@ withdraw_lock(void) {
     }
   }
   cprintf("withdraw_lock is finished...\n");
+  return;
 }
 
 void set_global_tick_zero() {
@@ -687,7 +688,7 @@ scheduler(void)
   c->proc = 0;
   
   for(;;){
-    // print_mlfq();
+    print_mlfq();
     // Enable interrupts on this processor.
     sti();
     // Loop over process table looking for process to run.
@@ -700,7 +701,6 @@ scheduler(void)
           //if there is a lock just remove it!
           print_mlfq();
           withdraw_lock();
-          goto SCHEDULER;
       }
       if(lockedproc->state != RUNNING) 
       {
