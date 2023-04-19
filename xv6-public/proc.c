@@ -270,8 +270,8 @@ mlfq_select()
         if(ret->state == RUNNABLE) {
           goto found;
         } else {
-          mlfq_dequeue(lev, 0);
-          mlfq_enqueue(lev, ret);
+          // mlfq_dequeue(lev, 0);
+          // mlfq_enqueue(lev, ret);
         }
       }
     } else if (lev == 2) {
@@ -695,6 +695,7 @@ scheduler(void)
     if(lockedproc != 0) {
       // print_mlfq();
       (mlfq_manager.global_executed_ticks)++;
+      cprintf("*****%d \n\n", mlfq_manager.global_executed_ticks);
       if(mlfq_manager.global_executed_ticks >= MLFQ_GLOBAL_BOOSTING_TICK_INTERVAL){
           //if there is a lock just remove it!
           print_mlfq();
@@ -704,8 +705,7 @@ scheduler(void)
       {
         if(lockedproc->state == RUNNABLE) {
           lockedproc->state = RUNNING;
-        } 
-        else {
+        } else {
            withdraw_lock();
            goto SCHEDULER;
         }
@@ -851,7 +851,7 @@ wakeup1(void *chan)
   struct proc *p;
 
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++)
-    if(p->state == SLEEPING) {
+    if(p->state == SLEEPING && p->chan == chan) {
       p->state = RUNNABLE;
     }
 }
