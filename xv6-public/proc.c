@@ -300,7 +300,7 @@ found: //if runnable process found.
     //executed_ticks reset to 0
     ret->executed_ticks = 0;
     
-  } if(lev == MLFQ_NUM -1  && ret->executed_ticks >= MLFQ_TIME_QUANTUM[lev]) {
+  } else if(lev == MLFQ_NUM -1  && ret->executed_ticks >= MLFQ_TIME_QUANTUM[lev]) {
       ret->executed_ticks = 0;
       //if ret->priority == 0, just keep 
       if(ret->priority > 0) {
