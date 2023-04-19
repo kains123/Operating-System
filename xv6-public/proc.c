@@ -330,6 +330,7 @@ found: //if runnable process found.
 void
 pinit(void)
 {
+  
   initlock(&ptable.lock, "ptable");
   mlfq_init();
 }
