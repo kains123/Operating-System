@@ -270,8 +270,8 @@ mlfq_select()
         if(ret->state == RUNNABLE) {
           goto found;
         } else {
-          // mlfq_dequeue(lev, 0);
-          // mlfq_enqueue(lev, ret);
+          mlfq_dequeue(lev, 0);
+          mlfq_enqueue(lev, ret);
         }
       }
     } else if (lev == 2) {
