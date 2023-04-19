@@ -694,11 +694,19 @@ scheduler(void)
     acquire(&ptable.lock);
     if(lockedproc != 0) {
       // print_mlfq();
+      (mlfq_manager.global_executed_ticks)++;
+      cprintf("*****%d \n\n", mlfq_manager.global_executed_ticks);
+      if(mlfq_manager.global_executed_ticks >= MLFQ_GLOBAL_BOOSTING_TICK_INTERVAL){
+          //if there is a lock just remove it!
+          print_mlfq();
+          withdraw_lock();
+      }
       if(lockedproc->state != RUNNING) 
       {
         if(lockedproc->state == RUNNABLE) {
           lockedproc->state = RUNNING;
         } else {
+           withdraw_lock();
            goto SCHEDULER;
         }
       }
@@ -712,21 +720,9 @@ scheduler(void)
       // Process is done running for now.
       // It should have changed its p->state before coming back.
       c->proc = 0;
-      (mlfq_manager.global_executed_ticks)++;
-      cprintf("*****%d \n\n", mlfq_manager.global_executed_ticks);
-      if(mlfq_manager.global_executed_ticks >= MLFQ_GLOBAL_BOOSTING_TICK_INTERVAL){
-          //if there is a lock just remove it!
-          print_mlfq();
-          cprintf("CALLED");
-          withdraw_lock();
-      }
     } else {
       SCHEDULER:
-        if(lockedproc  != 0) {
-          p = lockedproc;
-        } else {
-          p = mlfq_select(); //select mlfq which to execute.
-        }
+        p = mlfq_select(); //select mlfq which to execute.
         if(p != 0)
         {
           // Switch to chosen process.  It is the process's job
