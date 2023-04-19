@@ -57,6 +57,7 @@ struct proc {
   uint level;  //Queue Level of the process (0, 1, 2 중 1)
   uint executed_ticks; //executed tick count at specific level.
   int priority;
+  int arrived_time; //For FCFS check the global time
 
   enum lockstate lock;
 };

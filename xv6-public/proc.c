@@ -159,6 +159,7 @@ mlfq_priority_boost(void)
       mlfq_enqueue(0, p);
       p->priority = 3;
       p->executed_ticks = 0; //time quantum reset.
+      p->arrived_time = 0;
     }
   }
   mlfq_manager.global_executed_ticks = 0;
@@ -256,14 +257,16 @@ mlfq_select()
         //find the lowest priority in L2 queue
         int priority = 10000;
         int found_i = 10000;
+        int arrived_t = 10000;
         //start front to end rear;
         for(int i = 0; i < size; i++){
           int idx = (queue->front + i) % NPROC;
           ret = queue->data[idx];
           //only ret->state == RUNNABLE -> found_idx can be changed.
-          if(ret->priority < priority) {
+          if((ret->priority < priority) || (ret->priority == priority && ret->arrived_time < arrived_t)) {
             found_i = i;
             priority = ret->priority;
+            arrived_t = ret->arrived_time;
           }
         }
         if(priority != 10000 && found_i != 10000) {
@@ -303,7 +306,9 @@ found: //if runnable process found.
 
     //executed_ticks reset to 0
     ret->executed_ticks = 0;
-    
+    if (lev == MLFQ_NUM -2) {
+      ret->arrived_time = mlfq_manager.global_executed_ticks;
+    }
   } else if(lev == MLFQ_NUM -1  && ret->executed_ticks >= MLFQ_TIME_QUANTUM[lev]) {
       ret->executed_ticks = 0;
       //if ret->priority == 0, just keep 
@@ -397,6 +402,7 @@ found:
   p->executed_ticks=0;
   p->level=0;
   p->lock = UNLOCKED;
+  p->arrived_time = 0;
 
   cprintf("initialized %d\n", p->pid);
   //first push p in queue
@@ -623,6 +629,7 @@ wait(void)
         p->lock = UNLOCKED;
         p->level = 0;
         p->executed_ticks = 0;
+        p->arrived_time = 0;
         release(&ptable.lock);
         
         return pid;
@@ -650,10 +657,9 @@ void print_mlfq()
     cprintf("[level %d]\n", lev);
     cprintf("SIZE: %d\n", mlfq_manager.queue[lev].size);
     cprintf("GLOBAL_TICKS: %d\n", mlfq_manager.global_executed_ticks);
-    cprintf("FRONT: %d\n", mlfq_manager.queue[lev].front);
 
     for (i = 0; i < mlfq_manager.queue[lev].size; ++i)
-      cprintf("%d [priority : %d, executed_ticks: %d]   \n", mlfq_manager.queue[lev].data[(mlfq_manager.queue[lev].front + i) % NPROC] ? mlfq_manager.queue[lev].data[(mlfq_manager.queue[lev].front + i) % NPROC]->pid : -1, mlfq_manager.queue[lev].data[(mlfq_manager.queue[lev].front + i) % NPROC] ? mlfq_manager.queue[lev].data[(mlfq_manager.queue[lev].front + i) % NPROC]->priority : -1,  mlfq_manager.queue[lev].data[(mlfq_manager.queue[lev].front + i) % NPROC] ? mlfq_manager.queue[lev].data[(mlfq_manager.queue[lev].front + i) % NPROC]->executed_ticks : -1);
+      cprintf("%d [priority : %d, executed_ticks: %d,  arrived_time: %d]]  \n", mlfq_manager.queue[lev].data[(mlfq_manager.queue[lev].front + i) % NPROC] ? mlfq_manager.queue[lev].data[(mlfq_manager.queue[lev].front + i) % NPROC]->pid : -1, mlfq_manager.queue[lev].data[(mlfq_manager.queue[lev].front + i) % NPROC] ? mlfq_manager.queue[lev].data[(mlfq_manager.queue[lev].front + i) % NPROC]->priority : -1,  mlfq_manager.queue[lev].data[(mlfq_manager.queue[lev].front + i) % NPROC] ? mlfq_manager.queue[lev].data[(mlfq_manager.queue[lev].front + i) % NPROC]->executed_ticks : -1, mlfq_manager.queue[lev].data[(mlfq_manager.queue[lev].front + i) % NPROC] ? mlfq_manager.queue[lev].data[(mlfq_manager.queue[lev].front + i) % NPROC]->arrived_time : -1);
 
     cprintf("\n");
   }
