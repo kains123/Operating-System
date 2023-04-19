@@ -59,22 +59,19 @@ trap(struct trapframe *tf)
     return;
   }
   else if(tf->trapno == T_INT129){
+   if(myproc()->killed)
+      exit();
+    myproc()->tf = tf;
+    cprintf("user interrupt 129 called!\n");
     if(myproc()->killed)
-        exit();
-      myproc()->tf = tf;
-      cprintf("user interrupt 129 called!\n");
-      if(myproc()->killed)
-        exit();
-      return;
+      exit();
+    return;
   }
-    else if(tf->trapno == T_INT130){
+  else if(tf->trapno == T_INT130){
     if(myproc()->killed)
       exit();
     myproc()->tf = tf;
-    // myproc()->priority = 3;
-    // myproc()->executed_ticks = 0;
     cprintf("user interrupt 130 called!\n");
-    //schedulerUnlock
     if(myproc()->killed)
       exit();
     return;
