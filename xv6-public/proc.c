@@ -245,10 +245,11 @@ mlfq_select()
     if(lev < 2) {
       for (i = 0; i < size; ++i)
       {
-        ret = queue->data[queue->front];
-  
+        ret = queue->data[queue->front];        
         if(ret->state == RUNNABLE) {
           goto found;
+        } else {
+          cprinf("****************");
         }
       }
     } else if (lev == 2) {
@@ -317,12 +318,11 @@ found: //if runnable process found.
       }
     mlfq_dequeue(lev, 0);
     mlfq_enqueue(lev, ret);
-  } 
-  // else if (ret->executed_ticks % 1 == 0){
-  //   //change the sequence of the queue.
-  //   mlfq_dequeue(lev, 0);
-  //   mlfq_enqueue(lev, ret);
-  // }
+  } else if (ret->executed_ticks % 1 == 0){
+    //change the sequence of the queue.
+    mlfq_dequeue(lev, 0);
+    mlfq_enqueue(lev, ret);
+  }
   return ret;
 }
 
@@ -621,7 +621,6 @@ wait(void)
         p->name[0] = 0;
         p->killed = 0;
         p->state = UNUSED;
-        
         
         //reset of MLFQ
         p->priority = 3;
