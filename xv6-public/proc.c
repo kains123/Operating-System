@@ -167,6 +167,7 @@ mlfq_priority_boost(void)
 void 
 withdraw_lock(void) {
   cprintf("withdraw_lock is called...\n");
+  print_mlfq();
   int err = 0;
   if(lockedproc != 0) {
     //remove the lockedproc from the certain queue.
@@ -317,13 +318,15 @@ found: //if runnable process found.
     } else {
       ret->priority = 0;
     }
-    ret->arrived_time =  mlfq_manager.global_executed_ticks;
     mlfq_dequeue(lev, 0);
     mlfq_enqueue(lev, ret);
   } else if (ret->executed_ticks % 1 == 0){
     //change the sequence of the queue.
     mlfq_dequeue(lev, 0);
     mlfq_enqueue(lev, ret);
+  }
+  if(lev == MLFQ_NUM -1) {
+     ret->arrived_time =  mlfq_manager.global_executed_ticks;
   }
   return ret;
 }
@@ -688,6 +691,7 @@ scheduler(void)
     // Loop over process table looking for process to run.
     acquire(&ptable.lock);
     if(lockedproc != 0) {
+      print_mlfq();
       if(lockedproc->state != RUNNING) 
       {
         if(lockedproc->state == RUNNABLE) {
