@@ -21,7 +21,7 @@ schedulerLock(int password)
                 //global_tick_reset to 0.
                 set_global_tick_zero();
                 __asm__("int $129");
-                exit(); 
+                exit();
         } else {
                 cprintf("Password not matched!\n");
                 cprintf("PID: %d TIME_QUANTUM: %d CURRENT_LEVEL: %d", myproc()->pid, myproc()->executed_ticks, myproc()->level);
