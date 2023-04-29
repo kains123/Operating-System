@@ -108,6 +108,7 @@ exec2(char *path, char **argv, int stacksize)
   for(curthread = &curproc->threads[0]; curthread < &curproc->threads[NTHREAD]; curthread ++) {
     curthread->tid = 0;
     curthread->retval = 0;
+    curthread->state = UNUSED;
   }
 
  bad:
