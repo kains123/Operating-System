@@ -32,13 +32,13 @@ struct context {
   uint eip;
 };
 
-enum threadstate { UNUSED, EMBRYO, SLEEPING, RUNNABLE, RUNNING, ZOMBIE };
+
 enum procstate { UNUSED, EMBRYO, SLEEPING, RUNNABLE, RUNNING, ZOMBIE };
 
 struct thread
 {
   thread_t tid; // Id of Thread
-  enum threadstate state;
+  enum procstate state;
   void *retval; //save the return value of thread
   
 };
