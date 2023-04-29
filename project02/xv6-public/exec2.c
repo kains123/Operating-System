@@ -8,7 +8,7 @@
 #include "elf.h"
 
 int
-exec2(char *path, char **argv, int stacksize);
+exec2(char *path, char **argv, int stacksize)
 {
   char *s, *last;
   int i, off;
