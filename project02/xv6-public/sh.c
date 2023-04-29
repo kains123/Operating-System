@@ -75,7 +75,9 @@ runcmd(struct cmd *cmd)
     ecmd = (struct execcmd*)cmd;
     if(ecmd->argv[0] == 0)
       exit();
-    exec(ecmd->argv[0], ecmd->argv);
+    //TODO
+    // exec(ecmd->argv[0], ecmd->argv);
+    exec2(ecmd->argv[0], ecmd->argv, 100);
     printf(2, "exec %s failed\n", ecmd->argv[0]);
     break;
 
