@@ -52,7 +52,12 @@ struct proc {
 };
 
 // Process memory is laid out contiguously, low addresses first:
-//   text
 //   original data and bss
 //   fixed-size stack
 //   expandable heap
+
+
+struct thread 
+{
+  thread_t tid;               // Thread ID
+};
