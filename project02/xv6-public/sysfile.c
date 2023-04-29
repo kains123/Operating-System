@@ -425,6 +425,7 @@ sys_exec2(void)
   char *path, *argv[MAXARG];
   int i;
   uint uargv, uarg;
+  int stacksize = 0;
 
   if(argstr(0, &path) < 0 || argint(1, (int*)&uargv) < 0){
     return -1;
@@ -442,7 +443,7 @@ sys_exec2(void)
     if(fetchstr(uarg, &argv[i]) < 0)
       return -1;
   }
-  return exec2(path, argv);
+  return exec2(path, argv, stacksize);
 }
 
 
