@@ -59,5 +59,7 @@ struct proc {
 
 struct thread 
 {
-  thread_t tid;               // Thread ID
+  thread_t tid; // Id of Thread
+  void *retval //save the return value of thread
+  
 };
