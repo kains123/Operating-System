@@ -1,2 +1,0 @@
-pj_one_set_priority.o: pj_one_set_priority.c /usr/include/stdc-predef.h \
- types.h x86.h defs.h date.h param.h memlayout.h mmu.h proc.h spinlock.h
