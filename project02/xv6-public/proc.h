@@ -34,6 +34,13 @@ struct context {
 
 enum procstate { UNUSED, EMBRYO, SLEEPING, RUNNABLE, RUNNING, ZOMBIE };
 
+struct thread 
+{
+  thread_t tid; // Id of Thread
+  void *retval; //save the return value of thread
+  
+};
+
 // Per-process state
 struct proc {
   uint sz;                     // Size of process memory (bytes)
@@ -49,6 +56,7 @@ struct proc {
   struct file *ofile[NOFILE];  // Open files
   struct inode *cwd;           // Current directory
   char name[16];               // Process name (debugging)
+  struct thread threads[NTHREAD]; //threads in process
 };
 
 // Process memory is laid out contiguously, low addresses first:
@@ -57,9 +65,4 @@ struct proc {
 //   expandable heap
 
 
-struct thread 
-{
-  thread_t tid; // Id of Thread
-  void *retval //save the return value of thread
-  
-};
+
