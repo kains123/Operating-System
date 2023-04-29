@@ -25,6 +25,9 @@ void            panic(char*) __attribute__((noreturn));
 // exec.c
 int             exec(char*, char**);
 
+// exec2.c
+int             exec2(char *path, char **argv, int stacksize);
+
 // file.c
 struct file*    filealloc(void);
 void            fileclose(struct file*);
@@ -123,6 +126,8 @@ void            yield(void);
 int             thread_create(thread_t *thread, void *(*start_routine)(void*), void* arg);
 void            thread_exit(void *retval);
 int             thread_join(thread_t thread, void **retval);
+// int             exec2(char *path, char **argv, int stacksize);
+
 
 // swtch.S
 void            swtch(struct context**, struct context*);
