@@ -535,8 +535,55 @@ procdump(void)
   }
 }
 
-int thread_create(thread_t *thread, void *(*start_routine)(void*), void *arg)
+int thread_create(thread_t *thread, void *(*start_routine)(void *), void *arg)
 {
+  struct proc *curproc = myproc();
+  struct thread *t;
+  int t_idx;
+
+  {
+  struct proc *p;
+  char *sp;
+
+  acquire(&ptable.lock);
+
+  for(p = ptable.proc; p < &ptable.proc[NPROC]; p++)
+    if(p->state == UNUSED)
+      goto found;
+
+  release(&ptable.lock);
+  return 0;
+
+found:
+  t_idx = t - curproc->threads;
+  // t->tid = 
+
+  release(&ptable.lock);
+
+  // Allocate kernel stack.
+  if((p->kstack = kalloc()) == 0){
+    p->state = UNUSED;
+    return 0;
+  }
+  sp = p->kstack + KSTACKSIZE;
+
+  // Leave room for trap frame.
+  sp -= sizeof *p->tf;
+  p->tf = (struct trapframe*)sp;
+
+  // Set up new context to start executing at forkret,
+  // which returns to trapret.
+  sp -= 4;
+  *(uint*)sp = (uint)trapret;
+
+  sp -= sizeof *p->context;
+  t->context = (struct context*)sp;
+  memset(p->context, 0, sizeof *p->context);
+  p->context->eip = (uint)forkret;
+
+  return p;
+}
+  
   return 0;
 }
 
@@ -547,4 +594,9 @@ void thread_exit(void *retval)
 
 int thread_join(thread_t thread, void **retval){
   return 0;
+}
+
+void list(void){
+  //
+  return;
 }

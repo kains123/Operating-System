@@ -5,7 +5,9 @@
 int
 main(int argc, char *argv[])
 {
+  int stacksize = 100;
   //list
+  list();
   //kill
   //execute
   //memlim

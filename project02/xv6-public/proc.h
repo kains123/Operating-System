@@ -38,8 +38,10 @@ enum procstate { UNUSED, EMBRYO, SLEEPING, RUNNABLE, RUNNING, ZOMBIE };
 struct thread
 {
   thread_t tid; // Id of Thread
+  void *retval;  //thread return value
   enum procstate state;
   void *retval; //save the return value of thread
+  struct context *context;  // swtch() here to run process
   
 };
 
@@ -58,7 +60,7 @@ struct proc {
   struct file *ofile[NOFILE];  // Open files
   struct inode *cwd;           // Current directory
   char name[16];               // Process name (debugging)
-  struct thread threads[NTHREAD]; //threads in process
+  struct thread threads[MIN_NTHREAD]; //threads in process
 };
 
 // Process memory is laid out contiguously, low addresses first:
