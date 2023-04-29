@@ -18,6 +18,7 @@ exec2(char *path, char **argv, int stacksize)
   struct proghdr ph;
   pde_t *pgdir, *oldpgdir;
   struct proc *curproc = myproc();
+  struct thread *curthread;
 
   begin_op();
 
@@ -102,6 +103,12 @@ exec2(char *path, char **argv, int stacksize)
   switchuvm(curproc);
   freevm(oldpgdir);
   return 0;
+
+  //TODO
+  for(curthread = &curproc->threads[0]; curthread < &curproc->threads[NTHREAD]; curthread ++) {
+    curthread->tid = 0;
+    curthread->retval = 0;
+  }
 
  bad:
   if(pgdir)
