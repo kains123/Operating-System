@@ -38,7 +38,6 @@ enum procstate { UNUSED, EMBRYO, SLEEPING, RUNNABLE, RUNNING, ZOMBIE };
 struct thread
 {
   thread_t tid; // Id of Thread
-  void *retval;  //thread return value
   enum procstate state;
   void *retval; //save the return value of thread
   struct context *context;  // swtch() here to run process
