@@ -648,7 +648,7 @@ int thread_join(thread_t thread, void **retval){
   acquire(&ptable.lock);
   for (p = ptable.proc; p < &ptable.proc[NPROC]; ++p)
     if (p->state == RUNNABLE)
-      for (t = p->threads; t < &p->threads[NTHREAD]; ++t)
+      for (t = p->threads; t < &p->threads[MIN_NTHREAD]; ++t)
         if (t->state != UNUSED && t->tid == thread)
           //goto 
   release(&ptable.lock);
