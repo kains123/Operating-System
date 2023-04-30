@@ -42,6 +42,9 @@ struct thread
   enum procstate state;
   void *retval; //save the return value of thread
   struct context *context;  // swtch() here to run process
+  void *chan;                  // If non-zero, sleeping on chan
+  char *kstack;                // Bottom of kernel stack for this thread
+  struct trapframe *tf;        // Trap frame for current syscall
   
 };
 
@@ -61,6 +64,7 @@ struct proc {
   struct inode *cwd;           // Current directory
   char name[16];               // Process name (debugging)
   struct thread threads[MIN_NTHREAD]; //threads in process
+  thread_t curtid;
 };
 
 // Process memory is laid out contiguously, low addresses first:
@@ -68,5 +72,4 @@ struct proc {
 //   fixed-size stack
 //   expandable heap
 
-
-
+#define CURTHREAD(p) ((p)->threads[(p)->curtid])

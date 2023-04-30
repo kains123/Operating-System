@@ -4,6 +4,7 @@
     "types.h": "c",
     "user.h": "c",
     "memlayout.h": "c",
-    "list": "c"
+    "list": "c",
+    "spinlock.h": "c"
   }
 }
