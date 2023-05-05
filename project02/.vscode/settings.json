@@ -5,6 +5,7 @@
     "user.h": "c",
     "memlayout.h": "c",
     "list": "c",
-    "spinlock.h": "c"
+    "spinlock.h": "c",
+    "thread": "c"
   }
 }

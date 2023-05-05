@@ -371,8 +371,7 @@ sched(void)
   int intena;
   struct proc *p = myproc();
   struct thread *t = &CURTHREAD(p);
-  cprintf("################\n");
-
+  cprintf("########sched########\n");
   if(!holding(&ptable.lock))
     panic("sched ptable.lock");
   if(mycpu()->ncli != 1)
@@ -394,6 +393,7 @@ yield(void)
   acquire(&ptable.lock);  //DOC: yieldlock
   myproc()->state = RUNNABLE;
   sched();
+  cprintf("########yield########\n");
   release(&ptable.lock);
 }
 
@@ -446,6 +446,7 @@ sleep(void *chan, struct spinlock *lk)
   p->state = SLEEPING;
 
   sched();
+  cprintf("########sleep########\n");
 
   // Tidy up.
   p->chan = 0;
