@@ -371,6 +371,7 @@ sched(void)
   int intena;
   struct proc *p = myproc();
   struct thread *t = &CURTHREAD(p);
+  cprintf("################\n");
 
   if(!holding(&ptable.lock))
     panic("sched ptable.lock");
@@ -383,7 +384,7 @@ sched(void)
   intena = mycpu()->intena;
   swtch(&t->context, mycpu()->scheduler);
   mycpu()->intena = intena;
-  cprintf("################");
+
 }
 
 // Give up the CPU for one scheduling round.
