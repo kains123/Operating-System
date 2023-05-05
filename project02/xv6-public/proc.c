@@ -325,7 +325,7 @@ wait(void)
 void
 scheduler(void)
 {
-  cprintf("########scheduler########\n");
+  cprintf("########scheduler0########\n");
   struct proc *p;
   struct cpu *c = mycpu();
   c->proc = 0;
@@ -356,6 +356,7 @@ scheduler(void)
       c->proc = 0;
     }
     release(&ptable.lock);
+    cprintf("########scheduler4########\n");
 
   }
 }
