@@ -127,6 +127,7 @@ void            yield(void);
 int             thread_create(thread_t *thread, void *(*start_routine)(void *), void *arg);
 void            thread_exit(void *retval);
 int             thread_join(thread_t thread, void **retval);
+int				      setmemorylimit(int,int);
 
 // swtch.S
 void            swtch(struct context**, struct context*);

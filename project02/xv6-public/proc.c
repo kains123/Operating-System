@@ -515,12 +515,12 @@ void
 procdump(void)
 {
   static char *states[] = {
-  [UNUSED]    "unused",
-  [EMBRYO]    "embryo",
-  [SLEEPING]  "sleep ",
-  [RUNNABLE]  "runble",
-  [RUNNING]   "run   ",
-  [ZOMBIE]    "zombie"
+    [UNUSED]    "unused",
+    [EMBRYO]    "embryo",
+    [SLEEPING]  "sleep ",
+    [RUNNABLE]  "runble",
+    [RUNNING]   "run   ",
+    [ZOMBIE]    "zombie"
   };
   int i;
   struct proc *p;
@@ -593,7 +593,21 @@ found:
   t->context = (struct context*)sp;
   memset(t->context, 0, sizeof *t->context);
   t->context->eip = (uint)forkret;
-  
+
+  //TODO
+  // if (curproc->ustack_pool[t_idx] == 0)
+  // {
+  //   sz = PGROUNDUP(curproc->sz);
+  //   if ((sz = allocuvm(curproc->pgdir, sz, sz + PGSIZE)) == 0)
+  //   {
+  //     cprintf("cannot alloc user stack\n");
+  //     //
+  //   }
+
+  //   curproc->ustack_pool[t_idx] = sz;
+  //   curproc->sz = sz;
+  // }
+  // sp = (char *)curproc->ustack_pool[t_idx];
   return 0;
 }
 
@@ -658,4 +672,31 @@ int thread_join(thread_t thread, void **retval){
 void list(void){
   //
   return;
+}
+
+int setmemorylimit(int pid, int limit) {
+  struct proc *curproc = myproc();
+  struct proc *p;
+
+  for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+    if(p->pid == pid) {
+      break;
+    }
+  }
+  //if the received memory is less than limit return -1
+  if(curproc->sz > limit){
+    return -1;
+  }
+  // pid doesn't exist, or limit <0 return -1
+  if(!pid || limit <0) {
+    return -1;
+  }
+
+  acquire(&ptable.lock);
+  curproc->limit = limit;
+  release(&ptable.lock);
+
+  cprintf("setmemorylimit is worked : %d",  curproc->limit);
+
+  return 0;
 }
