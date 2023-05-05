@@ -383,6 +383,7 @@ sched(void)
   intena = mycpu()->intena;
   cprintf("########sched2########\n");
   swtch(&t->context, mycpu()->scheduler);
+  cprintf("########sched3########\n");
   mycpu()->intena = intena;
 
 }
