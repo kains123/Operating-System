@@ -468,7 +468,7 @@ wakeup1(void *chan)
     if(p->state == RUNNABLE) {
       for(t = p->threads; t < &p->threads[MIN_NTHREAD]; ++t) {
         if(t->state == SLEEPING && t->chan == chan)
-          p->state = RUNNABLE;
+          t->state = RUNNABLE;
       }
     }
 }
