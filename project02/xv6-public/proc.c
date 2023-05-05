@@ -464,7 +464,7 @@ wakeup1(void *chan)
   struct thread *t;
 
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++)
-    if(p->state = RUNNABLE) {
+    if(p->state == RUNNABLE) {
       for(t = p->threads; t < &p->threads[MIN_NTHREAD]; ++t) {
         if(t->state == SLEEPING && t->chan == chan)
           p->state = RUNNABLE;
@@ -548,7 +548,7 @@ int thread_create(thread_t *thread, void *(*start_routine)(void *), void *arg)
 {
   struct proc *curproc = myproc();
   struct thread *t;
-  int t_idx;
+  // int t_idx;
 
   struct proc *p;
   char *sp;
@@ -565,7 +565,7 @@ int thread_create(thread_t *thread, void *(*start_routine)(void *), void *arg)
   return 0;
 
 found:
-  t_idx = t - curproc->threads;
+  // t_idx = t - curproc->threads;
   // t->tid = ;
   //TODO
   t->state = EMBRYO;
