@@ -556,13 +556,14 @@ int thread_create(thread_t *thread, void *(*start_routine)(void *), void *arg)
 
   acquire(&ptable.lock);
 
-  for(p = ptable.proc; p < &ptable.proc[NPROC]; p++)
-    if(p->state == UNUSED)
+  // for(p = ptable.proc; p < &ptable.proc[NPROC]; p++)
+  //   if(p->state == UNUSED)
   for (t = curproc->threads; t < &curproc->threads[MIN_NTHREAD]; ++t)
     if (t->state == UNUSED)
       goto found;
 
   release(&ptable.lock);
+  
   return 0;
 
 found:
@@ -570,13 +571,14 @@ found:
   // t->tid = ;
   //TODO
   t->state = EMBRYO;
-  release(&ptable.lock);
 
   // Allocate kernel stack.
   if((t->kstack = kalloc()) == 0){
     //TODO
     t->state = UNUSED;
-    return 0;
+    t->tid = 0;
+    t->kstack = 0;
+    return -1;
   }
   sp = t->kstack + KSTACKSIZE;
 
@@ -596,19 +598,8 @@ found:
   t->context->eip = (uint)forkret;
 
   //TODO
-  // if (curproc->ustack_pool[t_idx] == 0)
-  // {
-  //   sz = PGROUNDUP(curproc->sz);
-  //   if ((sz = allocuvm(curproc->pgdir, sz, sz + PGSIZE)) == 0)
-  //   {
-  //     cprintf("cannot alloc user stack\n");
-  //     //
-  //   }
 
-  //   curproc->ustack_pool[t_idx] = sz;
-  //   curproc->sz = sz;
-  // }
-  // sp = (char *)curproc->ustack_pool[t_idx];
+  release(&ptable.lock);
   return 0;
 }
 
