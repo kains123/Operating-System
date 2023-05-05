@@ -383,6 +383,7 @@ sched(void)
   intena = mycpu()->intena;
   swtch(&t->context, mycpu()->scheduler);
   mycpu()->intena = intena;
+  cprintf("################");
 }
 
 // Give up the CPU for one scheduling round.
