@@ -348,6 +348,7 @@ scheduler(void)
       p->state = RUNNING;
 
       swtch(&(c->scheduler), p->context);
+      cprintf("########scheduler2########\n");
       switchkvm();
 
       // Process is done running for now.
