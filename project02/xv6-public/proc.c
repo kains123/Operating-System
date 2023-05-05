@@ -491,7 +491,7 @@ kill(int pid)
 {
   struct proc *p;
   struct thread *t;
-
+  cprintf("*******KILL**************\n");
   acquire(&ptable.lock);
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
     if(p->pid == pid){
@@ -627,6 +627,7 @@ void thread_exit(void *retval)
   curthread->retval = retval;
   curthread->state = ZOMBIE;
   sched();
+  cprintf("*********thread_exit************\n");
   panic("zombie exit");
 }
 
@@ -671,7 +672,7 @@ int setmemorylimit(int pid, int limit) {
   curproc->limit = limit;
   release(&ptable.lock);
 
-  cprintf("setmemorylimit is worked : %d",  curproc->limit);
+  cprintf("setmemorylimit is worked : %d \n",  curproc->limit);
 
   return 0;
 }
