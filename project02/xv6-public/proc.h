@@ -74,3 +74,5 @@ struct proc {
 //   expandable heap
 
 #define CURTHREAD(p) ((p)->threads[(p)->curtid])
+
+#define MAIN(p) ((p)->threads[0])
