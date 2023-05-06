@@ -395,7 +395,6 @@ scheduler(void)
       c->proc = p;
       switchuvm(p);
       t->state = RUNNING;
-
       swtch(&(c->scheduler), p->context);
       switchkvm();
       // Process is done running for now.
@@ -517,7 +516,7 @@ wakeup1(void *chan)
   struct proc *p;
   struct thread *t;
 
-  //cprintf("&&&&&&&&WAKE_UP&&&&&&&");
+  cprintf("&&&&&&&&WAKE_UP&&&&&&&");
 
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++)
      if(p->state == RUNNABLE) {
