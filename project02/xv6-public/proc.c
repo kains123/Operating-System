@@ -334,8 +334,35 @@ wait(void)
     // Wait for children to exit.  (See wakeup1 call in proc_exit.)
     sleep(curproc, &ptable.lock);  //DOC: wait-sleep
   }
-}
+ }
 
+struct proc * proc_choose(){
+  struct proc *p;
+  struct thread *t;
+
+  int start = 0;
+  p = myproc();
+  if (p != 0)
+  {
+    for (t = &CURTHREAD(p); ; ++t)
+    {
+      if (t == &p->threads[MIN_NTHREAD])
+        t = &p->threads[0];
+
+      if (t->state == RUNNABLE)
+        break;
+
+      if (start && t == &CURTHREAD(p))
+        panic("invalid logic");
+      start = 1;
+    }
+
+    p->curtid = t - p->threads;
+  }
+
+  return p;
+
+}
 //PAGEBREAK: 42
 // Per-CPU process scheduler.
 // Each CPU calls scheduler() after setting itself up.
@@ -352,32 +379,15 @@ scheduler(void)
   struct thread *t;
   struct cpu *c = mycpu();
   c->proc = 0;
-  
+
   for(;;){
     // Enable interrupts on this processor.
     sti();
-
     // Loop over process table looking for process to run.
 
     acquire(&ptable.lock);
-
-    p = myproc();
-    int start = 0;
-    if (p != 0) {
-      for (t = &CURTHREAD(p); ; ++t)
-      {
-        if (t == &p->threads[MIN_NTHREAD])
-          t = &p->threads[0];
-
-        if (t->state == RUNNABLE)
-          break;
-
-        if (start && t == &CURTHREAD(p))
-          panic("invalid logic");
-        start = 1;
-      }
-      p->curtid = t - p->threads;
-    }
+   
+    p = proc_choose();
     t = p ? &CURTHREAD(p) : 0;
     if(p != 0){
       cprintf("########scheduler3########\n");
@@ -464,8 +474,7 @@ void
 sleep(void *chan, struct spinlock *lk)
 {
   struct proc *p = myproc();
-  struct thread *t = &CURTHREAD(p);
-  
+
   if(p == 0)
     panic("sleep");
 
@@ -483,14 +492,12 @@ sleep(void *chan, struct spinlock *lk)
     release(lk);
   }
   // Go to sleep.
-  t->chan = chan;
-  t->state = SLEEPING;
+  p->chan = chan;
+  p->state = SLEEPING;
 
   sched();
-  cprintf("########sleep########\n");
-
   // Tidy up.
-  t->chan = 0;
+  p->chan = 0;
 
   // Reacquire original lock.
   if(lk != &ptable.lock){  //DOC: sleeplock2
@@ -505,18 +512,20 @@ sleep(void *chan, struct spinlock *lk)
 static void
 wakeup1(void *chan)
 {
+  
   struct proc *p;
   struct thread *t;
 
+  //cprintf("&&&&&&&&WAKE_UP&&&&&&&");
+
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++)
-    if(p->state == RUNNABLE) {
+     if(p->state == RUNNABLE) {
       for(t = p->threads; t < &p->threads[MIN_NTHREAD]; ++t) {
         if(t->state == SLEEPING && t->chan == chan)
           t->state = RUNNABLE;
       }
     }
 }
-
 // Wake up all processes sleeping on chan.
 void
 wakeup(void *chan)
