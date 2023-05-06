@@ -388,6 +388,7 @@ scheduler(void)
     }
     release(&ptable.lock);
     cprintf("########scheduler4########\n");
+    break;
   }
 }
 
