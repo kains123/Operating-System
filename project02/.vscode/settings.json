@@ -6,6 +6,7 @@
     "memlayout.h": "c",
     "list": "c",
     "spinlock.h": "c",
-    "thread": "c"
+    "thread": "c",
+    "random": "c"
   }
 }
