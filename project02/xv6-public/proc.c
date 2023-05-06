@@ -451,27 +451,45 @@ scheduler(void)
 // be proc->intena and proc->ncli, but that would
 // break in the few places where a lock is held but
 // there's no process.
+// void
+// sched(void)
+// {
+//   int intena;
+//   struct proc *p = myproc();
+//   struct thread *t = &CURTHREAD(p);
+//   cprintf("########sched1########\n");
+//   if(!holding(&ptable.lock))
+//     panic("sched ptable.lock");
+//   if(mycpu()->ncli != 1)
+//     panic("sched locks");
+//   if(t->state == RUNNING)
+//     panic("sched running");
+//   if(readeflags()&FL_IF)
+//     panic("sched interruptible");
+//   intena = mycpu()->intena;
+//   cprintf("########sched2########\n");
+//   swtch(&t->context, mycpu()->scheduler);
+//   cprintf("########sched3########\n");
+//   mycpu()->intena = intena;
+// }
+
 void
 sched(void)
 {
   int intena;
   struct proc *p = myproc();
-  struct thread *t = &CURTHREAD(p);
-  cprintf("########sched1########\n");
+
   if(!holding(&ptable.lock))
     panic("sched ptable.lock");
   if(mycpu()->ncli != 1)
     panic("sched locks");
-  if(t->state == RUNNING)
+  if(p->state == RUNNING)
     panic("sched running");
   if(readeflags()&FL_IF)
     panic("sched interruptible");
   intena = mycpu()->intena;
-  cprintf("########sched2########\n");
-  swtch(&t->context, mycpu()->scheduler);
-  cprintf("########sched3########\n");
+  swtch(&p->context, mycpu()->scheduler);
   mycpu()->intena = intena;
-
 }
 
 // Give up the CPU for one scheduling round.
@@ -547,22 +565,31 @@ sleep(void *chan, struct spinlock *lk)
 //PAGEBREAK!
 // Wake up all processes sleeping on chan.
 // The ptable lock must be held.
+// static void
+// wakeup1(void *chan)
+// {
+  
+  // struct proc *p;
+  // struct thread *t;
+
+  // // cprintf("&&&&&&&&WAKE_UP&&&&&&&\n");
+
+  // for(p = ptable.proc; p < &ptable.proc[NPROC]; p++)
+  //    if(p->state == RUNNABLE) {
+  //     for(t = p->threads; t < &p->threads[MIN_NTHREAD]; ++t) {
+  //       if(t->state == SLEEPING && t->chan == chan)
+  //         t->state = RUNNABLE;
+  //     }
+  //   }
+// }
 static void
 wakeup1(void *chan)
 {
-  
   struct proc *p;
-  struct thread *t;
-
-  // cprintf("&&&&&&&&WAKE_UP&&&&&&&\n");
 
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++)
-     if(p->state == RUNNABLE) {
-      for(t = p->threads; t < &p->threads[MIN_NTHREAD]; ++t) {
-        if(t->state == SLEEPING && t->chan == chan)
-          t->state = RUNNABLE;
-      }
-    }
+    if(p->state == SLEEPING && p->chan == chan)
+      p->state = RUNNABLE;
 }
 
 // Wake up all processes sleeping on chan.
