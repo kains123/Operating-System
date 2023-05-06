@@ -65,7 +65,6 @@ myproc(void) {
   return p;
 }
 
-
 //PAGEBREAK: 32
 // Look in the process table for an UNUSED proc.
 // If found, change state to EMBRYO and initialize
@@ -115,8 +114,6 @@ found:
 
   return p;
 }
-
-
 
 //PAGEBREAK: 32
 // Set up first user process.
@@ -232,7 +229,9 @@ exit(void)
 {
   struct proc *curproc = myproc();
   struct proc *p;
+  struct thread *t;
   int fd;
+  printf("********EXIT***********");
 
   if(curproc == initproc)
     panic("init exiting");
@@ -325,9 +324,7 @@ wait(void)
 void
 scheduler(void)
 {
-  cprintf("########scheduler0########\n");
   struct proc *p;
-  struct thread *t;
   struct cpu *c = mycpu();
   c->proc = 0;
   
@@ -336,58 +333,27 @@ scheduler(void)
     sti();
 
     // Loop over process table looking for process to run.
-
     acquire(&ptable.lock);
-
-    p = myproc();
-    int start = 0;
-    if (p != 0) {
-      for (t = &CURTHREAD(p); ; ++t)
-      {
-        if (t == &p->threads[MIN_NTHREAD])
-          t = &p->threads[0];
-
-        if (t->state == RUNNABLE)
-          break;
-
-        if (start && t == &CURTHREAD(p))
-          panic("invalid logic");
-        start = 1;
-      }
-      p->curtid = t - p->threads;
-    }
-    t = p ? &CURTHREAD(p) : 0;
-    // for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-      // if(p->state != RUNNABLE)
-      //   continue;
+    for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+      if(p->state != RUNNABLE)
+        continue;
 
       // Switch to chosen process.  It is the process's job
       // to release ptable.lock and then reacquire it
       // before jumping back to us.
-      // c->proc = p;
-      // switchuvm(p);
-      // t->state = RUNNING;
-
-      // swtch(&(c->scheduler), p->context);
-      // switchkvm();
-      // // Process is done running for now.
-      // // It should have changed its p->state before coming back.
-      // c->proc = 0;
-    // }
-    if(p != 0){
-      cprintf("########scheduler3########\n");
       c->proc = p;
       switchuvm(p);
-      t->state = RUNNING;
+      p->state = RUNNING;
 
       swtch(&(c->scheduler), p->context);
       switchkvm();
+
       // Process is done running for now.
       // It should have changed its p->state before coming back.
       c->proc = 0;
     }
     release(&ptable.lock);
-    // cprintf("########scheduler4########\n");
+
   }
 }
 
@@ -403,22 +369,18 @@ sched(void)
 {
   int intena;
   struct proc *p = myproc();
-  struct thread *t = &CURTHREAD(p);
-  cprintf("########sched1########\n");
+
   if(!holding(&ptable.lock))
     panic("sched ptable.lock");
   if(mycpu()->ncli != 1)
     panic("sched locks");
-  if(t->state == RUNNING)
+  if(p->state == RUNNING)
     panic("sched running");
   if(readeflags()&FL_IF)
     panic("sched interruptible");
   intena = mycpu()->intena;
-  cprintf("########sched2########\n");
-  swtch(&t->context, mycpu()->scheduler);
-  cprintf("########sched3########\n");
+  swtch(&p->context, mycpu()->scheduler);
   mycpu()->intena = intena;
-
 }
 
 // Give up the CPU for one scheduling round.
@@ -428,7 +390,6 @@ yield(void)
   acquire(&ptable.lock);  //DOC: yieldlock
   myproc()->state = RUNNABLE;
   sched();
-  cprintf("########yield########\n");
   release(&ptable.lock);
 }
 
@@ -459,7 +420,6 @@ void
 sleep(void *chan, struct spinlock *lk)
 {
   struct proc *p = myproc();
-  struct thread *t = &CURTHREAD(p);
   
   if(p == 0)
     panic("sleep");
@@ -478,14 +438,13 @@ sleep(void *chan, struct spinlock *lk)
     release(lk);
   }
   // Go to sleep.
-  t->chan = chan;
-  t->state = SLEEPING;
+  p->chan = chan;
+  p->state = SLEEPING;
 
   sched();
-  cprintf("########sleep########\n");
 
   // Tidy up.
-  t->chan = 0;
+  p->chan = 0;
 
   // Reacquire original lock.
   if(lk != &ptable.lock){  //DOC: sleeplock2
@@ -501,15 +460,10 @@ static void
 wakeup1(void *chan)
 {
   struct proc *p;
-  struct thread *t;
 
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++)
-    if(p->state == RUNNABLE) {
-      for(t = p->threads; t < &p->threads[MIN_NTHREAD]; ++t) {
-        if(t->state == SLEEPING && t->chan == chan)
-          t->state = RUNNABLE;
-      }
-    }
+    if(p->state == SLEEPING && p->chan == chan)
+      p->state = RUNNABLE;
 }
 
 // Wake up all processes sleeping on chan.
@@ -528,17 +482,14 @@ int
 kill(int pid)
 {
   struct proc *p;
-  struct thread *t;
-  cprintf("*******KILL**************\n");
+
   acquire(&ptable.lock);
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
     if(p->pid == pid){
       p->killed = 1;
       // Wake process from sleep if necessary.
-      for (t = p->threads; t < &p->threads[MIN_NTHREAD]; ++t) {
-        if(t->state == SLEEPING)
-          t->state = RUNNABLE;
-      }
+      if(p->state == SLEEPING)
+        p->state = RUNNABLE;
       release(&ptable.lock);
       return 0;
     }
@@ -555,12 +506,12 @@ void
 procdump(void)
 {
   static char *states[] = {
-    [UNUSED]    "unused",
-    [EMBRYO]    "embryo",
-    [SLEEPING]  "sleep ",
-    [RUNNABLE]  "runble",
-    [RUNNING]   "run   ",
-    [ZOMBIE]    "zombie"
+  [UNUSED]    "unused",
+  [EMBRYO]    "embryo",
+  [SLEEPING]  "sleep ",
+  [RUNNABLE]  "runble",
+  [RUNNING]   "run   ",
+  [ZOMBIE]    "zombie"
   };
   int i;
   struct proc *p;
@@ -582,135 +533,4 @@ procdump(void)
     }
     cprintf("\n");
   }
-}
-
-int thread_create(thread_t *thread, void *(*start_routine)(void *), void *arg)
-{
-  struct proc *curproc = myproc();
-  struct thread *t;
-  // int t_idx;
-
-  struct proc *p;
-  char *sp;
-
-  acquire(&ptable.lock);
-
-  // for(p = ptable.proc; p < &ptable.proc[NPROC]; p++)
-  //   if(p->state == UNUSED)
-  for (t = curproc->threads; t < &curproc->threads[MIN_NTHREAD]; ++t)
-    if (t->state == UNUSED)
-      goto found;
-
-  release(&ptable.lock);
-  
-  return 0;
-
-found:
-  // t_idx = t - curproc->threads;
-  // t->tid = ;
-  //TODO
-  t->state = EMBRYO;
-
-  // Allocate kernel stack.
-  if((t->kstack = kalloc()) == 0){
-    //TODO
-    t->state = UNUSED;
-    t->tid = 0;
-    t->kstack = 0;
-    return -1;
-  }
-  sp = t->kstack + KSTACKSIZE;
-
-  // Leave room for trap frame.
-  sp -= sizeof *t->tf;
-  t->tf = (struct trapframe*)sp;
-  //TODO
-  *t->tf = *CURTHREAD(curproc).tf;
-  // Set up new context to start executing at forkret,
-  // which returns to trapret.
-  sp -= 4;
-  *(uint*)sp = (uint)trapret;
-
-  sp -= sizeof *p->context;
-  t->context = (struct context*)sp;
-  memset(t->context, 0, sizeof *t->context);
-  t->context->eip = (uint)forkret;
-
-  //TODO
-
-  release(&ptable.lock);
-  return 0;
-}
-
-void thread_exit(void *retval)
-{
-  struct proc *curproc = myproc();
-  struct thread *curthread = &CURTHREAD(curproc);
-
-  acquire(&ptable.lock);
-
-  // Parent might be sleeping in wait().
-  wakeup1(curproc->parent);
-
-  // // Pass abandoned children to init.
-  // for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-  //   if(p->parent == curproc){
-  //     p->parent = initproc;
-  //     if(p->state == ZOMBIE)
-  //       wakeup1(initproc);
-  //   }
-  // }
-
-  // Jump into the scheduler, never to return.
-  curthread->retval = retval;
-  curthread->state = ZOMBIE;
-  sched();
-  cprintf("*********thread_exit************\n");
-  panic("zombie exit");
-}
-
-int thread_join(thread_t thread, void **retval){
-  struct proc *p;
-  struct thread *t;
-
-  acquire(&ptable.lock);
-  for (p = ptable.proc; p < &ptable.proc[NPROC]; ++p)
-    if (p->state == RUNNABLE)
-      for (t = p->threads; t < &p->threads[MIN_NTHREAD]; ++t)
-        if (t->state != UNUSED && t->tid == thread)
-          //goto 
-  release(&ptable.lock);
-  return 0;
-}
-
-void list(void){
-  //
-  return;
-}
-
-int setmemorylimit(int pid, int limit) {
-  struct proc *curproc = myproc();
-  struct proc *p;
-
-  for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-    if(p->pid == pid) {
-      break;
-    }
-  }
-  //if the received memory is less than limit return -1
-  if(curproc->sz > limit){
-    return -1;
-  }
-  // pid doesn't exist, or limit <0 return -1
-  if(!pid || limit <0) {
-    return -1;
-  }
-
-  acquire(&ptable.lock);
-  curproc->limit = limit;
-  release(&ptable.lock);
-
-  cprintf("setmemorylimit is worked : %d \n",  curproc->limit);
-
-  return 0;
 }
