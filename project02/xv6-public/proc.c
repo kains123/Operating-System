@@ -580,9 +580,9 @@ wakeup(void *chan)
 int
 kill(int pid)
 {
+  cprintf("*******KILL**************\n");
   struct proc *p;
   struct thread *t;
-  cprintf("*******KILL**************\n");
   acquire(&ptable.lock);
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
     if(p->pid == pid){
@@ -746,7 +746,13 @@ int thread_join(thread_t thread, void **retval){
 }
 
 void list(void){
-  //
+  struct proc *curproc = myproc();
+	struct proc *p;
+  for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+		if(p->state!=RUNNING)
+		    continue;
+    cprintf("***********list**********\nname: %s\npid: %d\nticks: %d\nstackpagenum: %d\nsz: %d\nlimit: %d", p->name,p->pid,ticks,p->stackpagenum,p->sz,p->limit);
+  }
   return;
 }
 

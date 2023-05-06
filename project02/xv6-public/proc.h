@@ -65,6 +65,7 @@ struct proc {
   struct thread threads[MIN_NTHREAD]; //threads in process
   thread_t curtid;
   int limit;
+  int stackpagenum;
   uint  ustack_pool[MIN_NTHREAD];
 };
 
