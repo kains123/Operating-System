@@ -232,7 +232,7 @@ exit(void)
 {
   struct proc *curproc = myproc();
   struct proc *p;
-  struct thread *t;
+  // struct thread *t;
   int fd;
 
   cprintf("************EXIT*******\n");
