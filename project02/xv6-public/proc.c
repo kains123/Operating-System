@@ -509,22 +509,32 @@ sleep(void *chan, struct spinlock *lk)
 //PAGEBREAK!
 // Wake up all processes sleeping on chan.
 // The ptable lock must be held.
+// static void
+// wakeup1(void *chan)
+// {
+  
+//   struct proc *p;
+//   struct thread *t;
+
+//   cprintf("&&&&&&&&WAKE_UP&&&&&&&\n");
+
+//   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++)
+//      if(p->state == RUNNABLE) {
+//       for(t = p->threads; t < &p->threads[MIN_NTHREAD]; ++t) {
+//         if(t->state == SLEEPING && t->chan == chan)
+//           t->state = RUNNABLE;
+//       }
+//     }
+// }
+
 static void
 wakeup1(void *chan)
 {
-  
   struct proc *p;
-  struct thread *t;
-
-  cprintf("&&&&&&&&WAKE_UP&&&&&&&");
 
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++)
-     if(p->state == RUNNABLE) {
-      for(t = p->threads; t < &p->threads[MIN_NTHREAD]; ++t) {
-        if(t->state == SLEEPING && t->chan == chan)
-          t->state = RUNNABLE;
-      }
-    }
+    if(p->state == SLEEPING && p->chan == chan)
+      p->state = RUNNABLE;
 }
 // Wake up all processes sleeping on chan.
 void
