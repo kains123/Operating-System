@@ -105,7 +105,11 @@ exec2(char *path, char **argv, int stacksize)
   return 0;
 
   //TODO
-  for(curthread = &curproc->threads[0]; curthread < &curproc->threads[stacksize]; curthread ++) {
+  cprintf("EXEC2\n");
+  for(curthread = &curproc->threads[1]; curthread < &curproc->threads[stacksize]; curthread ++) {
+    if (curthread->kstack)
+      kfree(curthread->kstack);
+    curthread->kstack = 0;
     curthread->tid = 0;
     curthread->retval = 0;
     curthread->state = UNUSED;
