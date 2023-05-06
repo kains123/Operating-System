@@ -65,6 +65,7 @@ struct proc {
   struct thread threads[MIN_NTHREAD]; //threads in process
   thread_t curtid;
   int limit;
+  uint  ustack_pool[MIN_NTHREAD];
 };
 
 // Process memory is laid out contiguously, low addresses first:

@@ -643,6 +643,7 @@ found:
   *t->tf = *CURTHREAD(curproc).tf;
   // Set up new context to start executing at forkret,
   // which returns to trapret.
+
   sp -= 4;
   *(uint*)sp = (uint)trapret;
 
@@ -652,6 +653,20 @@ found:
   t->context->eip = (uint)forkret;
 
   //TODO
+
+  if (curproc->ustack_pool[tidx] == 0)
+  {
+    sz = PGROUNDUP(curproc->sz);
+    if ((sz = allocuvm(curproc->pgdir, sz, sz + PGSIZE)) == 0)
+    {
+      cprintf("cannot alloc user stack\n");
+      goto bad;
+    }
+
+    curproc->ustack_pool[tidx] = sz;
+    curproc->sz = sz;
+  }
+  sp = (char *)curproc->ustack_pool[tidx];
 
   *thread = t->tid;
 
