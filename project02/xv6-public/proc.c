@@ -746,7 +746,7 @@ int thread_join(thread_t thread, void **retval){
 }
 
 void list(void){
-  struct proc *curproc = myproc();
+  // struct proc *curproc = myproc();
 	struct proc *p;
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
 		if(p->state!=RUNNING)
