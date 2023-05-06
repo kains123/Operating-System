@@ -337,34 +337,34 @@ wait(void)
   }
  }
 
-struct proc * proc_choose(){
-  struct proc *p;
-  struct thread *t;
+// struct proc * proc_choose(){
+//   struct proc *p;
+//   struct thread *t;
 
-  int start = 0;
-  // p = myproc();
-  cprintf("########proc_choose########\n");
-  if (p != 0)
-  {
-    for (t = &CURTHREAD(p); ; ++t)
-    {
-      if (t == &p->threads[MIN_NTHREAD])
-        t = &p->threads[0];
+//   int start = 0;
+//   // p = myproc();
+//   cprintf("########proc_choose########\n");
+//   if (p != 0)
+//   {
+//     for (t = &CURTHREAD(p); ; ++t)
+//     {
+//       if (t == &p->threads[MIN_NTHREAD])
+//         t = &p->threads[0];
 
-      if (t->state == RUNNABLE)
-        break;
+//       if (t->state == RUNNABLE)
+//         break;
 
-      if (start && t == &CURTHREAD(p))
-        panic("invalid logic");
-      start = 1;
-    }
+//       if (start && t == &CURTHREAD(p))
+//         panic("invalid logic");
+//       start = 1;
+//     }
 
-    p->curtid = t - p->threads;
-  }
+//     p->curtid = t - p->threads;
+//   }
 
-  return p;
+//   return p;
 
-}
+// }
 //PAGEBREAK: 42
 // Per-CPU process scheduler.
 // Each CPU calls scheduler() after setting itself up.
@@ -389,7 +389,7 @@ scheduler(void)
 
     acquire(&ptable.lock);
    
-    p = proc_choose();
+    // p = proc_choose();
     t = p ? &CURTHREAD(p) : 0;
     if(p != 0){
       cprintf("########scheduler3########\n");
