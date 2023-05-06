@@ -232,7 +232,7 @@ exit(void)
 {
   struct proc *curproc = myproc();
   struct proc *p;
-  // struct thread *t;
+  struct thread *t;
   int fd;
 
   cprintf("************EXIT*******\n");
@@ -268,6 +268,13 @@ exit(void)
 
   // Jump into the scheduler, never to return.
   curproc->state = ZOMBIE;
+
+  for (t = curproc->threads; t < &curproc->threads[MIN_NTHREAD]; ++t)
+  {
+    if (t->state != UNUSED)
+      t->state = ZOMBIE;
+  }
+
   sched();
   panic("zombie exit");
 }
@@ -278,6 +285,7 @@ int
 wait(void)
 {
   struct proc *p;
+  struct thread *t;
   int havekids, pid;
   struct proc *curproc = myproc();
   
@@ -291,10 +299,22 @@ wait(void)
       havekids = 1;
       if(p->state == ZOMBIE){
         // Found one.
-        pid = p->pid;
-        kfree(p->kstack);
-        p->kstack = 0;
-        freevm(p->pgdir);
+        // pid = p->pid;
+        // kfree(p->kstack);
+        // p->kstack = 0;
+        // freevm(p->pgdir);
+
+        for (t = p->threads; t < &p->threads[MIN_NTHREAD]; ++t)
+        {
+          //TODO
+
+          if (t->kstack != 0)
+            kfree(t->kstack);
+
+          t->kstack = 0;
+          t->tid = 0;
+          t->state = UNUSED;
+        }
         p->pid = 0;
         p->parent = 0;
         p->name[0] = 0;
