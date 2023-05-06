@@ -327,6 +327,7 @@ scheduler(void)
 {
   cprintf("########scheduler0########\n");
   struct proc *p;
+  struct thread *t;
   struct cpu *c = mycpu();
   c->proc = 0;
   
@@ -335,7 +336,27 @@ scheduler(void)
     sti();
 
     // Loop over process table looking for process to run.
+
     acquire(&ptable.lock);
+
+    p = myproc();
+    int start = 0;
+    if (p != 0) {
+      for (t = &CURTHREAD(p); ; ++t)
+      {
+        if (t == &p->threads[MIN_NTHREAD])
+          t = &p->threads[0];
+
+        if (t->state == RUNNABLE)
+          break;
+
+        if (start && t == &CURTHREAD(p))
+          panic("invalid logic");
+        start = 1;
+      }
+      p->curtid = t - p->threads;
+    }
+    t = p ? &CURTHREAD(p) : 0;
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
       if(p->state != RUNNABLE)
         continue;
@@ -345,19 +366,16 @@ scheduler(void)
       // before jumping back to us.
       c->proc = p;
       switchuvm(p);
-      p->state = RUNNING;
+      t->state = RUNNING;
 
       swtch(&(c->scheduler), p->context);
-      cprintf("########scheduler2########\n");
       switchkvm();
-      cprintf("########scheduler3########\n");
       // Process is done running for now.
       // It should have changed its p->state before coming back.
       c->proc = 0;
     }
     release(&ptable.lock);
     cprintf("########scheduler4########\n");
-
   }
 }
 
