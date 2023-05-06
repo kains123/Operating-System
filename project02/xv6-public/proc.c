@@ -15,6 +15,7 @@ struct {
 static struct proc *initproc;
 
 int nextpid = 1;
+int nexttid = 
 extern void forkret(void);
 extern void trapret(void);
 
@@ -602,7 +603,7 @@ int thread_create(thread_t *thread, void *(*start_routine)(void *), void *arg)
 {
   struct proc *curproc = myproc();
   struct thread *t;
-  // int t_idx;
+  int t_idx;
 
   struct proc *p;
   char *sp;
@@ -620,8 +621,8 @@ int thread_create(thread_t *thread, void *(*start_routine)(void *), void *arg)
   return 0;
 
 found:
-  // t_idx = t - curproc->threads;
-  // t->tid = ;
+  t_idx = t - curproc->threads;
+  t->tid = nexttid++;;
   //TODO
   t->state = EMBRYO;
 
@@ -638,7 +639,6 @@ found:
   // Leave room for trap frame.
   sp -= sizeof *t->tf;
   t->tf = (struct trapframe*)sp;
-  //TODO
   *t->tf = *CURTHREAD(curproc).tf;
   // Set up new context to start executing at forkret,
   // which returns to trapret.
@@ -652,6 +652,9 @@ found:
 
   //TODO
 
+  *thread = t->tid;
+
+  t->state = RUNNABLE;
   release(&ptable.lock);
   return 0;
 }
