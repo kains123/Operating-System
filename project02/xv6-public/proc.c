@@ -235,7 +235,7 @@ exit(void)
   struct thread *t;
   int fd;
 
-  cprintf('************EXIT*******\n');
+  cprintf("************EXIT*******\n");
   if(curproc == initproc)
     panic("init exiting");
 
