@@ -605,6 +605,7 @@ int thread_create(thread_t *thread, void *(*start_routine)(void *), void *arg)
   struct proc *curproc = myproc();
   struct thread *t;
   int t_idx;
+  uint sz;
 
   struct proc *p;
   char *sp;
@@ -654,19 +655,19 @@ found:
 
   //TODO
 
-  if (curproc->ustack_pool[tidx] == 0)
+  if (curproc->ustack_pool[t_idx] == 0)
   {
     sz = PGROUNDUP(curproc->sz);
     if ((sz = allocuvm(curproc->pgdir, sz, sz + PGSIZE)) == 0)
     {
       cprintf("cannot alloc user stack\n");
-      goto bad;
+      // goto bad;
     }
 
-    curproc->ustack_pool[tidx] = sz;
+    curproc->ustack_pool[t_idx] = sz;
     curproc->sz = sz;
   }
-  sp = (char *)curproc->ustack_pool[tidx];
+  sp = (char *)curproc->ustack_pool[t_idx];
 
   *thread = t->tid;
 
