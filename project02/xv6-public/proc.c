@@ -342,25 +342,8 @@ struct proc * proc_choose(){
   struct thread *t;
 
   int start = 0;
-  for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-      if(p->state != RUNNABLE)
-        continue;
-
-      // Switch to chosen process.  It is the process's job
-      // to release ptable.lock and then reacquire it
-      // before jumping back to us.
-      c->proc = p;
-      switchuvm(p);
-      p->state = RUNNING;
-
-      swtch(&(c->scheduler), p->context);
-      switchkvm();
-
-      // Process is done running for now.
-      // It should have changed its p->state before coming back.
-      c->proc = 0;
-  }
   cprintf("########proc_choose########\n");
+  p = myproc();
   if (p != 0)
   {
     for (t = &CURTHREAD(p); ; ++t)
