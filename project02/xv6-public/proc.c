@@ -786,23 +786,31 @@ void list(void){
 int setmemorylimit(int pid, int limit) {
   struct proc *curproc = myproc();
   struct proc *p;
+  int check_point = 1;
 
-  for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-    if(p->pid == pid) {
-      break;
-    }
-  }
-  //if the received memory is less than limit return -1
-  if(curproc->sz > limit){
-    return -1;
-  }
-  // pid doesn't exist, or limit <0 return -1
-  if(!pid || limit <0) {
+  if(limit <0) {
     return -1;
   }
 
   acquire(&ptable.lock);
-  curproc->limit = limit;
+
+  for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+    if(p->pid == pid) {
+      check_point = 0;
+      if(p->sz >= limit) {
+         //if the received memory is less than limit return -1
+        release(&ptable.lock);
+        return -1;
+      } else {
+        p->limit = limit;
+        break;
+      }
+    }
+  }
+  // pid doesn't exist return -1
+  if(check_point) {
+    return -1;
+  }
   release(&ptable.lock);
 
   cprintf("setmemorylimit is worked : %d \n",  curproc->limit);
