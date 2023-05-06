@@ -372,37 +372,72 @@ struct proc * proc_choose(){
 //  - swtch to start running that process
 //  - eventually that process transfers control
 //      via swtch back to the scheduler.
+// void
+// scheduler(void)
+// {
+//   cprintf("########scheduler0########\n");
+//   struct proc *p;
+//   struct thread *t;
+//   struct cpu *c = mycpu();
+//   c->proc = 0;
+
+//   for(;;){
+//     // Enable interrupts on this processor.
+//     sti();
+//     // Loop over process table looking for process to run.
+
+//     acquire(&ptable.lock);
+   
+//     p = proc_choose();
+//     t = p ? &CURTHREAD(p) : 0;
+//     if(p != 0){
+//       cprintf("########scheduler3########\n");
+//       c->proc = p;
+//       switchuvm(p);
+//       t->state = RUNNING;
+//       swtch(&(c->scheduler), p->context);
+//       switchkvm();
+//       // Process is done running for now.
+//       // It should have changed its p->state before coming back.
+//       c->proc = 0;
+//     }
+//     release(&ptable.lock);
+//     // cprintf("########scheduler4########\n");
+//   }
+// }
 void
 scheduler(void)
 {
-  cprintf("########scheduler0########\n");
   struct proc *p;
-  struct thread *t;
   struct cpu *c = mycpu();
   c->proc = 0;
-
+  
   for(;;){
     // Enable interrupts on this processor.
     sti();
-    // Loop over process table looking for process to run.
 
+    // Loop over process table looking for process to run.
     acquire(&ptable.lock);
-   
-    p = proc_choose();
-    t = p ? &CURTHREAD(p) : 0;
-    if(p != 0){
-      cprintf("########scheduler3########\n");
+    for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+      if(p->state != RUNNABLE)
+        continue;
+
+      // Switch to chosen process.  It is the process's job
+      // to release ptable.lock and then reacquire it
+      // before jumping back to us.
       c->proc = p;
       switchuvm(p);
-      t->state = RUNNING;
+      p->state = RUNNING;
+
       swtch(&(c->scheduler), p->context);
       switchkvm();
+
       // Process is done running for now.
       // It should have changed its p->state before coming back.
       c->proc = 0;
     }
     release(&ptable.lock);
-    // cprintf("########scheduler4########\n");
+
   }
 }
 
@@ -509,33 +544,24 @@ sleep(void *chan, struct spinlock *lk)
 //PAGEBREAK!
 // Wake up all processes sleeping on chan.
 // The ptable lock must be held.
-// static void
-// wakeup1(void *chan)
-// {
-  
-//   struct proc *p;
-//   struct thread *t;
-
-//   cprintf("&&&&&&&&WAKE_UP&&&&&&&\n");
-
-//   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++)
-//      if(p->state == RUNNABLE) {
-//       for(t = p->threads; t < &p->threads[MIN_NTHREAD]; ++t) {
-//         if(t->state == SLEEPING && t->chan == chan)
-//           t->state = RUNNABLE;
-//       }
-//     }
-// }
-
 static void
 wakeup1(void *chan)
 {
+  
   struct proc *p;
+  struct thread *t;
+
+  cprintf("&&&&&&&&WAKE_UP&&&&&&&\n");
 
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++)
-    if(p->state == SLEEPING && p->chan == chan)
-      p->state = RUNNABLE;
+     if(p->state == RUNNABLE) {
+      for(t = p->threads; t < &p->threads[MIN_NTHREAD]; ++t) {
+        if(t->state == SLEEPING && t->chan == chan)
+          t->state = RUNNABLE;
+      }
+    }
 }
+
 // Wake up all processes sleeping on chan.
 void
 wakeup(void *chan)
