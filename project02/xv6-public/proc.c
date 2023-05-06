@@ -342,7 +342,8 @@ struct proc * proc_choose(){
   struct thread *t;
 
   int start = 0;
-  p = myproc();
+  // p = myproc();
+  cprintf("########proc_choose########\n");
   if (p != 0)
   {
     for (t = &CURTHREAD(p); ; ++t)
@@ -403,7 +404,7 @@ scheduler(void)
       c->proc = 0;
     }
     release(&ptable.lock);
-    // cprintf("########scheduler4########\n");
+    cprintf("########scheduler4########\n");
   }
 }
 
