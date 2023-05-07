@@ -497,7 +497,7 @@ yield(void)
   acquire(&ptable.lock);  //DOC: yieldlock
   myproc()->state = RUNNABLE;
   sched();
-  cprintf("########yield########\n");
+  // cprintf("########yield########\n");
   release(&ptable.lock);
 }
 
@@ -777,7 +777,7 @@ void list(void){
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
 		if(p->state!=RUNNING)
 		    continue;
-    cprintf("***********list**********\nname: %s\npid: %d\nticks: %d\nstackpagenum: %d\nsz: %d\nlimit: %d\n\n", p->name,p->pid,ticks,p->stackpagenum,p->sz,p->limit);
+    cprintf("name: %s\npid: %d\nticks: %d\nstackpagenum: %d\nsz: %d\nlimit: %d\n\n", p->name,p->pid,ticks,p->stackpagenum,p->sz,p->limit);
   }
   return;
 }
