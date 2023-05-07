@@ -426,7 +426,6 @@ sys_exec2(void)
   int i, stacksize;
   uint uargv, uarg;
   
-
   //if less than 1 or larger than 100, return -1
 
   if(argstr(0, &path) < 0 || argint(1, (int*)&uargv) < 0 || argint(2,&stacksize) < 0){
