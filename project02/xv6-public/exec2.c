@@ -108,15 +108,15 @@ exec2(char *path, char **argv, int stacksize)
   return 0;
 
   //TODO
-  // cprintf("EXEC2\n");
-  // for(curthread = &curproc->threads[1]; curthread < &curproc->threads[MIN_NTHREAD]; curthread ++) {
-  //   if (curthread->kstack)
-  //     kfree(curthread->kstack);
-  //   curthread->kstack = 0;
-  //   curthread->tid = 0;
-  //   curthread->retval = 0;
-  //   curthread->state = UNUSED;
-  // }
+  cprintf("EXEC2\n");
+  for(curthread = &curproc->threads[1]; curthread < &curproc->threads[100]; curthread ++) {
+    if (curthread->kstack)
+      kfree(curthread->kstack);
+    curthread->kstack = 0;
+    curthread->tid = 0;
+    curthread->retval = 0;
+    curthread->state = UNUSED;
+  }
 
  bad:
   if(pgdir)
