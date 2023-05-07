@@ -15,6 +15,7 @@ main(int argc, char *argv[])
 	char *cmd3 = "execute"; //execute <path> <stacksize>
 	char *cmd4 = "memlim"; //memlim <pid> <limit>
 	char *cmd5 = "exit"; //exit
+
 	printf(1,"[PMANAGER]\n");
 	while(getcmd(array, sizeof(array)) >= 0){
 		while((fd = open("console", 0x002)) >= 0) {
@@ -27,13 +28,11 @@ main(int argc, char *argv[])
 			printf(1,"\n<<EXIT>>\n");
 			list();
 			continue;
-		}
-		if(array[0]==cmd1[0]){
+		} else if(array[0]==cmd1[0]){
 			printf(1,"\n<<LIST>>\n");
 			list();
 			continue;
-		}
-		if(array[0]==cmd2[0]){
+		} else if(array[0]==cmd2[0]){
 			printf(1,"\n<<KILL>>\n");
 			char *pid = (char*)malloc(sizeof(char)*15);
 			int j = 0;
@@ -45,41 +44,38 @@ main(int argc, char *argv[])
 			int pid1 = atoi(pid);
 			kill(pid1);
 			continue;
-		}
-			if(array[0]==cmd3[0]){
-				printf(1,"<<EXECUTE>>\n");
-				int pid;
-				int stacksize = 100;
+		} else if(array[0]==cmd3[0]){
+			printf(1,"<<EXECUTE>>\n");
+			int pid;
+			int stacksize = 100;
+			pid = fork();
+			if(pid == 0) {
 				pid = fork();
-
 				if(pid == 0) {
-					pid = fork();
-					if(pid == 0) {
-						exec2(argv[0], argv, stacksize);
-						printf(1, "failed to exec\n");
-					} 
-					else if(pid < 0) {
-						printf(1, "fork failed\n");
-					}
-					exit();
+					exec2(argv[0], argv, stacksize);
+					printf(1, "failed to exec\n");
 				} 
-				else if(pid > 0) {
-					wait();
-				} 
-				else {
-					printf(1, "failed to fork\n");
+				else if(pid < 0) {
+					printf(1, "fork failed\n");
 				}
-				continue;
+				exit();
+			} 
+			else if(pid > 0) {
+				wait();
+			} 
+			else {
+				printf(1, "failed to fork\n");
 			}
-			if(array[0]==cmd4[0]){
-				printf(1,"\n<<MEMLIM>>\n");
-				int pid = 0;
-				int limit = 100;
-				if(setmemorylimit(pid, limit) == -1) {
-					printf(1, "setmemorylimit failed.\n");
-				}
-				continue;
+			continue;
+	  } else if(array[0]==cmd4[0]){
+			printf(1,"\n<<MEMLIM>>\n");
+			int pid = 0;
+			int limit = 100;
+			if(setmemorylimit(pid, limit) == -1) {
+				printf(1, "setmemorylimit failed.\n");
 			}
+			continue;
+	  }
 		
   }
 	exit();
