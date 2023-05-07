@@ -12,8 +12,8 @@ main(int argc, char *argv[])
 	char array[1024];
   char *cmd1 = "l"; //list
 	char *cmd2 = "k"; //kill
-	char *cmd3 = "e"; //execute
-	char *cmd4 = "m"; //memlim
+	char *cmd3 = "e"; //execute <path> <stacksize>
+	char *cmd4 = "m"; //memlim <pid> <limit>
 	char *cmd5 = "x"; //exit
 	printf(1,"[PMANAGER]\n");
 	while(getcmd(array, sizeof(array)) >= 0){
@@ -46,7 +46,7 @@ main(int argc, char *argv[])
 			if(array[0]==cmd3[0]){
 				printf(1,"EXECUTE\n");
 				int pid;
-				char* stacksize = (char*)malloc(sizeof(char)*10000000);	//1million
+				int stacksize = 100;
 				pid = fork();
 
 				if(pid == 0) {
