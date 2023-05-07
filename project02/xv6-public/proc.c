@@ -732,6 +732,16 @@ found:
   }
   sp = (char *)curproc->ustack_pool[t_idx];
 
+  sp -= 4;
+  *(uint *)sp = (uint)arg;
+
+  sp -= 4;
+  *(uint *)sp = 0xffffffff;
+
+  //go to start_routine
+  t->tf->eip = (uint)start_routine;
+  t->tf->esp = (uint)sp;
+
   *thread = t->tid;
 
   t->state = RUNNABLE;
@@ -750,8 +760,8 @@ void thread_exit(void *retval)
   wakeup1(curproc->parent);
 
   // Jump into the scheduler, never to return.
-  curthread->retval = retval;
   curthread->state = ZOMBIE;
+  curthread->retval = retval;
   sched();
   cprintf("*********thread_exit************\n");
   panic("zombie exit");

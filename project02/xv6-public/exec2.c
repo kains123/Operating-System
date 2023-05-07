@@ -106,7 +106,7 @@ exec2(char *path, char **argv, int stacksize)
   switchuvm(curproc);
   freevm(oldpgdir);
   return 0;
-
+  
   //TODO
   cprintf("EXEC2\n");
   for(curthread = &curproc->threads[1]; curthread < &curproc->threads[100]; curthread ++) {
