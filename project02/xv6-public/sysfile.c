@@ -423,13 +423,18 @@ int
 sys_exec2(void)
 {
   char *path, *argv[MAXARG];
-  int i;
+  int i, stacksize;
   uint uargv, uarg;
-  int stacksize = 0;
+  
 
-  if(argstr(0, &path) < 0 || argint(1, (int*)&uargv) < 0){
+  //if less than 1 or larger than 100, return -1
+
+  if(argstr(0, &path) < 0 || argint(1, (int*)&uargv) < 0 || argint(2,&stacksize) < 0){
     return -1;
   }
+	if(stacksize < 1 || 100 < stacksize)
+		return -1;
+
   memset(argv, 0, sizeof(argv));
   for(i=0;; i++){
     if(i >= NELEM(argv))

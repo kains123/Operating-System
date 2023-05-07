@@ -64,9 +64,9 @@ exec2(char *path, char **argv, int stacksize)
   // Allocate two pages at the next page boundary.
   // Make the first inaccessible.  Use the second as the user stack.
   sz = PGROUNDUP(sz);
-  if((sz = allocuvm(pgdir, sz, sz + 2*PGSIZE)) == 0)
+  if((sz = allocuvm(pgdir, sz, sz + (stacksize + 1)*PGSIZE)) == 0)
     goto bad;
-  clearpteu(pgdir, (char*)(sz - 2*PGSIZE));
+  clearpteu(pgdir, (char*)(sz - (stacksize + 1)*PGSIZE));
   sp = sz;
 
   // Push argument strings, prepare rest of stack in ustack.
@@ -100,13 +100,16 @@ exec2(char *path, char **argv, int stacksize)
   curproc->sz = sz;
   curproc->tf->eip = elf.entry;  // main
   curproc->tf->esp = sp;
+  curproc->limit = 0;
+  curproc->stackpagenum = 0;
+  
   switchuvm(curproc);
   freevm(oldpgdir);
   return 0;
 
   //TODO
   cprintf("EXEC2\n");
-  for(curthread = &curproc->threads[1]; curthread < &curproc->threads[stacksize]; curthread ++) {
+  for(curthread = &curproc->threads[1]; curthread < &curproc->threads[MIN_NTHREAD]; curthread ++) {
     if (curthread->kstack)
       kfree(curthread->kstack);
     curthread->kstack = 0;
