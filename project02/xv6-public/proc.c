@@ -303,15 +303,13 @@ wait(void)
       havekids = 1;
       if(p->state == ZOMBIE){
         // Found one.
-        // pid = p->pid;
-        // kfree(p->kstack);
-        // p->kstack = 0;
-        // freevm(p->pgdir);
+        pid = p->pid;
+        kfree(p->kstack);
+        p->kstack = 0;
+        freevm(p->pgdir);
         cprintf("HERE\n");
         for (t = p->threads; t < &p->threads[MIN_NTHREAD]; ++t)
         {
-          //TODO
-
           if (t->kstack != 0)
             kfree(t->kstack);
 
