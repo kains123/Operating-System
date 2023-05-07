@@ -45,7 +45,28 @@ main(int argc, char *argv[])
 			}
 			if(array[0]==cmd3[0]){
 				printf(1,"EXECUTE\n");
+				int pid;
 				char* stacksize = (char*)malloc(sizeof(char)*10000000);	//1million
+				pid = fork();
+
+				if(pid == 0) {
+					pid = fork();
+					if(pid == 0) {
+						exec2(argv[0], argv, stacksize);
+						printf(1, "failed to exec\n");
+					} 
+					else if(pid < 0) {
+						printf(1, "fork failed\n");
+					}
+					exit();
+
+				} 
+				else if(pid > 0) {
+					wait();
+				} 
+				else {
+					printf(1, "failed to fork\n");
+				}
 				continue;
 			}
 			if(array[0]==cmd4[0]){
