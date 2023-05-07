@@ -137,6 +137,15 @@ sys_thread_join(void)
   return thread_join(thread, retval);
 }
 
+
+int
+sys_list(void)
+{
+  list();
+  return 0;
+}
+
+
 int 
 sys_setmemorylimit(void){
   int pid, limit;
