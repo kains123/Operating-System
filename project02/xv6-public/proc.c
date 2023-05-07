@@ -1313,7 +1313,7 @@ void list(void){
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
 		if(p->state!=RUNNING)
 		    continue;
-    cprintf("***********list**********\nname: %s\npid: %d\nticks: %d\nstackpagenum: %d\nsz: %d\nlimit: %d", p->name,p->pid,ticks,p->stackpagenum,p->sz,p->limit);
+    cprintf("***********list**********\nname: %s\npid: %d\nticks: %d\nstackpagenum: %d\nsz: %d\nlimit: %d\n\n", p->name,p->pid,ticks,p->stackpagenum,p->sz,p->limit);
   }
   return;
 }
