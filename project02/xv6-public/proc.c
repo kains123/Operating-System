@@ -765,9 +765,25 @@ int thread_join(thread_t thread, void **retval){
   for (p = ptable.proc; p < &ptable.proc[NPROC]; ++p)
     if (p->state == RUNNABLE)
       for (t = p->threads; t < &p->threads[MIN_NTHREAD]; ++t)
-        if (t->state != UNUSED && t->tid == thread)
-          //goto 
+        if (t->tid == thread && t->state != UNUSED)
+          goto found;
   release(&ptable.lock);
+  return -1;
+
+found: 
+  if(t->state != ZOMBIE) {
+    sleep((void*)thread, &ptable.lock);
+  }
+
+  if (retval != 0)
+    *retval = t->retval;
+  kfree(t->kstack);
+  t->kstack = 0;
+  t->retval = 0;
+  t->tid = 0;
+  t->state = UNUSED;
+  release(&ptable.lock);
+
   return 0;
 }
 
