@@ -568,32 +568,32 @@ sleep(void *chan, struct spinlock *lk)
 //PAGEBREAK!
 // Wake up all processes sleeping on chan.
 // The ptable lock must be held.
-// static void
-// wakeup1(void *chan)
-// {
-  
-  // struct proc *p;
-  // struct thread *t;
-
-  // // cprintf("&&&&&&&&WAKE_UP&&&&&&&\n");
-
-  // for(p = ptable.proc; p < &ptable.proc[NPROC]; p++)
-  //    if(p->state == RUNNABLE) {
-  //     for(t = p->threads; t < &p->threads[NTHREAD]; ++t) {
-  //       if(t->state == SLEEPING && t->chan == chan)
-  //         t->state = RUNNABLE;
-  //     }
-  //   }
-// }
 static void
 wakeup1(void *chan)
 {
+  
   struct proc *p;
+  struct thread *t;
+
+  // cprintf("&&&&&&&&WAKE_UP&&&&&&&\n");
 
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++)
-    if(p->state == SLEEPING && p->chan == chan)
-      p->state = RUNNABLE;
+     if(p->state == RUNNABLE) {
+      for(t = p->threads; t < &p->threads[NTHREAD]; ++t) {
+        if(t->state == SLEEPING && t->chan == chan)
+          t->state = RUNNABLE;
+      }
+    }
 }
+// static void
+// wakeup1(void *chan)
+// {
+//   struct proc *p;
+
+//   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++)
+//     if(p->state == SLEEPING && p->chan == chan)
+//       p->state = RUNNABLE;
+// }
 
 // Wake up all processes sleeping on chan.
 void
@@ -762,7 +762,7 @@ void thread_exit(void *retval)
   acquire(&ptable.lock);
 
   // Parent might be sleeping in wait().
-  wakeup1(curproc->parent);
+  wakeup1((void*)curthread->tid);
 
   // Jump into the scheduler, never to return.
   curthread->state = ZOMBIE;
@@ -777,12 +777,14 @@ int thread_join(thread_t thread, void **retval){
   struct thread *t;
 
   acquire(&ptable.lock);
+
   for (p = ptable.proc; p < &ptable.proc[NPROC]; ++p)
     if (p->state == RUNNABLE)
       for (t = p->threads; t < &p->threads[NTHREAD]; ++t)
         if (t->tid == thread && t->state != UNUSED)
           goto found;
   release(&ptable.lock);
+  
   return -1;
 
 found: 
