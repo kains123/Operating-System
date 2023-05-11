@@ -43,7 +43,7 @@ main(int argc, char *argv[])
 			}
 			pid[j] = '\0';
 			int pid_num = atoi(pid);
-			printf("------ %d ------\n", pid_num);
+			// printf("------ %s ------\n", pid_num);
 			kill(pid_num);
 			continue;
 		} else if(array[0]==cmd3[0]){
@@ -64,6 +64,15 @@ main(int argc, char *argv[])
 				path_index++;
 				index++;
 				path[path_index] = '\0';
+			}
+
+			argv[0] = path;
+			argv[1] = 0;
+
+			while(48 <= array[index] && array[index] <= 57) {
+				stacksize *= 10;
+				stacksize += array[index] - 48;
+				index++;
 			}
 
 			// exec2(argv[0], argv, stacksize);
