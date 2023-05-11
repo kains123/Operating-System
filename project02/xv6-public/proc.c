@@ -167,15 +167,20 @@ growproc(int n)
 {
   uint sz;
   struct proc *curproc = myproc();
-
+  acquire(&ptable.lock); //ptable.lock
   sz = curproc->sz;
   if(n > 0){
-    if((sz = allocuvm(curproc->pgdir, sz, sz + n)) == 0)
+    if((sz = allocuvm(curproc->pgdir, sz, sz + n)) == 0) {
+      release(&ptable.lock);
       return -1;
+    }
   } else if(n < 0){
-    if((sz = deallocuvm(curproc->pgdir, sz, sz + n)) == 0)
+    if((sz = deallocuvm(curproc->pgdir, sz, sz + n)) == 0) {
+      release(&ptable.lock);
       return -1;
+    }
   }
+  release(&ptable.lock);
   curproc->sz = sz;
   switchuvm(curproc);
   return 0;

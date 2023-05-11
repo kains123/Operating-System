@@ -102,21 +102,29 @@ exec2(char *path, char **argv, int stacksize)
   curproc->tf->esp = sp;
   curproc->limit = 0;
   curproc->stackpagenum = 0;
-  
-  switchuvm(curproc);
-  freevm(oldpgdir);
-  return 0;
+
+  if (curproc->curtid != 0)
+  {
+    curproc->ustack_pool[0] = sz;
+    curproc = curproc->threads[curproc->curtid];
+    curproc->threads[curproc->curtid].kstack = 0;
+  }
   
   //TODO
   cprintf("EXEC2\n");
-  for(curthread = &curproc->threads[1]; curthread < &curproc->threads[100]; curthread ++) {
+  for(curthread = &curproc->threads[1]; curthread < &curproc->threads[64]; curthread ++) {
     if (curthread->kstack)
       kfree(curthread->kstack);
     curthread->kstack = 0;
     curthread->tid = 0;
     curthread->retval = 0;
     curthread->state = UNUSED;
+    curproc->ustack_pool[curthread - curproc->threads] = 0;
   }
+
+  switchuvm(curproc);
+  freevm(oldpgdir);
+  return 0;
 
  bad:
   if(pgdir)
