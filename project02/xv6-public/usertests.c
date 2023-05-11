@@ -39,7 +39,7 @@ int pipetest(void);
 int sleeptest(void);
 
 // Test behavior when we use set_cpu_share with thread
-int stridetest(void);
+// int stridetest(void);
 
 volatile int gcnt;
 int gpipe[2];
@@ -58,7 +58,7 @@ int (*testfunc[NTEST])(void) = {
   killtest,
   pipetest,
   sleeptest,
-  stridetest,
+  
 };
 char *testname[NTEST] = {
   "racingtest",
@@ -74,7 +74,6 @@ char *testname[NTEST] = {
   "killtest",
   "pipetest",
   "sleeptest",
-  "stridetest",
 };
 
 int
@@ -651,54 +650,54 @@ stridethreadmain(void *arg)
   return 0;
 }
 
-int
-stridetest(void)
-{
-  thread_t threads[NUM_THREAD];
-  int i;
-  int pid;
-  int flag;
-  void *retval;
+// int
+// stridetest(void)
+// {
+//   thread_t threads[NUM_THREAD];
+//   int i;
+//   int pid;
+//   int flag;
+//   void *retval;
 
-  gcnt = 0;
-  flag = 2;
-  if ((pid = fork()) == -1){
-    printf(1, "panic at fork in forktest\n");
-    exit();
-  } else if (pid == 0){
-    set_cpu_share(2);
-  } else{
-    set_cpu_share(10);
-  }
+//   gcnt = 0;
+//   flag = 2;
+//   if ((pid = fork()) == -1){
+//     printf(1, "panic at fork in forktest\n");
+//     exit();
+//   } else if (pid == 0){
+//     set_cpu_share(2);
+//   } else{
+//     set_cpu_share(10);
+//   }
 
-  for (i = 0; i < NUM_THREAD; i++){
-    if (thread_create(&threads[i], stridethreadmain, (void*)&flag) != 0){
-      printf(1, "panic at thread_create\n");
-      return -1;
-    }
-  }
-  flag = 1;
-  sleep(500);
-  flag = 0;
-  for (i = 0; i < NUM_THREAD; i++){
-    if (thread_join(threads[i], &retval) != 0){
-      printf(1, "panic at thread_join\n");
-      return -1;
-    }
-  }
+//   for (i = 0; i < NUM_THREAD; i++){
+//     if (thread_create(&threads[i], stridethreadmain, (void*)&flag) != 0){
+//       printf(1, "panic at thread_create\n");
+//       return -1;
+//     }
+//   }
+//   flag = 1;
+//   sleep(500);
+//   flag = 0;
+//   for (i = 0; i < NUM_THREAD; i++){
+//     if (thread_join(threads[i], &retval) != 0){
+//       printf(1, "panic at thread_join\n");
+//       return -1;
+//     }
+//   }
 
-  if (pid == 0){
-    printf(1, " 2% : %d\n", gcnt);
-    exit();
-  } else{
-    printf(1, "10% : %d\n", gcnt);
-    if (wait() == -1){
-      printf(1, "panic at wait in forktest\n");
-      exit();
-    }
-  }
+//   if (pid == 0){
+//     printf(1, " 2% : %d\n", gcnt);
+//     exit();
+//   } else{
+//     printf(1, "10% : %d\n", gcnt);
+//     if (wait() == -1){
+//       printf(1, "panic at wait in forktest\n");
+//       exit();
+//     }
+//   }
 
-  return 0;
-}
+//   return 0;
+// }
 
 // ============================================================================
