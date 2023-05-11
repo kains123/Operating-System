@@ -103,12 +103,12 @@ exec2(char *path, char **argv, int stacksize)
   curproc->limit = 0;
   curproc->stackpagenum = 0;
 
-  if (curproc->curtid != 0)
-  {
-    curproc->ustack_pool[0] = sz;
-    MAIN(curproc) = curproc->threads[curproc->curtid];
-    curproc->threads[curproc->curtid].kstack = 0;
-  }
+  // if (curproc->curtid != 0)
+  // {
+  //   curproc->ustack_pool[0] = sz;
+  //   MAIN(curproc) = curproc->threads[curproc->curtid];
+  //   curproc->threads[curproc->curtid].kstack = 0;
+  // }
   
   //TODO
   cprintf("EXEC2\n");
