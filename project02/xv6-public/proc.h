@@ -62,11 +62,11 @@ struct proc {
   struct file *ofile[NOFILE];  // Open files
   struct inode *cwd;           // Current directory
   char name[16];               // Process name (debugging)
-  struct thread threads[MIN_NTHREAD]; //threads in process
+  struct thread threads[NTHREAD]; //threads in process
   thread_t curtid;
   int limit;
   int stackpagenum;
-  uint  ustack_pool[MIN_NTHREAD];
+  uint  ustack_pool[NTHREAD];
 };
 
 // Process memory is laid out contiguously, low addresses first:

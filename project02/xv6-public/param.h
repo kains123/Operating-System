@@ -11,4 +11,4 @@
 #define LOGSIZE      (MAXOPBLOCKS*3)  // max data blocks in on-disk log
 #define NBUF         (MAXOPBLOCKS*3)  // size of disk block cache
 #define FSSIZE       1000  // size of file system in blocks
-#define MIN_NTHREAD   1  // minimum number of threads per process
+#define NTHREAD  64  // number of threads per process

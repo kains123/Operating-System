@@ -11,7 +11,7 @@ main(int argc, char *argv[])
 {
 	char array[1024];
   char *cmd1 = "list"; //list
-	char *cmd2 = "kill"; //kill
+	char *cmd2 = "kill"; //kill <pid>
 	char *cmd3 = "execute"; //execute <path> <stacksize>
 	char *cmd4 = "memlim"; //memlim <pid> <limit>
 	char *cmd5 = "exit"; //exit
@@ -26,29 +26,56 @@ main(int argc, char *argv[])
 		}
 		if(array[0]==cmd5[0] && array[1]==cmd5[1] && array[2]==cmd5[2] && array[3]==cmd5[3]){
 			printf(1,"\n<<EXIT>>\n");
-			list();
+			exit();
 			continue;
 		} else if(array[0]==cmd1[0]){
 			printf(1,"\n<<LIST>>\n");
 			list();
 			continue;
 		} else if(array[0]==cmd2[0]){
+			//kill <pid>
 			printf(1,"\n<<KILL>>\n");
 			char *pid = (char*)malloc(sizeof(char)*15);
 			int j = 0;
-			for(int i=5;i<strlen(array);i++){
+			for(int i=5; i<strlen(array); i++){
 				pid[j] = array[i];
 				j++;
 			}
 			pid[j] = '\0';
-			int pid1 = atoi(pid);
-			kill(pid1);
+			int pid_num = atoi(pid);
+			printf("------ %d ------\n", pid_num);
+			kill(pid_num);
 			continue;
 		} else if(array[0]==cmd3[0]){
 			printf(1,"<<EXECUTE>>\n");
 			int pid;
 			int stacksize = 100;
+			int index = 8;
+			char path[1024];
 			pid = fork();
+			int path_index = 0;
+
+			while(array[index] != ' ' && array[index] != '\n') {
+				if(index > 40) {
+					array[index] = '\n';
+					break;
+				}				
+				path[path_index] = array[index];
+				path_index++;
+				index++;
+				path[path_index] = '\0';
+			}
+
+			// exec2(argv[0], argv, stacksize);
+			// printf(1, "failed to exec\n");
+
+			// //path
+			// char *path = (char*)malloc(sizeof(char)*15);
+			// //stacksize
+			// exec2(path, argv, stacksize);
+
+			pid = fork();
+
 			if(pid == 0) {
 				pid = fork();
 				if(pid == 0) {
@@ -59,6 +86,7 @@ main(int argc, char *argv[])
 					printf(1, "fork failed\n");
 				}
 				exit();
+
 			} 
 			else if(pid > 0) {
 				wait();
@@ -66,6 +94,8 @@ main(int argc, char *argv[])
 			else {
 				printf(1, "failed to fork\n");
 			}
+
+
 			continue;
 	  } else if(array[0]==cmd4[0]){
 			printf(1,"\n<<MEMLIM>>\n");

@@ -273,7 +273,7 @@ exit(void)
   // Jump into the scheduler, never to return.
   curproc->state = ZOMBIE;
 
-  for (t = curproc->threads; t < &curproc->threads[MIN_NTHREAD]; ++t)
+  for (t = curproc->threads; t < &curproc->threads[NTHREAD]; ++t)
   {
     if (t->state != UNUSED)
       t->state = ZOMBIE;
@@ -308,7 +308,7 @@ wait(void)
         p->kstack = 0;
         freevm(p->pgdir);
         cprintf("HERE\n");
-        for (t = p->threads; t < &p->threads[MIN_NTHREAD]; ++t)
+        for (t = p->threads; t < &p->threads[NTHREAD]; ++t)
         {
           if (t->kstack != 0)
             kfree(t->kstack);
@@ -349,7 +349,7 @@ struct proc * proc_choose(){
   {
     for (t = &CURTHREAD(p); ; ++t)
     {
-      if (t == &p->threads[MIN_NTHREAD])
+      if (t == &p->threads[NTHREAD])
         t = &p->threads[0];
 
       if (t->state == RUNNABLE)
@@ -574,7 +574,7 @@ sleep(void *chan, struct spinlock *lk)
 
   // for(p = ptable.proc; p < &ptable.proc[NPROC]; p++)
   //    if(p->state == RUNNABLE) {
-  //     for(t = p->threads; t < &p->threads[MIN_NTHREAD]; ++t) {
+  //     for(t = p->threads; t < &p->threads[NTHREAD]; ++t) {
   //       if(t->state == SLEEPING && t->chan == chan)
   //         t->state = RUNNABLE;
   //     }
@@ -613,7 +613,7 @@ kill(int pid)
     if(p->pid == pid){
       p->killed = 1;
       // Wake process from sleep if necessary.
-      for (t = p->threads; t < &p->threads[MIN_NTHREAD]; ++t) {
+      for (t = p->threads; t < &p->threads[NTHREAD]; ++t) {
         if(t->state == SLEEPING)
           t->state = RUNNABLE;
       }
@@ -677,7 +677,7 @@ int thread_create(thread_t *thread, void *(*start_routine)(void *), void *arg)
 
   // for(p = ptable.proc; p < &ptable.proc[NPROC]; p++)
   //   if(p->state == UNUSED)
-  for (t = curproc->threads; t < &curproc->threads[MIN_NTHREAD]; ++t)
+  for (t = curproc->threads; t < &curproc->threads[NTHREAD]; ++t)
     if (t->state == UNUSED)
       goto found;
 
@@ -774,7 +774,7 @@ int thread_join(thread_t thread, void **retval){
   acquire(&ptable.lock);
   for (p = ptable.proc; p < &ptable.proc[NPROC]; ++p)
     if (p->state == RUNNABLE)
-      for (t = p->threads; t < &p->threads[MIN_NTHREAD]; ++t)
+      for (t = p->threads; t < &p->threads[NTHREAD]; ++t)
         if (t->tid == thread && t->state != UNUSED)
           goto found;
   release(&ptable.lock);
