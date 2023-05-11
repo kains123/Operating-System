@@ -106,7 +106,7 @@ exec2(char *path, char **argv, int stacksize)
   if (curproc->curtid != 0)
   {
     curproc->ustack_pool[0] = sz;
-    curproc = curproc->threads[curproc->curtid];
+    MAIN(curproc) = curproc->threads[curproc->curtid];
     curproc->threads[curproc->curtid].kstack = 0;
   }
   
