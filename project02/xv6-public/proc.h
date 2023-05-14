@@ -33,7 +33,7 @@ struct context {
 };
 
 
-enum procstate { UNUSED, EMBRYO, SLEEPING, RUNNABLE, RUNNING, ZOMBIE };
+enum procstate { UNUSED, EMBRYO, SLEEPING, RUNNABLE, RUNNING, ZOMBIE , USED };
 
 struct thread
 {
@@ -44,6 +44,7 @@ struct thread
   void *chan;                  // If non-zero, sleeping on chan
   char *kstack;                // Bottom of kernel stack for this thread
   struct trapframe *tf;        // Trap frame for current syscall
+  int killed;                  // If non-zero, have been killed
   
 };
 
@@ -77,3 +78,7 @@ struct proc {
 #define CURTHREAD(p) ((p)->threads[(p)->curtid])
 
 #define MAIN(p) ((p)->threads[0])
+
+extern struct cpu *cpu asm("%gs:0");       // &cpus[cpunum()]
+extern struct proc *proc asm("%gs:4");     // cpus[cpunum()].proc
+extern struct thread *thread asm("%gs:8");     // cpus[cpunum()].thread
