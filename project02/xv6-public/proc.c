@@ -410,8 +410,8 @@ scheduler(void)
           if (t->state == RUNNABLE)
             break;
 
-          if (start && t == &CURTHREAD(p))
-            panic("invalid logic");
+          // if (start && t == &CURTHREAD(p))
+          //   panic("invalid logic");
           start = 1;
         }
         cprintf("*******scheduler5**********\n");   
