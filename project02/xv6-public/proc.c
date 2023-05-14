@@ -397,10 +397,13 @@ scheduler(void)
       cprintf("########scheduler1########\n");
       int start = 0;
       if(p->state != RUNNABLE)
+        cprintf("########scheduler2########\n");
         continue;
       if(p != 0) {
+        cprintf("########scheduler3########\n");
         for (t = &CURTHREAD(p); ; ++t)
-        {
+        { 
+          cprintf("########scheduler4########\n");
           if (t == &p->threads[NTHREAD])
             t = &p->threads[0];
 
