@@ -398,7 +398,6 @@ scheduler(void)
       int start = 0;
       if(p->state != RUNNABLE)
         continue;
-      // t = p ? &CURTHREAD(p) : 0;
       if(p != 0) {
         for (t = &CURTHREAD(p); ; ++t)
         {
@@ -415,6 +414,7 @@ scheduler(void)
         p->curtid = t - p->threads;    
       }
     }
+    t = p ? &CURTHREAD(p) : 0;
     c->proc = p;
     switchuvm(p);
     t->state = RUNNING;
