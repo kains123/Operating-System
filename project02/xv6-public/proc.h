@@ -33,7 +33,7 @@ struct context {
 };
 
 
-enum procstate { UNUSED, EMBRYO, SLEEPING, RUNNABLE, RUNNING, ZOMBIE , USED };
+enum procstate { UNUSED, EMBRYO, SLEEPING, RUNNABLE, RUNNING, ZOMBIE , USED, INVALID };
 
 struct thread
 {

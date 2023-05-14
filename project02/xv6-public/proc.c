@@ -27,6 +27,18 @@ pinit(void)
   initlock(&ptable.lock, "ptable");
 }
 
+void
+clearThread(struct thread * t)
+{
+  if(t->state == INVALID || t->state == ZOMBIE)
+    kfree(t->kstack);
+
+  t->kstack = 0;
+  t->tid = 0;
+  t->state = UNUSED;
+  t->killed = 0;
+}
+
 
 struct thread*
 allocthread(struct proc * p)
