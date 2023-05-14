@@ -504,6 +504,7 @@ yield(void)
   // sched();
   // // cprintf("########yield########\n");
   // release(&ptable.lock);
+  cprintf("########YIELD0########\n");
   struct proc *p = myproc();
   int intena;
   struct thread *t;
@@ -522,7 +523,6 @@ yield(void)
         release(&ptable.lock);
         return;
       }
-
       sched();
       panic("zombie thread");
     }
@@ -534,7 +534,6 @@ yield(void)
   t->state = RUNNING;
   p->curtid = t - p->threads;
 
-  
   pushcli();
   mycpu()->ts.esp0 = (uint)t->kstack + KSTACKSIZE;
   popcli();
