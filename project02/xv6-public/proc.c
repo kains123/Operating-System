@@ -423,6 +423,7 @@ scheduler(void)
     switchkvm();
     c->proc = 0;
     // cprintf("########scheduler4########\n");
+    release(&ptable.lock);
   }
 }
 // void
