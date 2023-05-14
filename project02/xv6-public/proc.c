@@ -428,35 +428,16 @@ scheduler(void)
             panic("invalid logic");
           start = 1;
         }
-        p->curtid = t - p->threads;
-        // return p;
-        t = p ? &CURTHREAD(p) : 0;
-        cprintf("########scheduler3########\n");
-        c->proc = p;
-        switchuvm(p);
-        t->state = RUNNING;
-        swtch(&(c->scheduler), p->context);
-        switchkvm();
-        // Process is done running for now.
-        // It should have changed its p->state before coming back.
-        c->proc = 0;
-    
+        p->curtid = t - p->threads;    
       }
-      // Switch to chosen process.  It is the process's job
-      // to release ptable.lock and then reacquire it
-      // before jumping back to us.
-      // c->proc = p;
-      // switchuvm(p);
-      // p->state = RUNNING;
-
-      // swtch(&(c->scheduler), p->context);
-      // switchkvm();
-
-      // // Process is done running for now.
-      // // It should have changed its p->state before coming back.
-      // c->proc = 0;
     }
+    c->proc = p;
+    switchuvm(p);
+    t->state = RUNNING;
     release(&ptable.lock);
+    swtch(&(c->scheduler), t->context);
+    switchkvm();
+    c->proc = 0;
     // cprintf("########scheduler4########\n");
   }
 }
