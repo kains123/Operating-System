@@ -348,10 +348,11 @@ struct proc * proc_choose(){
   struct thread *t;
 
   int start = 0;
-  // cprintf("########proc_choose########\n");
+  cprintf("########proc_choose########\n");
   p = myproc();
   if (p != 0)
   {
+    cprintf("########proc_choose1########\n");
     for (t = &CURTHREAD(p); ; ++t)
     {
       if (t == &p->threads[NTHREAD])
