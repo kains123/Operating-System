@@ -396,9 +396,9 @@ scheduler(void)
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
       cprintf("########scheduler1########\n");
       int start = 0;
-      if(p->state != RUNNABLE)
-        cprintf("########scheduler2########\n");
+      if(p->state != RUNNABLE) {
         continue;
+      }
       if(p != 0) {
         cprintf("########scheduler3########\n");
         for (t = &CURTHREAD(p); ; ++t)
