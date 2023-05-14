@@ -393,22 +393,6 @@ scheduler(void)
     // Enable interrupts on this processor.
     sti();
     // Loop over process table looking for process to run.
-
-    acquire(&ptable.lock);
-   
-    // p = proc_choose();
-    // t = p ? &CURTHREAD(p) : 0;
-    // if(p != 0){
-    //   cprintf("########scheduler3########\n");
-    //   c->proc = p;
-    //   switchuvm(p);
-    //   t->state = RUNNING;
-    //   swtch(&(c->scheduler), p->context);
-    //   switchkvm();
-    //   // Process is done running for now.
-    //   // It should have changed its p->state before coming back.
-    //   c->proc = 0;
-    // }
     acquire(&ptable.lock);
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
       int start = 0;
