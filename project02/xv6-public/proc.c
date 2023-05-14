@@ -414,8 +414,9 @@ scheduler(void)
             panic("invalid logic");
           start = 1;
         }
+        cprintf("*******scheduler5**********\n");   
         p->curtid = t - p->threads; 
-         cprintf("########scheduler5########\n");   
+        cprintf("########scheduler5########\n");   
       }
     }
     cprintf("########scheduler2########\n");
