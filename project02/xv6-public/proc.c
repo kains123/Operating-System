@@ -615,7 +615,7 @@ wakeup1(void *chan)
   struct proc *p;
   struct thread *t;
 
-  cprintf("&&&&&&&&WAKE_UP&&&&&&&\n");
+  // cprintf("&&&&&&&&WAKE_UP&&&&&&&\n");
 
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++)
      if(p->state == RUNNABLE) {
