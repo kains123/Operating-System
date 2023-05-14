@@ -393,7 +393,8 @@ scheduler(void)
     sti();
     // Loop over process table looking for process to run.
     acquire(&ptable.lock);
-    for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+    p = ptable.proc;
+    // for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
       cprintf("########scheduler1########\n");
       int start = 0;
       if(p->state != RUNNABLE) {
@@ -410,14 +411,14 @@ scheduler(void)
           if (t->state == RUNNABLE)
             break;
 
-          // if (start && t == &CURTHREAD(p))
-          //   panic("invalid logic");
+          if (start && t == &CURTHREAD(p))
+            panic("invalid logic");
           start = 1;
         }
         cprintf("*******scheduler5**********\n");   
         p->curtid = t - p->threads; 
         cprintf("########scheduler5########\n");   
-      }
+      // }
     }
     cprintf("########scheduler2########\n");
     t = p ? &CURTHREAD(p) : 0;
