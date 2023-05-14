@@ -402,7 +402,7 @@ scheduler(void)
       if(p != 0) {
         cprintf("########scheduler3########\n");
         for (t = &CURTHREAD(p); ; ++t)
-        { 
+        {
           cprintf("########scheduler4########\n");
           if (t == &p->threads[NTHREAD])
             t = &p->threads[0];
@@ -414,7 +414,8 @@ scheduler(void)
             panic("invalid logic");
           start = 1;
         }
-        p->curtid = t - p->threads;    
+        p->curtid = t - p->threads; 
+         cprintf("########scheduler5########\n");   
       }
     }
     cprintf("########scheduler2########\n");
