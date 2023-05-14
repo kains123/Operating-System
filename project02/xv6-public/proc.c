@@ -470,7 +470,7 @@ sched(void)
   if(readeflags()&FL_IF)
     panic("sched interruptible");
   intena = mycpu()->intena;
-  cprintf("########sched2########\n");
+
   swtch(&t->context, mycpu()->scheduler);
   cprintf("########sched3########\n");
   mycpu()->intena = intena;
@@ -499,11 +499,51 @@ sched(void)
 void
 yield(void)
 {
-  acquire(&ptable.lock);  //DOC: yieldlock
-  myproc()->state = RUNNABLE;
-  sched();
-  // cprintf("########yield########\n");
+  // acquire(&ptable.lock);  //DOC: yieldlock
+  // myproc()->state = RUNNABLE;
+  // sched();
+  // // cprintf("########yield########\n");
+  // release(&ptable.lock);
+  struct proc *p = myproc();
+  int intena;
+  struct thread *t;
+  struct thread *curthread = &CURTHREAD(p);
+  
+  acquire(&ptable.lock);
+  for (t = &p->threads[(p->curtid + 1) % NTHREAD]; ; ++t)
+  {
+    if (t == &p->threads[NTHREAD])
+      t = p->threads;
+
+    if (t == curthread)
+    {
+      if (t->state == RUNNING)
+      {
+        release(&ptable.lock);
+        return;
+      }
+
+      sched();
+      panic("zombie thread");
+    }
+    if (t->state == RUNNABLE)
+      break;
+  }
+
+  curthread->state = RUNNABLE;
+  t->state = RUNNING;
+  p->curtid = t - p->threads;
+
+  
+  pushcli();
+  mycpu()->ts.esp0 = (uint)t->kstack + KSTACKSIZE;
+  popcli();
+  intena = mycpu()->intena;
+  swtch(&curthread->context, t->context);
+  mycpu()->intena = intena;
+
   release(&ptable.lock);
+
 }
 
 // A fork child's very first scheduling by scheduler()
