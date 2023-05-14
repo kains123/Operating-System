@@ -387,7 +387,6 @@ scheduler(void)
   struct thread *t;
   struct cpu *c = mycpu();
   c->proc = 0;
-  
 
   for(;;){
     // Enable interrupts on this processor.
@@ -395,6 +394,7 @@ scheduler(void)
     // Loop over process table looking for process to run.
     acquire(&ptable.lock);
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+      cprintf("########scheduler1########\n");
       int start = 0;
       if(p->state != RUNNABLE)
         continue;
@@ -414,6 +414,7 @@ scheduler(void)
         p->curtid = t - p->threads;    
       }
     }
+    cprintf("########scheduler2########\n");
     t = p ? &CURTHREAD(p) : 0;
     c->proc = p;
     switchuvm(p);
