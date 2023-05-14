@@ -159,10 +159,9 @@ allocproc(void)
 found:
   p->state = EMBRYO;
   p->pid = nextpid++;
-
-  release(&ptable.lock);
-
+  
   t = allocthread(p);
+  release(&ptable.lock);
 
   if(t == 0)
   {
