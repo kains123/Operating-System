@@ -146,7 +146,6 @@ allocproc(void)
   struct proc *p;
   struct thread *t;
   
-
   acquire(&ptable.lock);
 
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++)
@@ -534,48 +533,9 @@ sched(void)
 void
 yield(void)
 {
-  // acquire(&ptable.lock);  //DOC: yieldlock
-  // myproc()->state = RUNNABLE;
-  // sched();
-  // // cprintf("########yield########\n");
-  // release(&ptable.lock);
-  cprintf("########YIELD0########\n");
-  struct proc *p = myproc();
-  int intena;
-  struct thread *t;
-  struct thread *curthread = &CURTHREAD(p);
-  
-  acquire(&ptable.lock);
-  for (t = &p->threads[(p->curtid + 1) % NTHREAD]; ; ++t)
-  {
-    if (t == &p->threads[NTHREAD])
-      t = p->threads;
-
-    if (t == curthread)
-    {
-      if (t->state == RUNNING)
-      {
-        release(&ptable.lock);
-        return;
-      }
-      sched();
-      panic("zombie thread");
-    }
-    if (t->state == RUNNABLE)
-      break;
-  }
-
-  curthread->state = RUNNABLE;
-  t->state = RUNNING;
-  p->curtid = t - p->threads;
-
-  pushcli();
-  mycpu()->ts.esp0 = (uint)t->kstack + KSTACKSIZE;
-  popcli();
-  intena = mycpu()->intena;
-  swtch(&curthread->context, t->context);
-  mycpu()->intena = intena;
-
+  acquire(&ptable.lock);  //DOC: yieldlock
+  thread->state = RUNNABLE;
+  sched();
   release(&ptable.lock);
 
 }
@@ -608,7 +568,7 @@ sleep(void *chan, struct spinlock *lk)
 {
   struct proc *p = myproc();
 
-  if(p == 0)
+  if(p == 0 || thread == 0)
     panic("sleep");
 
   if(lk == 0)
@@ -625,12 +585,13 @@ sleep(void *chan, struct spinlock *lk)
     release(lk);
   }
   // Go to sleep.
-  p->chan = chan;
-  p->state = SLEEPING;
+  thread->chan = chan;
+  thread->state = SLEEPING;
+  
 
   sched();
   // Tidy up.
-  p->chan = 0;
+  thread->chan = 0;
 
   // Reacquire original lock.
   if(lk != &ptable.lock){  //DOC: sleeplock2
@@ -684,7 +645,6 @@ wakeup(void *chan)
 int
 kill(int pid)
 {
-  cprintf("*******KILL**************\n");
   struct proc *p;
   struct thread *t;
   acquire(&ptable.lock);
@@ -692,7 +652,7 @@ kill(int pid)
     if(p->pid == pid){
       p->killed = 1;
       // Wake process from sleep if necessary.
-      for (t = p->threads; t < &p->threads[NTHREAD]; ++t) {
+      for (t = p->threads; t < &p->threads[NTHREAD]; t++) {
         if(t->state == SLEEPING)
           t->state = RUNNABLE;
       }

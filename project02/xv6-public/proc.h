@@ -67,6 +67,7 @@ struct proc {
   thread_t curtid;
   int limit;
   int stackpagenum;
+  struct spinlock lock;  
   uint  ustack_pool[NTHREAD];
 };
 
@@ -76,8 +77,6 @@ struct proc {
 //   expandable heap
 
 #define CURTHREAD(p) ((p)->threads[(p)->curtid])
-
-#define MAIN(p) ((p)->threads[0])
 
 extern struct cpu *cpu asm("%gs:0");       // &cpus[cpunum()]
 extern struct proc *proc asm("%gs:4");     // cpus[cpunum()].proc
