@@ -32,7 +32,6 @@ clearThread(struct thread * t)
 {
   if(t->state == INVALID || t->state == ZOMBIE)
     kfree(t->kstack);
-
   t->kstack = 0;
   t->tid = 0;
   t->state = UNUSED;
@@ -298,8 +297,6 @@ exit(void)
   struct proc *p;
   struct thread *t;
   int fd;
-
-  cprintf("************EXIT*******\n");
   if(curproc == initproc)
     panic("init exiting");
 
@@ -435,49 +432,85 @@ struct proc * proc_choose(){
 //  - eventually that process transfers control
 //      via swtch back to the scheduler.
 
+// void
+// scheduler(void)
+// {
+//   struct proc *p;
+//   struct thread *t;
+
+//   for(;;){
+//     // Enable interrupts on this processor.
+//     sti();
+//     // Loop over process table looking for process to run.
+//     acquire(&ptable.lock);
+//     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+//       if(p->state != USED)
+//           continue;
+
+//       for(t = p->threads; t < &p->threads[NTHREAD]; t++){
+//         if(t->state != RUNNABLE)
+//           continue;
+//         // Switch to chosen process.  It is the process's job
+//         // to release ptable.lock and then reacquire it
+//         // before jumping back to us.
+
+//         proc = p;
+//         thread = t;
+//         switchuvm(p);
+//         t->state = RUNNING;
+//         swtch(&cpu->scheduler, t->context);
+//         switchkvm();
+
+//         // Process is done running for now.
+//         // It should have changed its p->state before coming back.
+//         proc = 0;
+//         if(p->state != USED)
+//           t = &p->threads[NTHREAD];
+        
+//         thread = 0;
+//       }
+//       break;
+//     }
+//     release(&ptable.lock);
+//   }
+// }
+
 void
 scheduler(void)
 {
   struct proc *p;
-  struct thread *t;
-
+  struct cpu *c = mycpu();
+  c->proc = 0;
+  
   for(;;){
     // Enable interrupts on this processor.
     sti();
+
     // Loop over process table looking for process to run.
     acquire(&ptable.lock);
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-      if(p->state != USED)
-          continue;
+      if(p->state != RUNNABLE)
+        continue;
 
-      for(t = p->threads; t < &p->threads[NTHREAD]; t++){
-        if(t->state != RUNNABLE)
-          continue;
-        // Switch to chosen process.  It is the process's job
-        // to release ptable.lock and then reacquire it
-        // before jumping back to us.
+      // Switch to chosen process.  It is the process's job
+      // to release ptable.lock and then reacquire it
+      // before jumping back to us.
+      c->proc = p;
+      switchuvm(p);
+      p->state = RUNNING;
 
-        proc = p;
-        thread = t;
-        switchuvm(p);
-        t->state = RUNNING;
-        swtch(&cpu->scheduler, t->context);
-        switchkvm();
+      swtch(&(c->scheduler), p->context);
+      switchkvm();
 
-        // Process is done running for now.
-        // It should have changed its p->state before coming back.
-        proc = 0;
-        if(p->state != USED)
-          t = &p->threads[NTHREAD];
-        
-        thread = 0;
-      }
-      break;
+      // Process is done running for now.
+      // It should have changed its p->state before coming back.
+      c->proc = 0;
     }
     release(&ptable.lock);
 
   }
 }
+
 
 // Enter scheduler.  Must hold only ptable.lock
 // and have changed proc->state. Saves and restores
@@ -502,7 +535,6 @@ sched(void)
   if(readeflags()&FL_IF)
     panic("sched interruptible");
   intena = mycpu()->intena;
-
   swtch(&t->context, mycpu()->scheduler);
   cprintf("########sched3########\n");
   mycpu()->intena = intena;
