@@ -453,7 +453,6 @@ scheduler(void)
       for(t = p->threads; t < &p->threads[NTHREAD]; t++){
         if(t->state != RUNNABLE)
           continue;
-
         // Switch to chosen process.  It is the process's job
         // to release ptable.lock and then reacquire it
         // before jumping back to us.
@@ -465,7 +464,6 @@ scheduler(void)
         swtch(&cpu->scheduler, t->context);
         switchkvm();
 
-
         // Process is done running for now.
         // It should have changed its p->state before coming back.
         proc = 0;
@@ -474,7 +472,7 @@ scheduler(void)
         
         thread = 0;
       }
-
+      break;
     }
     release(&ptable.lock);
 
