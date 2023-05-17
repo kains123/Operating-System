@@ -67,7 +67,6 @@ struct proc {
   thread_t curtid;
   int limit;
   int stackpagenum;
-  struct spinlock lock;  
   uint  ustack_pool[NTHREAD];
 };
 
