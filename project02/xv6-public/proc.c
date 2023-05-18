@@ -431,6 +431,7 @@ scheduler(void)
         // to release ptable.lock and then reacquire it
         // before jumping back to us.
         c->proc = p;
+        cprintf("*******SCHDEULDER2*********\n");
         switchuvm(p);
         t->state = RUNNING;
 
