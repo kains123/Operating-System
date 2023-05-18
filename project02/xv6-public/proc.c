@@ -382,8 +382,6 @@ scheduler(void)
         // Switch to chosen process.  It is the process's job
         // to release ptable.lock and then reacquire it
         // before jumping back to us.
-
-
         proc = p;
         thread = t;
         switchuvm(p);
@@ -402,7 +400,7 @@ scheduler(void)
       }
     }
     release(&ptable.lock);
-    cprintf("************SCHEDULER*******\n");
+    // cprintf("************SCHEDULER*******\n");
 
   }
 }
