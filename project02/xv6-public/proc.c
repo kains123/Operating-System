@@ -162,15 +162,15 @@ found:
   // t = allocthread(p);
     release(&ptable.lock);
 
-  if(t == 0)
-  {
-    p->state = UNUSED;
-    return 0;
-  }
-  p->threads[0] = *t;
+  // if(t == 0)
+  // {
+  //   p->state = UNUSED;
+  //   return 0;
+  // }
+  // p->threads[0] = *t;
 
-  for(t = p->threads; t < &p->threads[NTHREAD]; t++)
-    t->state = UNUSED;
+  // for(t = p->threads; t < &p->threads[NTHREAD]; t++)
+  //   t->state = UNUSED;
 
   return p;
 }
