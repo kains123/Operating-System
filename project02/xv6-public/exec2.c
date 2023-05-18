@@ -10,7 +10,7 @@
 int
 exec2(char *path, char **argv, int stacksize)
 {
-  cprintf("exec2 GO\n");
+  
   char *s, *last;
   int i, off;
   uint argc, sz, sp, ustack[3+MAXARG+1];

@@ -238,29 +238,27 @@ fork(void)
   int i, pid;
   struct proc *np;
   struct proc *curproc = myproc();
-  struct thread *nt;
 
-  acquire(&ptable.lock);
+
   // Allocate process.
   if((np = allocproc()) == 0){
-    release(&ptable.lock);
     return -1;
   }
-  nt = np->threads;
 
   // Copy process state from proc.
   if((np->pgdir = copyuvm(curproc->pgdir, curproc->sz)) == 0){
-    kfree(np->kstack);
-    np->kstack = 0;
+    kfree(np->threads[0].kstack);
+    np->threads[0].kstack = 0;
     np->state = UNUSED;
+    np->threads[0].state = UNUSED;
     return -1;
   }
   np->sz = curproc->sz;
   np->parent = curproc;
   // *np->tf = *curproc->tf;
-  *nt->tf = *thread->tf;
+  *np->threads[0].tf = *thread->tf;
   // Clear %eax so that fork returns 0 in the child.
-  np->tf->eax = 0;
+  np->threads[0].tf->eax = 0;
 
   for(i = 0; i < NOFILE; i++)
     if(curproc->ofile[i])
@@ -271,10 +269,15 @@ fork(void)
 
   pid = np->pid;
 
-  // acquire(&ptable.lock);
+  acquire(&ptable.lock);
 
-  // np->state = RUNNABLE;
-  nt->state = RUNNABLE;
+  np->state = RUNNABLE;
+  np->threads[0].state = RUNNABLE;
+
+  for (i = 0; i < NTHREAD; ++i)
+    np->ustack_pool[i] = curproc->ustack_pool[i];
+  np->ustack_pool[0] = curproc->ustack_pool[curproc->curtid];
+  np->ustack_pool[curproc->curtid] = curproc->ustack_pool[0];
 
   release(&ptable.lock);
 
