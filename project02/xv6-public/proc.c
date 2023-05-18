@@ -715,7 +715,7 @@ int thread_create(thread_t *thread, void *(*start_routine)(void *), void *arg)
   int t_idx;
   uint sz;
 
-  struct proc *p;
+  // struct proc *p;
   char *sp;
 
   acquire(&ptable.lock);
