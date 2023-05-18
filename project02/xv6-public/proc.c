@@ -510,9 +510,11 @@ sched(void)
 void
 yield(void)
 {
+  struct proc *p = myproc();
   acquire(&ptable.lock);  //DOC: yieldlock
   // myproc()->state = RUNNABLE;
-  thread->state = RUNNABLE;
+  
+  CURTHREAD(p).state = RUNNABLE;
   sched();
   release(&ptable.lock);
 }
