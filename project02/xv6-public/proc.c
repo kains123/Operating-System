@@ -159,7 +159,7 @@ allocproc(void)
 found:
   p->state = EMBRYO;
   p->pid = nextpid++;
-  t = allocthread(p);
+  // t = allocthread(p);
     release(&ptable.lock);
 
   if(t == 0)
@@ -575,7 +575,7 @@ void
 yield(void)
 {
   acquire(&ptable.lock);  //DOC: yieldlock
-  myproc()->state = RUNNABLE;
+  thread->state = RUNNABLE;
   sched();
   release(&ptable.lock);
 }
