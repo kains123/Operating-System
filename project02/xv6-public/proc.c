@@ -257,8 +257,7 @@ fork(void)
   }
   np->sz = curproc->sz;
   np->parent = curproc;
-  // *np->tf = *curproc->tf;
-  *np->threads[0].tf = *thread->tf;
+  *np->threads[0].tf = *CURTHREAD(curproc).tf;
   // Clear %eax so that fork returns 0 in the child.
   np->threads[0].tf->eax = 0;
 

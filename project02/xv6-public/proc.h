@@ -77,6 +77,6 @@ struct proc {
 
 #define CURTHREAD(p) ((p)->threads[(p)->curtid])
 
-extern struct cpu *cpu asm("%gs:0");       // &cpus[cpunum()]
-extern struct proc *proc asm("%gs:4");     // cpus[cpunum()].proc
-extern struct thread *thread asm("%gs:8");     // cpus[cpunum()].thread
+// extern struct cpu *cpu asm("%gs:0");       // &cpus[cpunum()]
+// extern struct proc *proc asm("%gs:4");     // cpus[cpunum()].proc
+// extern struct thread *thread asm("%gs:8");     // cpus[cpunum()].thread
