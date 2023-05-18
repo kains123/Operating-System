@@ -511,9 +511,7 @@ void
 yield(void)
 {
   struct proc *p = myproc();
-  acquire(&ptable.lock);  //DOC: yieldlock
-  // myproc()->state = RUNNABLE;
-  
+  acquire(&ptable.lock);  //DOC: yieldlock 
   CURTHREAD(p).state = RUNNABLE;
   sched();
   release(&ptable.lock);
@@ -591,12 +589,12 @@ wakeup1(void *chan)
   cprintf("&&&&&&&&WAKE_UP&&&&&&&\n");
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++)
      if(p->state == RUNNABLE) {
-      acquire(&ptable.lock);
+      
       for(t = p->threads; t < &p->threads[NTHREAD]; t++) {
         if(t->state == SLEEPING && t->chan == chan)
           t->state = RUNNABLE;
       }
-      release(&ptable.lock);
+      
     }
 }
 // static void
