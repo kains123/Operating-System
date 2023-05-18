@@ -76,7 +76,6 @@ static struct proc*
 allocproc(void)
 {
   struct proc *p;
-  // struct thread *t;
   char *sp;
 
   acquire(&ptable.lock);
@@ -242,7 +241,7 @@ exit(void)
   int fd;
 
   cprintf("************EXIT*******\n");
-  if(proc == initproc)
+  if(curproc == initproc)
     panic("init exiting");
 
   // Close all open files.
@@ -472,46 +471,46 @@ scheduler(void)
 // be proc->intena and proc->ncli, but that would
 // break in the few places where a lock is held but
 // there's no process.
-void
-sched(void)
-{
-  int intena;
-  struct proc *p = myproc();
-  struct thread *t = &CURTHREAD(p);
-  cprintf("########sched1########\n");
-  if(!holding(&ptable.lock))
-    panic("sched ptable.lock");
-  if(mycpu()->ncli != 1)
-    panic("sched locks");
-  if(t->state == RUNNING)
-    panic("sched running");
-  if(readeflags()&FL_IF)
-    panic("sched interruptible");
-  intena = mycpu()->intena;
-
-  swtch(&t->context, mycpu()->scheduler);
-  cprintf("########sched3########\n");
-  mycpu()->intena = intena;
-}
-
 // void
 // sched(void)
 // {
 //   int intena;
 //   struct proc *p = myproc();
-
+//   struct thread *t = &CURTHREAD(p);
+//   cprintf("########sched1########\n");
 //   if(!holding(&ptable.lock))
 //     panic("sched ptable.lock");
 //   if(mycpu()->ncli != 1)
 //     panic("sched locks");
-//   if(p->state == RUNNING)
+//   if(t->state == RUNNING)
 //     panic("sched running");
 //   if(readeflags()&FL_IF)
 //     panic("sched interruptible");
 //   intena = mycpu()->intena;
-//   swtch(&p->context, mycpu()->scheduler);
+
+//   swtch(&t->context, mycpu()->scheduler);
+//   cprintf("########sched3########\n");
 //   mycpu()->intena = intena;
 // }
+
+void
+sched(void)
+{
+  int intena;
+  struct proc *p = myproc();
+
+  if(!holding(&ptable.lock))
+    panic("sched ptable.lock");
+  if(mycpu()->ncli != 1)
+    panic("sched locks");
+  if(p->state == RUNNING)
+    panic("sched running");
+  if(readeflags()&FL_IF)
+    panic("sched interruptible");
+  intena = mycpu()->intena;
+  swtch(&p->context, mycpu()->scheduler);
+  mycpu()->intena = intena;
+}
 
 // Give up the CPU for one scheduling round.
 void
