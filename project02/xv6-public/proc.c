@@ -511,7 +511,8 @@ void
 yield(void)
 {
   acquire(&ptable.lock);  //DOC: yieldlock
-  myproc()->state = RUNNABLE;
+  // myproc()->state = RUNNABLE;
+  thread->state = RUNNABLE;
   sched();
   release(&ptable.lock);
 }
