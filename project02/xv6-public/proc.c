@@ -412,18 +412,18 @@ scheduler(void)
   struct proc *p;
   struct thread *t;
   struct cpu *c = mycpu();
+  c->proc = 0;
 
   for(;;){
     // Enable interrupts on this processor.
     sti();
     // Loop over process table looking for process to run.
-    cprintf("*******SCHDEULDER5*********\n");
+  
     acquire(&ptable.lock);
-    cprintf("*******SCHDEULDER4*********\n");
+  
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
       if(p->state != RUNNABLE)
           continue;
-      cprintf("*******SCHDEULDER6*********\n");
       //thread num이 = 0 이면 지나가고 0 이상이면 
       for(t = p->threads; t < &p->threads[NTHREAD]; t++){
         if(t->state != RUNNABLE)
@@ -431,10 +431,8 @@ scheduler(void)
         // Switch to chosen process.  It is the process's job
         // to release ptable.lock and then reacquire it
         // before jumping back to us.
-        cprintf("*******SCHDEULDER7*********\n");
         // proc = p;
         // thread = t;
-        cprintf("*******SCHDEULDER3*********\n");
         switchuvm(p);
         cprintf("*******SCHDEULDER2*********\n");
         t->state = RUNNING;
@@ -445,11 +443,9 @@ scheduler(void)
 
         // Process is done running for now.
         // It should have changed its p->state before coming back.
-        proc = 0;
         if(p->state != RUNNABLE)
           t = &p->threads[NTHREAD];
-        
-        thread = 0;
+
       }
     }
     release(&ptable.lock);
@@ -736,13 +732,11 @@ int thread_create(thread_t *thread, void *(*start_routine)(void *), void *arg)
 
 found:
   t_idx = t - curproc->threads;
-  t->tid = nexttid++;;
-  //TODO
+  t->tid = nexttid++;
   t->state = EMBRYO;
 
   // Allocate kernel stack.
   if((t->kstack = kalloc()) == 0){
-    //TODO
     t->state = UNUSED;
     t->tid = 0;
     t->kstack = 0;
@@ -760,12 +754,10 @@ found:
   sp -= 4;
   *(uint*)sp = (uint)trapret;
 
-  sp -= sizeof *p->context;
+  sp -= sizeof *t->context;
   t->context = (struct context*)sp;
   memset(t->context, 0, sizeof *t->context);
   t->context->eip = (uint)forkret;
-
-  //TODO
 
   if (curproc->ustack_pool[t_idx] == 0)
   {
@@ -773,7 +765,7 @@ found:
     if ((sz = allocuvm(curproc->pgdir, sz, sz + PGSIZE)) == 0)
     {
       cprintf("cannot alloc user stack\n");
-      // goto bad;
+      goto bad;
     }
 
     curproc->ustack_pool[t_idx] = sz;
@@ -796,6 +788,15 @@ found:
   t->state = RUNNABLE;
   release(&ptable.lock);
   return 0;
+
+bad:
+  t->kstack = 0;
+  t->tid = 0;
+  t->state = UNUSED;
+
+  release(&ptable.lock);
+
+  return -1;
 }
 
 void thread_exit(void *retval)
