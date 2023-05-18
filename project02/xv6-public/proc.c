@@ -139,10 +139,10 @@ myproc(void) {
 static struct proc*
 allocproc(void)
 {
-  printf("ALLOC_PROC \n");
+  cprintf("ALLOC_PROC \n");
   struct proc *p;
   struct thread *t;
-  char *sp;
+  // char *sp;
 
   acquire(&ptable.lock);
 
