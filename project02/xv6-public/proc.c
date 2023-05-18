@@ -417,11 +417,13 @@ scheduler(void)
     // Enable interrupts on this processor.
     sti();
     // Loop over process table looking for process to run.
+    cprintf("*******SCHDEULDER5*********\n");
     acquire(&ptable.lock);
+    cprintf("*******SCHDEULDER4*********\n");
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
       if(p->state != RUNNABLE)
           continue;
-
+      cprintf("*******SCHDEULDER5*********\n");
       //thread num이 = 0 이면 지나가고 0 이상이면 
       for(t = p->threads; t < &p->threads[NTHREAD]; t++){
         if(t->state != RUNNABLE)
