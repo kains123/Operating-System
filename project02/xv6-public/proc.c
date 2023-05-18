@@ -72,12 +72,59 @@ myproc(void) {
 // If found, change state to EMBRYO and initialize
 // state required to run in the kernel.
 // Otherwise return 0.
+// static struct proc*
+// allocproc(void)
+// {
+//   struct proc *p;
+//   char *sp;
+  
+//   acquire(&ptable.lock);
+
+//   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++)
+//     if(p->state == UNUSED)
+//       goto found;
+
+//   release(&ptable.lock);
+//   return 0;
+
+// found:
+//   p->state = EMBRYO;
+//   p->pid = nextpid++;
+  
+//   p->threads[0].state = EMBRYO;
+//   p->threads[0].tid = nexttid++;
+//   release(&ptable.lock);
+
+//   // Allocate kernel stack.
+//   if((p->threads[0].kstack= kalloc()) == 0){
+//     p->threads[0].state = UNUSED;
+//     return 0;
+//   }
+//   sp = p->threads[0].kstack + KSTACKSIZE;
+
+//   // Leave room for trap frame.
+//   sp -= sizeof *p->threads[0].tf;
+//   p->threads[0].tf = (struct trapframe*)sp;
+
+//   // Set up new context to start executing at forkret,
+//   // which returns to trapret.
+//   sp -= 4;
+//   *(uint*)sp = (uint)trapret;
+
+//   sp -= sizeof *p->context;
+//   p->threads[0].context = (struct context*)sp;
+//   memset(p->threads[0].context, 0, sizeof *p->threads[0].context);
+//   p->threads[0].context->eip = (uint)forkret;
+//   p->curtid = 0;
+//   return p;
+// }
+
 static struct proc*
 allocproc(void)
 {
   struct proc *p;
   char *sp;
-  
+
   acquire(&ptable.lock);
 
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++)
@@ -90,21 +137,19 @@ allocproc(void)
 found:
   p->state = EMBRYO;
   p->pid = nextpid++;
-  
-  p->threads[0].state = EMBRYO;
-  p->threads[0].tid = nexttid++;
+
   release(&ptable.lock);
 
   // Allocate kernel stack.
-  if((p->threads[0].kstack= kalloc()) == 0){
-    p->threads[0].state = UNUSED;
+  if((p->kstack = kalloc()) == 0){
+    p->state = UNUSED;
     return 0;
   }
-  sp = p->threads[0].kstack + KSTACKSIZE;
+  sp = p->kstack + KSTACKSIZE;
 
   // Leave room for trap frame.
-  sp -= sizeof *p->threads[0].tf;
-  p->threads[0].tf = (struct trapframe*)sp;
+  sp -= sizeof *p->tf;
+  p->tf = (struct trapframe*)sp;
 
   // Set up new context to start executing at forkret,
   // which returns to trapret.
@@ -112,13 +157,12 @@ found:
   *(uint*)sp = (uint)trapret;
 
   sp -= sizeof *p->context;
-  p->threads[0].context = (struct context*)sp;
-  memset(p->threads[0].context, 0, sizeof *p->threads[0].context);
-  p->threads[0].context->eip = (uint)forkret;
-  p->curtid = 0;
+  p->context = (struct context*)sp;
+  memset(p->context, 0, sizeof *p->context);
+  p->context->eip = (uint)forkret;
+
   return p;
 }
-
 
 
 //PAGEBREAK: 32
