@@ -201,7 +201,7 @@ userinit(void)
 
   p->state = RUNNABLE;
   p->threads[0].state = RUNNABLE;
-
+  cprintf("*******USERINIT2*********\n");
   release(&ptable.lock);
 }
 
