@@ -433,6 +433,7 @@ scheduler(void)
         // before jumping back to us.
         // proc = p;
         // thread = t;
+        c->proc = p;
         switchuvm(p);
         cprintf("*******SCHDEULDER2*********\n");
         t->state = RUNNING;
