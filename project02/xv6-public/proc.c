@@ -242,7 +242,7 @@ exit(void)
   int fd;
 
   cprintf("************EXIT*******\n");
-  if(curproc == initproc)
+  if(proc == initproc)
     panic("init exiting");
 
   // Close all open files.
