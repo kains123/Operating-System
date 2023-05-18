@@ -27,6 +27,73 @@ pinit(void)
   initlock(&ptable.lock, "ptable");
 }
 
+void
+clearThread(struct thread * t)
+{
+  if(t->state == INVALID || t->state == ZOMBIE)
+    kfree(t->kstack);
+
+  t->kstack = 0;
+  t->tid = 0;
+  t->state = UNUSED;
+  t->killed = 0;
+}
+
+struct thread*
+allocthread(struct proc * p)
+{
+  struct thread *t;
+  char *sp;
+  int found = 0;
+
+  for(t = p->threads; found != 1 && t < &p->threads[NTHREAD]; t++)
+  {
+    if(t->state == UNUSED)
+    {
+      found = 1;
+      t--;
+    }
+    else if(t->state == ZOMBIE)
+    {
+      clearThread(t);
+      t->state = UNUSED;
+      found = 1;
+      t--;
+    }
+  }
+
+  if(!found)
+    return 0;
+
+  t->tid = nexttid++;
+  t->state = EMBRYO;
+  p->curtid = t->tid;
+  t->killed = 0;
+
+  // Allocate kernel stack.
+  if((t->kstack = kalloc()) == 0){
+    t->state = UNUSED;
+    return 0;
+  }
+  sp = t->kstack + KSTACKSIZE;
+
+  // Leave room for trap frame.
+  sp -= sizeof *t->tf;
+  t->tf = (struct trapframe*)sp;
+
+  // Set up new context to start executing at forkret,
+  // which returns to trapret.
+  sp -= 4;
+  *(uint*)sp = (uint)trapret;
+
+  sp -= sizeof *t->context;
+  t->context = (struct context*)sp;
+  memset(t->context, 0, sizeof *t->context);
+  t->context->eip = (uint)forkret;
+  return t;
+}
+
+
 // Must be called with interrupts disabled
 int
 cpuid() {
@@ -67,6 +134,7 @@ myproc(void) {
 }
 
 
+
 //PAGEBREAK: 32
 // Look in the process table for an UNUSED proc.
 // If found, change state to EMBRYO and initialize
@@ -76,7 +144,8 @@ static struct proc*
 allocproc(void)
 {
   struct proc *p;
-  char *sp;
+  struct thread *t;
+  // char *sp;
 
   acquire(&ptable.lock);
 
@@ -90,32 +159,21 @@ allocproc(void)
 found:
   p->state = EMBRYO;
   p->pid = nextpid++;
-  release(&ptable.lock);
+  t = allocthread(p);
+    release(&ptable.lock);
 
-  // Allocate kernel stack.
-  if((p->kstack = kalloc()) == 0){
+  if(t == 0)
+  {
     p->state = UNUSED;
     return 0;
   }
-  sp = p->kstack + KSTACKSIZE;
+  p->threads[0] = *t;
 
-  // Leave room for trap frame.
-  sp -= sizeof *p->tf;
-  p->tf = (struct trapframe*)sp;
-
-  // Set up new context to start executing at forkret,
-  // which returns to trapret.
-  sp -= 4;
-  *(uint*)sp = (uint)trapret;
-
-  sp -= sizeof *p->context;
-  p->context = (struct context*)sp;
-  memset(p->context, 0, sizeof *p->context);
-  p->context->eip = (uint)forkret;
+  for(t = p->threads; t < &p->threads[NTHREAD]; t++)
+    t->state = UNUSED;
 
   return p;
 }
-
 
 
 //PAGEBREAK: 32
@@ -471,46 +529,46 @@ scheduler(void)
 // be proc->intena and proc->ncli, but that would
 // break in the few places where a lock is held but
 // there's no process.
-// void
-// sched(void)
-// {
-//   int intena;
-//   struct proc *p = myproc();
-//   struct thread *t = &CURTHREAD(p);
-//   cprintf("########sched1########\n");
-//   if(!holding(&ptable.lock))
-//     panic("sched ptable.lock");
-//   if(mycpu()->ncli != 1)
-//     panic("sched locks");
-//   if(t->state == RUNNING)
-//     panic("sched running");
-//   if(readeflags()&FL_IF)
-//     panic("sched interruptible");
-//   intena = mycpu()->intena;
-
-//   swtch(&t->context, mycpu()->scheduler);
-//   cprintf("########sched3########\n");
-//   mycpu()->intena = intena;
-// }
-
 void
 sched(void)
 {
   int intena;
   struct proc *p = myproc();
-
+  struct thread *t = &CURTHREAD(p);
+  cprintf("########sched1########\n");
   if(!holding(&ptable.lock))
     panic("sched ptable.lock");
   if(mycpu()->ncli != 1)
     panic("sched locks");
-  if(p->state == RUNNING)
+  if(t->state == RUNNING)
     panic("sched running");
   if(readeflags()&FL_IF)
     panic("sched interruptible");
   intena = mycpu()->intena;
-  swtch(&p->context, mycpu()->scheduler);
+
+  swtch(&t->context, mycpu()->scheduler);
+  cprintf("########sched3########\n");
   mycpu()->intena = intena;
 }
+
+// void
+// sched(void)
+// {
+//   int intena;
+//   struct proc *p = myproc();
+
+//   if(!holding(&ptable.lock))
+//     panic("sched ptable.lock");
+//   if(mycpu()->ncli != 1)
+//     panic("sched locks");
+//   if(p->state == RUNNING)
+//     panic("sched running");
+//   if(readeflags()&FL_IF)
+//     panic("sched interruptible");
+//   intena = mycpu()->intena;
+//   swtch(&p->context, mycpu()->scheduler);
+//   mycpu()->intena = intena;
+// }
 
 // Give up the CPU for one scheduling round.
 void
