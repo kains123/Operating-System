@@ -27,19 +27,6 @@ pinit(void)
   initlock(&ptable.lock, "ptable");
 }
 
-void
-clearThread(struct thread * t)
-{
-  if(t->state == INVALID || t->state == ZOMBIE)
-    kfree(t->kstack);
-
-  t->kstack = 0;
-  t->tid = 0;
-  t->state = UNUSED;
-  t->killed = 0;
-}
-
-
 // Must be called with interrupts disabled
 int
 cpuid() {
@@ -373,6 +360,7 @@ scheduler(void)
 {
   struct proc *p;
   struct thread *t;
+  struct cpu *c = mycpu();
 
   for(;;){
     // Enable interrupts on this processor.
@@ -394,7 +382,7 @@ scheduler(void)
         thread = t;
         switchuvm(p);
         t->state = RUNNING;
-        swtch(&cpu->scheduler, t->context);
+        swtch(&(c->scheduler), t->context);
         switchkvm();
 
         // Process is done running for now.
