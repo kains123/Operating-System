@@ -39,57 +39,6 @@ clearThread(struct thread * t)
   t->killed = 0;
 }
 
-struct thread*
-allocthread(struct proc * p)
-{
-  struct thread *t;
-  char *sp;
-  int found = 0;
-  for(t = p->threads; found != 1 && t < &p->threads[NTHREAD]; t++)
-  {
-    if(t->state == UNUSED)
-    {
-      found = 1;
-      t--;
-    }
-    else if(t->state == ZOMBIE)
-    {
-      clearThread(t);
-      t->state = UNUSED;
-      found = 1;
-      t--;
-    }
-  }
-
-  if(!found)
-    return 0;
-
-  t->tid = nexttid++;
-  t->state = EMBRYO;
-  t->killed = 0;
-
-  // Allocate kernel stack.
-  if((t->kstack = kalloc()) == 0){
-    t->state = UNUSED;
-    return 0;
-  }
-  sp = t->kstack + KSTACKSIZE;
-
-  // Leave room for trap frame.
-  sp -= sizeof *t->tf;
-  t->tf = (struct trapframe*)sp;
-
-  // Set up new context to start executing at forkret,
-  // which returns to trapret.
-  sp -= 4;
-  *(uint*)sp = (uint)trapret;
-
-  sp -= sizeof *t->context;
-  t->context = (struct context*)sp;
-  memset(t->context, 0, sizeof *t->context);
-  t->context->eip = (uint)forkret;
-  return t;
-}
 
 // Must be called with interrupts disabled
 int
@@ -139,11 +88,9 @@ myproc(void) {
 static struct proc*
 allocproc(void)
 {
-  cprintf("ALLOC_PROC \n");
   struct proc *p;
-  struct thread *t;
-  // char *sp;
-
+  char *sp;
+  
   acquire(&ptable.lock);
 
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++)
@@ -156,40 +103,32 @@ allocproc(void)
 found:
   p->state = EMBRYO;
   p->pid = nextpid++;
-
-  t = allocthread(p);
+  
+  p->threads[0].state = EMBRYO;
+  p->threads[0].tid = nexttid++;
   release(&ptable.lock);
 
-  if(t == 0)
-  {
-    p->state = UNUSED;
+  // Allocate kernel stack.
+  if((p->threads[0].kstack= kalloc()) == 0){
+    p->threads[0].state = UNUSED;
     return 0;
   }
-  p->threads[0] = *t;
+  sp = p->threads[0].kstack + KSTACKSIZE;
 
-  for(t = p->threads; t < &p->threads[NTHREAD]; t++)
-    t->state = UNUSED;
-  // // Allocate kernel stack.
-  // if((p->kstack = kalloc()) == 0){
-  //   p->state = UNUSED;
-  //   return 0;
-  // }
-  // sp = p->kstack + KSTACKSIZE;
+  // Leave room for trap frame.
+  sp -= sizeof *p->threads[0].tf;
+  p->threads[0].tf = (struct trapframe*)sp;
 
-  // // Leave room for trap frame.
-  // sp -= sizeof *p->tf;
-  // p->tf = (struct trapframe*)sp;
+  // Set up new context to start executing at forkret,
+  // which returns to trapret.
+  sp -= 4;
+  *(uint*)sp = (uint)trapret;
 
-  // // Set up new context to start executing at forkret,
-  // // which returns to trapret.
-  // sp -= 4;
-  // *(uint*)sp = (uint)trapret;
-
-  // sp -= sizeof *p->context;
-  // p->context = (struct context*)sp;
-  // memset(p->context, 0, sizeof *p->context);
-  // p->context->eip = (uint)forkret;
-
+  sp -= sizeof *p->context;
+  p->threads[0].context = (struct context*)sp;
+  memset(p->threads[0].context, 0, sizeof *p->threads[0].context);
+  p->threads[0].context->eip = (uint)forkret;
+  p->curtid = 0;
   return p;
 }
 
