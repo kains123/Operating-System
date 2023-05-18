@@ -30,7 +30,7 @@ main(void)
       // exec("sh", argv);
       //TODO
       exec2("sh", argv, 100);
-      printf("&&&HERE&&&\n");
+      printf(1, "&&&HERE&&&\n");
       printf(1, "init: exec sh failed\n");
       exit();
     }
