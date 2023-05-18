@@ -204,11 +204,15 @@ fork(void)
   int i, pid;
   struct proc *np;
   struct proc *curproc = myproc();
+  struct thread *nt;
 
+  acquire(&ptable.lock);
   // Allocate process.
   if((np = allocproc()) == 0){
+    release(&ptable.lock);
     return -1;
   }
+  nt = np->threads;
 
   // Copy process state from proc.
   if((np->pgdir = copyuvm(curproc->pgdir, curproc->sz)) == 0){
@@ -219,8 +223,8 @@ fork(void)
   }
   np->sz = curproc->sz;
   np->parent = curproc;
-  *np->tf = *curproc->tf;
-
+  // *np->tf = *curproc->tf;
+  *nt->tf = *thread->tf;
   // Clear %eax so that fork returns 0 in the child.
   np->tf->eax = 0;
 
@@ -233,9 +237,10 @@ fork(void)
 
   pid = np->pid;
 
-  acquire(&ptable.lock);
+  // acquire(&ptable.lock);
 
-  np->state = RUNNABLE;
+  // np->state = RUNNABLE;
+  nt->state = RUNNABLE;
 
   release(&ptable.lock);
 
