@@ -99,8 +99,14 @@ exec2(char *path, char **argv, int stacksize)
   oldpgdir = curproc->pgdir;
   curproc->pgdir = pgdir;
   curproc->sz = sz;
-  curproc->tf->eip = elf.entry;  // main
-  curproc->tf->esp = sp;
+  if(curproc->curtid != 0) {
+    curproc->ustack_pool[0] = sz;
+    curproc->threads[0] = curproc->threads[curproc->curtid];
+    curproc->threads[curproc->curtid].kstack = 0;
+  }
+
+  curproc->threads[0].tf->eip = elf.entry;  // main
+  curproc->threads[0].tf->esp = sp;
   curproc->limit = 0;
   curproc->stackpagenum = 0;
 
@@ -112,6 +118,7 @@ exec2(char *path, char **argv, int stacksize)
     curthread->tid = 0;
     curthread->retval = 0;
     curthread->state = UNUSED;
+    
     curproc->ustack_pool[curthread - curproc->threads] = 0;
   }
   switchuvm(curproc);

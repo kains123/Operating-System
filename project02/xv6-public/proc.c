@@ -368,6 +368,8 @@ wait(void)
         cprintf("HERE\n");
         for (t = p->threads; t < &p->threads[NTHREAD]; ++t)
         {
+          
+          p->ustack_pool[t - p->threads] = 0;
           if (t->kstack != 0)
             kfree(t->kstack);
 
@@ -420,10 +422,11 @@ scheduler(void)
       if(p->state != RUNNABLE)
           continue;
 
+      //thread num이 = 0 이면 지나가고 0 이상이면 
       for(t = p->threads; t < &p->threads[NTHREAD]; t++){
         if(t->state != RUNNABLE)
           continue;
-
+        
         // Switch to chosen process.  It is the process's job
         // to release ptable.lock and then reacquire it
         // before jumping back to us.
