@@ -103,7 +103,7 @@ exec2(char *path, char **argv, int stacksize)
   curproc->limit = 0;
   curproc->stackpagenum = 0;
 
-  cprintf("EXEC2\n");
+  cprintf("*****EXEC2*****\n");
   for(curthread = &curproc->threads[1]; curthread < &curproc->threads[64]; curthread ++) {
     if (curthread->kstack)
       kfree(curthread->kstack);

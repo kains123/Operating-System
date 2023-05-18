@@ -27,9 +27,10 @@ main(void)
       exit();
     }
     if(pid == 0){
-      exec("sh", argv);
+      // exec("sh", argv);
       //TODO
-      //exec2("sh", argv, 100);
+      exec2("sh", argv, 100);
+      printf("&&&HERE&&&\n");
       printf(1, "init: exec sh failed\n");
       exit();
     }
