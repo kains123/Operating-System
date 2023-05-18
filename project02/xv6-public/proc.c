@@ -438,8 +438,9 @@ scheduler(void)
         t->state = RUNNING;
         cprintf("*******SCHDEULDER0*********\n");
         swtch(&(c->scheduler), t->context);
-        switchkvm();
         cprintf("*******SCHDEULDER1*********\n");
+        switchkvm();
+        cprintf("*******SCHDEULDER-1*********\n");
 
         // Process is done running for now.
         // It should have changed its p->state before coming back.
