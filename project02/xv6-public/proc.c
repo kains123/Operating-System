@@ -170,6 +170,7 @@ found:
 void
 userinit(void)
 {
+  cprintf("*******USERINIT*********\n");
   struct proc *p;
   extern char _binary_initcode_start[], _binary_initcode_size[];
 
@@ -199,6 +200,7 @@ userinit(void)
   acquire(&ptable.lock);
 
   p->state = RUNNABLE;
+  p->threads[0].state = RUNNABLE;
 
   release(&ptable.lock);
 }
