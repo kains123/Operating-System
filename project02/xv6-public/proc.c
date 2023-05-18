@@ -27,6 +27,19 @@ pinit(void)
   initlock(&ptable.lock, "ptable");
 }
 
+void
+clearThread(struct thread * t)
+{
+  if(t->state == INVALID || t->state == ZOMBIE)
+    kfree(t->kstack);
+
+  t->kstack = 0;
+  t->tid = 0;
+  t->state = UNUSED;
+  t->killed = 0;
+}
+
+
 // Must be called with interrupts disabled
 int
 cpuid() {
@@ -338,35 +351,6 @@ wait(void)
     sleep(curproc, &ptable.lock);  //DOC: wait-sleep
   }
  }
-
-struct proc * proc_choose(){
-  struct proc *p;
-  struct thread *t;
-
-  int start = 0;
-  cprintf("########proc_choose########\n");
-  p = myproc();
-  if (p != 0)
-  {
-    cprintf("########proc_choose1########\n");
-    for (t = &CURTHREAD(p); ; ++t)
-    {
-      if (t == &p->threads[NTHREAD])
-        t = &p->threads[0];
-
-      if (t->state == RUNNABLE)
-        break;
-
-      if (start && t == &CURTHREAD(p))
-        panic("invalid logic");
-      start = 1;
-    }
-    p->curtid = t - p->threads;
-  }
-
-  return p;
-
-}
 //PAGEBREAK: 42
 // Per-CPU process scheduler.
 // Each CPU calls scheduler() after setting itself up.
@@ -418,6 +402,7 @@ scheduler(void)
       }
     }
     release(&ptable.lock);
+    cprintf("************SCHEDULER*******\n");
 
   }
 }
@@ -587,7 +572,6 @@ wakeup1(void *chan)
   struct thread *t;
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++)
      if(p->state == RUNNABLE) {
-      
       for(t = p->threads; t < &p->threads[NTHREAD]; t++) {
         if(t->state == SLEEPING && t->chan == chan)
           t->state = RUNNABLE;
