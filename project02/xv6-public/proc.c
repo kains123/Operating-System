@@ -76,7 +76,7 @@ static struct proc*
 allocproc(void)
 {
   struct proc *p;
-  struct thread *t;
+  // struct thread *t;
   char *sp;
 
   acquire(&ptable.lock);
