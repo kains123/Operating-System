@@ -27,73 +27,6 @@ pinit(void)
   initlock(&ptable.lock, "ptable");
 }
 
-void
-clearThread(struct thread * t)
-{
-  if(t->state == INVALID || t->state == ZOMBIE)
-    kfree(t->kstack);
-
-  t->kstack = 0;
-  t->tid = 0;
-  t->state = UNUSED;
-  t->killed = 0;
-}
-
-struct thread*
-allocthread(struct proc * p)
-{
-  struct thread *t;
-  char *sp;
-  int found = 0;
-
-  for(t = p->threads; found != 1 && t < &p->threads[NTHREAD]; t++)
-  {
-    if(t->state == UNUSED)
-    {
-      found = 1;
-      t--;
-    }
-    else if(t->state == ZOMBIE)
-    {
-      clearThread(t);
-      t->state = UNUSED;
-      found = 1;
-      t--;
-    }
-  }
-
-  if(!found)
-    return 0;
-
-  t->tid = nexttid++;
-  t->state = EMBRYO;
-  p->curtid = t->tid;
-  t->killed = 0;
-
-  // Allocate kernel stack.
-  if((t->kstack = kalloc()) == 0){
-    t->state = UNUSED;
-    return 0;
-  }
-  sp = t->kstack + KSTACKSIZE;
-
-  // Leave room for trap frame.
-  sp -= sizeof *t->tf;
-  t->tf = (struct trapframe*)sp;
-
-  // Set up new context to start executing at forkret,
-  // which returns to trapret.
-  sp -= 4;
-  *(uint*)sp = (uint)trapret;
-
-  sp -= sizeof *t->context;
-  t->context = (struct context*)sp;
-  memset(t->context, 0, sizeof *t->context);
-  t->context->eip = (uint)forkret;
-  return t;
-}
-
-
 // Must be called with interrupts disabled
 int
 cpuid() {
@@ -134,7 +67,6 @@ myproc(void) {
 }
 
 
-
 //PAGEBREAK: 32
 // Look in the process table for an UNUSED proc.
 // If found, change state to EMBRYO and initialize
@@ -144,8 +76,8 @@ static struct proc*
 allocproc(void)
 {
   struct proc *p;
-  // struct thread *t;
-  // char *sp;
+  struct thread *t;
+  char *sp;
 
   acquire(&ptable.lock);
 
@@ -159,21 +91,32 @@ allocproc(void)
 found:
   p->state = EMBRYO;
   p->pid = nextpid++;
-  // t = allocthread(p);
   release(&ptable.lock);
 
-  // if(t == 0)
-  // {
-  //   p->state = UNUSED;
-  //   return 0;
-  // }
-  // p->threads[0] = *t;
+  // Allocate kernel stack.
+  if((p->kstack = kalloc()) == 0){
+    p->state = UNUSED;
+    return 0;
+  }
+  sp = p->kstack + KSTACKSIZE;
 
-  // for(t = p->threads; t < &p->threads[NTHREAD]; t++)
-  //   t->state = UNUSED;
+  // Leave room for trap frame.
+  sp -= sizeof *p->tf;
+  p->tf = (struct trapframe*)sp;
+
+  // Set up new context to start executing at forkret,
+  // which returns to trapret.
+  sp -= 4;
+  *(uint*)sp = (uint)trapret;
+
+  sp -= sizeof *p->context;
+  p->context = (struct context*)sp;
+  memset(p->context, 0, sizeof *p->context);
+  p->context->eip = (uint)forkret;
 
   return p;
 }
+
 
 
 //PAGEBREAK: 32
@@ -575,7 +518,7 @@ void
 yield(void)
 {
   acquire(&ptable.lock);  //DOC: yieldlock
-  thread->state = RUNNABLE;
+  myproc()->state = RUNNABLE;
   sched();
   release(&ptable.lock);
 }
