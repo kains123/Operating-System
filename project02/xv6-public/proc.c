@@ -137,29 +137,33 @@ allocproc(void)
 found:
   p->state = EMBRYO;
   p->pid = nextpid++;
+  p->threads[0].state = EMBRYO;
+  p->threads[0].tid = nexttid;
 
   release(&ptable.lock);
 
   // Allocate kernel stack.
-  if((p->kstack = kalloc()) == 0){
-    p->state = UNUSED;
+  if((p->threads[0].kstack = kalloc()) == 0){
+    p->threads[0].state = UNUSED;
     return 0;
   }
-  sp = p->kstack + KSTACKSIZE;
+  sp = p->threads[0].kstack + KSTACKSIZE;
 
   // Leave room for trap frame.
-  sp -= sizeof *p->tf;
-  p->tf = (struct trapframe*)sp;
+  sp -= sizeof *p->threads[0].tf;
+  p->threads[0].tf = (struct trapframe*)sp;
 
   // Set up new context to start executing at forkret,
   // which returns to trapret.
   sp -= 4;
   *(uint*)sp = (uint)trapret;
 
-  sp -= sizeof *p->context;
-  p->context = (struct context*)sp;
-  memset(p->context, 0, sizeof *p->context);
-  p->context->eip = (uint)forkret;
+  sp -= sizeof *p->threads[0].context;
+  p->threads[0].context = (struct context*)sp;
+  memset(p->context, 0, sizeof *p->threads[0].context);
+  p->threads[0].context->eip = (uint)forkret;
+
+  p->curtid = 0;
 
   return p;
 }
@@ -181,14 +185,14 @@ userinit(void)
     panic("userinit: out of memory?");
   inituvm(p->pgdir, _binary_initcode_start, (int)_binary_initcode_size);
   p->sz = PGSIZE;
-  memset(p->tf, 0, sizeof(*p->tf));
-  p->tf->cs = (SEG_UCODE << 3) | DPL_USER;
-  p->tf->ds = (SEG_UDATA << 3) | DPL_USER;
-  p->tf->es = p->tf->ds;
-  p->tf->ss = p->tf->ds;
-  p->tf->eflags = FL_IF;
-  p->tf->esp = PGSIZE;
-  p->tf->eip = 0;  // beginning of initcode.S
+  memset(p->threads[0].tf, 0, sizeof(*p->threads[0].tf));
+  p->threads[0].tf->cs = (SEG_UCODE << 3) | DPL_USER;
+  p->threads[0].tf->ds = (SEG_UDATA << 3) | DPL_USER;
+  p->threads[0].tf->es = p->threads[0].tf->ds;
+  p->threads[0].tf->ss = p->threads[0].tf->ds;
+  p->threads[0].tf->eflags = FL_IF;
+  p->threads[0].tf->esp = PGSIZE;
+  p->threads[0].tf->eip = 0;  // beginning of initcode.S
 
   safestrcpy(p->name, "initcode", sizeof(p->name));
   p->cwd = namei("/");
@@ -240,7 +244,6 @@ fork(void)
   int i, pid;
   struct proc *np;
   struct proc *curproc = myproc();
-
 
   // Allocate process.
   if((np = allocproc()) == 0){
@@ -296,7 +299,6 @@ exit(void)
   struct thread *t;
   int fd;
 
-  cprintf("************EXIT*******\n");
   if(curproc == initproc)
     panic("init exiting");
 
@@ -432,18 +434,18 @@ scheduler(void)
         // before jumping back to us.
         c->proc = p;
         switchuvm(p);
-        cprintf("*******SCHDEULDER2*********\n");
         t->state = RUNNING;
-        cprintf("*******SCHDEULDER0*********\n");
-        swtch(&(c->scheduler), t->context);
+
         cprintf("*******SCHDEULDER1*********\n");
+        swtch(&(c->scheduler), t->context);
         switchkvm();
-        cprintf("*******SCHDEULDER-1*********\n");
+        cprintf("*******SCHDEULDER0*********\n");
 
         // Process is done running for now.
         // It should have changed its p->state before coming back.
-        if(p->state != RUNNABLE)
-          t = &p->threads[NTHREAD];
+        c->proc = 0;
+        // if(p->state != RUNNABLE)
+        //   t = &p->threads[NTHREAD];
 
       }
     }
