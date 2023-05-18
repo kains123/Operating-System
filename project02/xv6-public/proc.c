@@ -144,7 +144,7 @@ static struct proc*
 allocproc(void)
 {
   struct proc *p;
-  struct thread *t;
+  // struct thread *t;
   // char *sp;
 
   acquire(&ptable.lock);
@@ -160,7 +160,7 @@ found:
   p->state = EMBRYO;
   p->pid = nextpid++;
   // t = allocthread(p);
-    release(&ptable.lock);
+  release(&ptable.lock);
 
   // if(t == 0)
   // {
