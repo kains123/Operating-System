@@ -432,11 +432,14 @@ scheduler(void)
         // before jumping back to us.
         proc = p;
         thread = t;
+        cprintf("*******SCHDEULDER3*********\n");
         switchuvm(p);
+        cprintf("*******SCHDEULDER2*********\n");
         t->state = RUNNING;
+        cprintf("*******SCHDEULDER0*********\n");
         swtch(&(c->scheduler), t->context);
         switchkvm();
-        cprintf("*******SCHDEULDER*********\n");
+        cprintf("*******SCHDEULDER1*********\n");
 
         // Process is done running for now.
         // It should have changed its p->state before coming back.
