@@ -519,7 +519,6 @@ yield(void)
   acquire(&ptable.lock);  //DOC: yieldlock
   myproc()->state = RUNNABLE;
   sched();
-  // cprintf("########yield########\n");
   release(&ptable.lock);
 }
 
@@ -773,6 +772,7 @@ found:
 
 void thread_exit(void *retval)
 {
+  cprintf("*********thread_exit************\n");
   struct proc *curproc = myproc();
   struct thread *curthread = &CURTHREAD(curproc);
 
@@ -785,7 +785,6 @@ void thread_exit(void *retval)
   curthread->state = ZOMBIE;
   curthread->retval = retval;
   sched();
-  cprintf("*********thread_exit************\n");
   panic("zombie exit");
 }
 
