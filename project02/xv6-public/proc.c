@@ -163,7 +163,6 @@ found:
   p->threads[0].context = (struct context*)sp;
   memset(p->threads[0].context, 0, sizeof *p->threads[0].context);
   p->threads[0].context->eip = (uint)forkret;
-
   return p;
 }
 
@@ -437,8 +436,9 @@ scheduler(void)
 
         cprintf("*******SCHDEULDER1*********\n");
         swtch(&(c->scheduler), t->context);
-        switchkvm();
         cprintf("*******SCHDEULDER0*********\n");
+        switchkvm();
+        cprintf("*******SCHDEULDER3*********\n");
 
         // Process is done running for now.
         // It should have changed its p->state before coming back.
