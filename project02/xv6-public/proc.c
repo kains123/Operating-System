@@ -172,7 +172,7 @@ found:
 void
 userinit(void)
 {
-  cprintf("*******USERINIT*********\n");
+  // cprintf("*******USERINIT*********\n");
   struct proc *p;
   extern char _binary_initcode_start[], _binary_initcode_size[];
 
@@ -443,14 +443,14 @@ scheduler(void)
         // to release ptable.lock and then reacquire it
         // before jumping back to us.
         c->proc = p;
-        cprintf("*******SCHDEULDER2*********\n");
+      
         switchuvm(p);
         t->state = RUNNING;
           
         swtch(&(c->scheduler), t->context);
-        cprintf("*******SCHDEULDER0*********\n");
+        
         switchkvm();
-        cprintf("*******SCHDEULDER3*********\n");
+        
         // Process is done running for now.
         // It should have changed its p->state before coming back.
         c->proc = 0;
@@ -533,7 +533,7 @@ sched(void)
   int intena;
   struct proc *p = myproc();
   struct thread *t = &CURTHREAD(p);
-  cprintf("*******SCHED*********\n");
+  // cprintf("*******SCHED*********\n");
   if(!holding(&ptable.lock))
     panic("sched ptable.lock");
   if(mycpu()->ncli != 1)
@@ -554,7 +554,7 @@ yield(void)
   struct proc *p = myproc();
   acquire(&ptable.lock);  //DOC: yieldlock 
   CURTHREAD(p).state = RUNNABLE;
-  cprintf("*******YEILD*********\n");
+  // cprintf("*******YEILD*********\n");
   sched();
   release(&ptable.lock);
 }
@@ -607,7 +607,7 @@ sleep(void *chan, struct spinlock *lk)
   // Go to sleep.
   t->chan = chan;
   t->state = SLEEPING;
-  cprintf("*******SLEEP*********\n");
+  // cprintf("*******SLEEP*********\n");
   sched();
   // Tidy up.
   t->chan = 0;
@@ -662,7 +662,7 @@ wakeup(void *chan)
 int
 kill(int pid)
 {
-  cprintf("*******KILL**************\n");
+  // cprintf("*******KILL**************\n");
   struct proc *p;
   struct thread *t;
   acquire(&ptable.lock);
