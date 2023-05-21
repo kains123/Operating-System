@@ -868,7 +868,9 @@ void list(void){
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
     // if(p->state!=RUNNING)
     //     continue;
-    cprintf("name: %s\npid: %d\nticks: %d\nstackpagenum: %d\nsz: %d\nlimit: %d\n\n", p->name,p->pid,ticks,p->stackpagenum,p->sz,p->limit);
+    if(p->pid != 0 && p->killed != 1){
+      cprintf("name: %s\npid: %d\nticks: %d\nstackpagenum: %d\nsz: %d\nlimit: %d\n\n", p->name,p->pid,ticks,p->stackpagenum,p->sz,p->limit);
+    }
   }
   release(&ptable.lock);
   return;
