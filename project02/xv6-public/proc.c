@@ -555,6 +555,7 @@ yield(void)
   struct proc *p = myproc();
   acquire(&ptable.lock);  //DOC: yieldlock 
   CURTHREAD(p).state = RUNNABLE;
+  cprintf("*******YEILD*********\n");
   sched();
   release(&ptable.lock);
 }
@@ -606,7 +607,7 @@ sleep(void *chan, struct spinlock *lk)
   // Go to sleep.
   p->chan = chan;
   p->state = SLEEPING;
-
+  cprintf("*******SLEEP*********\n");
   sched();
   // Tidy up.
   p->chan = 0;
