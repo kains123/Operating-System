@@ -214,6 +214,7 @@ growproc(int n)
 {
   uint sz;
   struct proc *curproc = myproc();
+  
   acquire(&ptable.lock); //ptable.lock
   sz = curproc->sz;
   if(n > 0){
@@ -358,7 +359,8 @@ wait(void)
       if(p->parent != curproc)
         continue;
       havekids = 1;
-      if(p->state == ZOMBIE){
+      if(p->state == ZOMBIE)
+      {
         // Found one.
         pid = p->pid;
         kfree(p->kstack);
@@ -375,11 +377,14 @@ wait(void)
           t->tid = 0;
           t->state = UNUSED;
         }
+        pid = p->pid;
+        freevm(p->pgdir);
         p->pid = 0;
         p->parent = 0;
         p->name[0] = 0;
         p->killed = 0;
         p->state = UNUSED;
+
         release(&ptable.lock);
         return pid;
       }
@@ -407,6 +412,7 @@ wait(void)
 void
 scheduler(void)
 {
+  int start = 0;
   struct proc *p;
   struct thread *t;
   struct cpu *c = mycpu();
@@ -426,6 +432,11 @@ scheduler(void)
       for(t = p->threads; t < &p->threads[NTHREAD]; t++){
         if(t->state != RUNNABLE)
           continue;
+        
+        if (start && t == &CURTHREAD(p))
+          panic("invalid logic");
+        start = 1;
+        p->curtid = t - p->threads;
         // Switch to chosen process.  It is the process's job
         // to release ptable.lock and then reacquire it
         // before jumping back to us.
@@ -433,8 +444,7 @@ scheduler(void)
         cprintf("*******SCHDEULDER2*********\n");
         switchuvm(p);
         t->state = RUNNING;
-
-        cprintf("*******SCHDEULDER1*********\n");
+        
         swtch(&(c->scheduler), t->context);
         cprintf("*******SCHDEULDER0*********\n");
         switchkvm();
