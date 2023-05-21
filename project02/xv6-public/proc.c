@@ -443,7 +443,7 @@ scheduler(void)
         c->proc = p;
         cprintf("*******SCHDEULDER2*********\n");
         switchuvm(p);
-        t->state = RUNNING;
+        // t->state = RUNNING;
         
         swtch(&(c->scheduler), t->context);
         cprintf("*******SCHDEULDER0*********\n");
