@@ -869,7 +869,7 @@ void list(void){
     // if(p->state!=RUNNING)
     //     continue;
     if(p->pid != 0 && p->killed != 1){
-      cprintf("name: %s\npid: %d\nticks: %d\nstackpagenum: %d\nsz: %d\nlimit: %d\n\n", p->name,p->pid,ticks,p->stackpagenum,p->sz,p->limit);
+      cprintf("name: %s\npid: %d \nstackpagenum: %d\nsz: %d\nlimit: %d\n\n", p->name,p->pid, p->stackpagenum,p->sz,p->limit);
     }
   }
   release(&ptable.lock);
