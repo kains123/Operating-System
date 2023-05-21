@@ -534,7 +534,7 @@ sched(void)
   int intena;
   struct proc *p = myproc();
   struct thread *t = &CURTHREAD(p);
-
+  cprintf("*******SCHED*********\n");
   if(!holding(&ptable.lock))
     panic("sched ptable.lock");
   if(mycpu()->ncli != 1)
