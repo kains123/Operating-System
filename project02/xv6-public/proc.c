@@ -889,6 +889,7 @@ int setmemorylimit(int pid, int limit) {
     if(p->pid == pid) {
       check_point = 0;
       if(p->sz >= limit) {
+        
          //if the received memory is less than limit return -1
         release(&ptable.lock);
         return -1;
@@ -904,7 +905,7 @@ int setmemorylimit(int pid, int limit) {
   }
   release(&ptable.lock);
 
-  cprintf("setmemorylimit is worked : %d \n",  curproc->limit);
+  cprintf("setmemorylimit is worked : pid: %d limit:  %d \n", p->pid, p->limit);
 
   return 0;
 }
