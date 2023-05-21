@@ -75,14 +75,6 @@ main(int argc, char *argv[])
 				index++;
 			}
 
-			// exec2(argv[0], argv, stacksize);
-			// printf(1, "failed to exec\n");
-
-			// //path
-			// char *path = (char*)malloc(sizeof(char)*15);
-			// //stacksize
-			// exec2(path, argv, stacksize);
-
 			pid = fork();
 
 			if(pid == 0) {
