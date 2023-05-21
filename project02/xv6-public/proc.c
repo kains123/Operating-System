@@ -429,32 +429,35 @@ scheduler(void)
       if(p->state != RUNNABLE)
           continue;
       //thread num이 = 0 이면 지나가고 0 이상이면 
+
       for(t = p->threads; t < &p->threads[NTHREAD]; t++){
         if(t->state != RUNNABLE)
           continue;
-        
-        if (start && t == &CURTHREAD(p))
-          panic("invalid logic");
-        start = 1;
-        p->curtid = t - p->threads;
-        // Switch to chosen process.  It is the process's job
-        // to release ptable.lock and then reacquire it
-        // before jumping back to us.
-        c->proc = p;
-        cprintf("*******SCHDEULDER2*********\n");
-        switchuvm(p);
-        // t->state = RUNNING;
-        
-        swtch(&(c->scheduler), t->context);
-        cprintf("*******SCHDEULDER0*********\n");
-        switchkvm();
-        cprintf("*******SCHDEULDER3*********\n");
 
-        // Process is done running for now.
-        // It should have changed its p->state before coming back.
-        c->proc = 0;
-        // if(p->state != RUNNABLE)
-        //   t = &p->threads[NTHREAD];
+
+        
+      if (start && t == &CURTHREAD(p))
+        panic("invalid logic");
+      start = 1;
+      p->curtid = t - p->threads;
+      // Switch to chosen process.  It is the process's job
+      // to release ptable.lock and then reacquire it
+      // before jumping back to us.
+      c->proc = p;
+      cprintf("*******SCHDEULDER2*********\n");
+      switchuvm(p);
+      t->state = RUNNING;
+        
+      swtch(&(c->scheduler), t->context);
+      cprintf("*******SCHDEULDER0*********\n");
+      switchkvm();
+      cprintf("*******SCHDEULDER3*********\n");
+
+      // Process is done running for now.
+      // It should have changed its p->state before coming back.
+      c->proc = 0;
+      if(p->state != RUNNABLE)
+        t = &p->threads[NTHREAD];
 
       }
     }
