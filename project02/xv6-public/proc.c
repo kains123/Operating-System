@@ -875,7 +875,6 @@ void list(void){
 }
 
 int setmemorylimit(int pid, int limit) {
-  struct proc *curproc = myproc();
   struct proc *p;
   int check_point = 1;
 
@@ -889,7 +888,7 @@ int setmemorylimit(int pid, int limit) {
     if(p->pid == pid) {
       check_point = 0;
       if(p->sz >= limit) {
-        
+
          //if the received memory is less than limit return -1
         release(&ptable.lock);
         return -1;
