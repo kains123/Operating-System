@@ -412,7 +412,7 @@ wait(void)
 void
 scheduler(void)
 {
-  int start = 0;
+  // int start = 0;
   struct proc *p;
   struct thread *t;
   struct cpu *c = mycpu();
@@ -435,9 +435,9 @@ scheduler(void)
       
         t = &CURTHREAD(p);
           
-        if (start && t == &CURTHREAD(p))
-          panic("invalid logic");
-        start = 1;
+        // if (start && t == &CURTHREAD(p))
+        //   panic("invalid logic");
+        // start = 1;
         p->curtid = t - p->threads;
         // Switch to chosen process.  It is the process's job
         // to release ptable.lock and then reacquire it
