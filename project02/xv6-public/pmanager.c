@@ -58,6 +58,7 @@ main(int argc, char *argv[])
 			}
 			printf(1, "*********WHAT'S WRONG 0*******\n\n");
 			continue;
+			
 		} else if(array[0]==cmd3[0]){
 			printf(1,"<<EXECUTE>>\n");
 			int pid;
