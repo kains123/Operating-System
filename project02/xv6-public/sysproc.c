@@ -133,7 +133,7 @@ sys_thread_join(void)
   
   if(argptr(1, (char **)&retval, sizeof retval) < 0)
     return -1;
-
+    
   return thread_join(thread, retval);
 }
 
