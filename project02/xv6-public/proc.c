@@ -679,7 +679,7 @@ kill(int pid)
         cprintf("*******KILL 4**************\n");
       }
       cprintf("*******KILL 5**************\n");
-      release(&ptable.lock);
+      // release(&ptable.lock);
       return 0;
     }
   }
