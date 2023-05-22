@@ -788,8 +788,8 @@ found:
 
   //go to start_routine
   cprintf("Thread_create 2 \n");
-  t->tf->eip = (uint)start_routine;
   t->tf->esp = (uint)sp;
+  t->tf->eip = (uint)start_routine;
 
   *thread = t->tid;
 

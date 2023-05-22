@@ -151,6 +151,7 @@ racingtest(void)
   gcnt = 0;
   
   for (i = 0; i < NUM_THREAD; i++){
+    printf(1,"THREAD_RACING\n");
     if (thread_create(&threads[i], racingthreadmain, (void*)i) != 0){
       printf(1, "panic at thread_create\n");
       return -1;
