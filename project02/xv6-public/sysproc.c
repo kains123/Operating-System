@@ -93,6 +93,7 @@ sys_uptime(void)
 int
 sys_thread_create(void)
 {
+  cprintf(1, "SYS_THERAD_CALL");
   thread_t *thread;
   void *(*start_routine)(void*);
   void *arg;
