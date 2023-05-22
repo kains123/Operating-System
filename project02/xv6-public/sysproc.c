@@ -107,8 +107,6 @@ sys_thread_create(void)
     return -1;  
 
   return thread_create(thread, start_routine, arg);
-
-  return 0;
 }
 
 int

@@ -637,15 +637,6 @@ wakeup1(void *chan)
       
     }
 }
-// static void
-// wakeup1(void *chan)
-// {
-//   struct proc *p;
-
-//   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++)
-//     if(p->state == SLEEPING && p->chan == chan)
-//       p->state = RUNNABLE;
-// }
 
 // Wake up all processes sleeping on chan.
 void
@@ -824,8 +815,8 @@ void thread_exit(void *retval)
   wakeup1((void*)curthread->tid);
 
   // Jump into the scheduler, never to return.
-  curthread->state = ZOMBIE;
   curthread->retval = retval;
+  curthread->state = ZOMBIE;
   sched();
   panic("zombie exit");
 }
@@ -855,7 +846,7 @@ found:
 
   if (retval != 0)
     *retval = t->retval;
-    
+
   kfree(t->kstack);
   t->kstack = 0;
   t->retval = 0;
