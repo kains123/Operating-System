@@ -136,6 +136,7 @@ racingthreadmain(void *arg)
 	asm volatile("call %P0"::"i"(nop));
     gcnt = tmp;
   }
+  printf(1,"THREAD_EXIT: TID: %d\n", tid);
   thread_exit((void *)(tid+1));
 
   return 0;

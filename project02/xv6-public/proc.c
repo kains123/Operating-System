@@ -819,6 +819,7 @@ void thread_exit(void *retval)
   // Jump into the scheduler, never to return.
   curthread->retval = retval;
   curthread->state = ZOMBIE;
+  
   sched();
   panic("zombie exit");
 }
