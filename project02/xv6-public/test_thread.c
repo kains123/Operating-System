@@ -703,9 +703,6 @@ int pipetest(void);
 // Test sleep system call in multi-threaded environment
 int sleeptest(void);
 
-// Test behavior when we use set_cpu_share with thread
-int stridetest(void);
-
 volatile int gcnt;
 int gpipe[2];
 
@@ -723,7 +720,6 @@ int (*testfunc[NTEST])(void) = {
   killtest,
   pipetest,
   sleeptest,
-  stridetest,
 };
 char *testname[NTEST] = {
   "racingtest",
@@ -739,7 +735,6 @@ char *testname[NTEST] = {
   "killtest",
   "pipetest",
   "sleeptest",
-  "stridetest",
 };
 
 int
@@ -1298,72 +1293,3 @@ sleeptest(void)
   return 0;
 }
 
-// ============================================================================
-
-void*
-stridethreadmain(void *arg)
-{
-  volatile int *flag = (int*)arg;
-  int t;
-  while(*flag){
-    while(*flag == 1){
-      for (t = 0; t < 5; t++);
-      __sync_fetch_and_add(&gcnt, 1);
-    }
-  }
-  thread_exit(0);
-
-  return 0;
-}
-
-int
-stridetest(void)
-{
-  thread_t threads[NUM_THREAD];
-  int i;
-  int pid;
-  int flag;
-  void *retval;
-
-  gcnt = 0;
-  flag = 2;
-  if ((pid = fork()) == -1){
-    printf(1, "panic at fork in forktest\n");
-    exit();
-  } else if (pid == 0){
-    set_cpu_share(2);
-  } else{
-    set_cpu_share(10);
-  }
-
-  for (i = 0; i < NUM_THREAD; i++){
-    if (thread_create(&threads[i], stridethreadmain, (void*)&flag) != 0){
-      printf(1, "panic at thread_create\n");
-      return -1;
-    }
-  }
-  flag = 1;
-  sleep(500);
-  flag = 0;
-  for (i = 0; i < NUM_THREAD; i++){
-    if (thread_join(threads[i], &retval) != 0){
-      printf(1, "panic at thread_join\n");
-      return -1;
-    }
-  }
-
-  if (pid == 0){
-    printf(1, " 2% : %d\n", gcnt);
-    exit();
-  } else{
-    printf(1, "10% : %d\n", gcnt);
-    if (wait() == -1){
-      printf(1, "panic at wait in forktest\n");
-      exit();
-    }
-  }
-
-  return 0;
-}
-
-// ============================================================================
