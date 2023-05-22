@@ -662,7 +662,7 @@ wakeup(void *chan)
 int
 kill(int pid)
 {
-  cprintf("*******KILL**************\n");
+  cprintf("*******KILL START**************\n");
   struct proc *p;
   struct thread *t;
   acquire(&ptable.lock);
@@ -679,6 +679,7 @@ kill(int pid)
     }
   }
   release(&ptable.lock);
+  cprintf("*******KILL END**************\n");
   return -1;
 }
 
