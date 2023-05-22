@@ -714,7 +714,7 @@ procdump(void)
 
 int thread_create(thread_t *thread, void *(*start_routine)(void *), void *arg)
 {
-  cprintf("Thread_create\n");
+  cprintf("Thread_create 0 \n");
   struct proc *curproc = myproc();
   struct thread *t;
   int t_idx;
@@ -736,6 +736,7 @@ int thread_create(thread_t *thread, void *(*start_routine)(void *), void *arg)
   return -1;
 
 found:
+  cprintf("Thread_create 1 \n");
   t_idx = t - curproc->threads;
   t->tid = nexttid++;
   t->state = EMBRYO;
@@ -786,6 +787,7 @@ found:
   *(uint *)sp = 0xffffffff;
 
   //go to start_routine
+  cprintf("Thread_create 2 \n");
   t->tf->eip = (uint)start_routine;
   t->tf->esp = (uint)sp;
 
@@ -819,7 +821,7 @@ void thread_exit(void *retval)
   // Jump into the scheduler, never to return.
   curthread->retval = retval;
   curthread->state = ZOMBIE;
-  
+
   sched();
   panic("zombie exit");
 }

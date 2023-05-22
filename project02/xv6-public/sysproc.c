@@ -93,7 +93,6 @@ sys_uptime(void)
 int
 sys_thread_create(void)
 {
-  cprintf("SYS_THERAD_CREATE_CALL\n");
   thread_t *thread;
   void *(*start_routine)(void*);
   void *arg;
@@ -107,6 +106,7 @@ sys_thread_create(void)
   if (argptr(2, (char **)&arg, sizeof arg) < 0)
     return -1;  
 
+  
   return thread_create(thread, start_routine, arg);
 }
 
