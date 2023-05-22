@@ -844,7 +844,7 @@ int thread_join(thread_t thread, void **retval){
           cprintf("*********thread_join************\n");
           goto found;
         }
-
+  cprintf("*********thread_join_-1************\n");
   release(&ptable.lock);
   return -1;
 
