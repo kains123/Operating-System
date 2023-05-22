@@ -841,8 +841,9 @@ int thread_join(thread_t thread, void **retval){
     if (p->state == RUNNABLE)
       for (t = p->threads; t < &p->threads[NTHREAD]; ++t)
         if (t->tid == thread && t->state != UNUSED)
+          cprintf("*********thread_join************\n");
           goto found;
-          
+
   release(&ptable.lock);
   return -1;
 

@@ -49,7 +49,7 @@ int (*testfunc[NTEST])(void) = {
   basictest,
   jointest1,
   jointest2,
-  // stresstest,
+  stresstest,
   exittest1,
   exittest2,
   forktest,
@@ -65,7 +65,7 @@ char *testname[NTEST] = {
   "basictest",
   "jointest1",
   "jointest2",
-  // "stresstest",
+  "stresstest",
   "exittest1",
   "exittest2",
   "forktest",
@@ -271,41 +271,41 @@ jointest2(void)
 
 // ============================================================================
 
-// void*
-// stressthreadmain(void *arg)
-// {
-//   thread_exit(0);
+void*
+stressthreadmain(void *arg)
+{
+  thread_exit(0);
 
-//   return 0;
-// }
+  return 0;
+}
 
-// int
-// stresstest(void)
-// {
-//   const int nstress = 35000;
-//   thread_t threads[NUM_THREAD];
-//   int i, n;
-//   void *retval;
+int
+stresstest(void)
+{
+  const int nstress = 35000;
+  thread_t threads[NUM_THREAD];
+  int i, n;
+  void *retval;
 
-//   for (n = 1; n <= nstress; n++){
-//     if (n % 1000 == 0)
-//       printf(1, "%d\n", n);
-//     for (i = 0; i < NUM_THREAD; i++){
-//       if (thread_create(&threads[i], stressthreadmain, (void*)i) != 0){
-//         printf(1, "panic at thread_create\n");
-//         return -1;
-//       }
-//     }
-//     for (i = 0; i < NUM_THREAD; i++){
-//       if (thread_join(threads[i], &retval) != 0){
-//         printf(1, "panic at thread_join\n");
-//         return -1;
-//       }
-//     }
-//   }
-//   printf(1, "\n");
-//   return 0;
-// }
+  for (n = 1; n <= nstress; n++){
+    if (n % 1000 == 0)
+      printf(1, "%d\n", n);
+    for (i = 0; i < NUM_THREAD; i++){
+      if (thread_create(&threads[i], stressthreadmain, (void*)i) != 0){
+        printf(1, "panic at thread_create\n");
+        return -1;
+      }
+    }
+    for (i = 0; i < NUM_THREAD; i++){
+      if (thread_join(threads[i], &retval) != 0){
+        printf(1, "panic at thread_join\n");
+        return -1;
+      }
+    }
+  }
+  printf(1, "\n");
+  return 0;
+}
 
 // ============================================================================
 
