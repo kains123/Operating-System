@@ -50,17 +50,18 @@ main(int argc, char *argv[])
 			pid[j] = '\0';
 			int pid_num = atoi(pid);
 
-			printf(1, "------ %d ------\n", pid_num);
+			printf(1, "------ pid: %d ------\n", pid_num);
 			if(kill(pid_num) == -1) {
 				printf(1, "kill failed\n");
 			} else {
 				printf(1, "kill success\n\n");
 			}
-			printf(1, "*********WHAT'S WRONG 0*******\n\n");
+			// printf(1, "*********WHAT'S WRONG 0*******\n\n");
 			continue;
-			
+
 		} else if(array[0]==cmd3[0]){
 			printf(1,"<<EXECUTE>>\n");
+			//execute <path> <stacksize>
 			int pid;
 			int stacksize = 100;
 			int index = 8;
@@ -88,6 +89,9 @@ main(int argc, char *argv[])
 				index++;
 			}
 
+			
+			printf(1, "------ path: %s / stacksize: %d ------\n\n", path[0], stacksize);
+
 			pid = fork();
 
 			if(pid == 0) {
@@ -108,6 +112,7 @@ main(int argc, char *argv[])
 			else {
 				printf(1, "failed to fork\n");
 			}
+
 			continue;
 	  } else if(array[0]==cmd4[0]){
 			printf(1,"\n<<MEMLIM>>\n");
@@ -131,6 +136,8 @@ main(int argc, char *argv[])
 				limit += array[idx] - 48;
 				idx++;
 			}
+
+			printf(1, "------ pid: %d / limit: %d ------\n\n", pid, limit);
 
 			if(setmemorylimit(pid, limit) == -1) {
 				printf(1, "setmemorylimit failed\n");
