@@ -157,6 +157,7 @@ racingtest(void)
   }
   for (i = 0; i < NUM_THREAD; i++){
     if (thread_join(threads[i], &retval) != 0 || (int)retval != i+1){
+      printf(1, "racing thread_join!!!\n");
       printf(1, "panic at thread_join\n");
       return -1;
     }
@@ -196,6 +197,7 @@ basictest(void)
   }
   for (i = 0; i < NUM_THREAD; i++){
     if (thread_join(threads[i], &retval) != 0 || (int)retval != i+1){
+      printf(1, "basic thread_join!!!\n");
       printf(1, "panic at thread_join\n");
       return -1;
     }
@@ -231,9 +233,9 @@ jointest1(void)
     }
   }
 
-  printf(1, "thread_join!!!\n");
   for (i = 1; i <= NUM_THREAD; i++){
     if (thread_join(threads[i-1], &retval) != 0 || (int)retval != i * 2 ){
+      printf(1, "one thread_join!!!\n");
       printf(1, "panic at thread_join\n");
       return -1;
     }
@@ -256,9 +258,9 @@ jointest2(void)
     }
   }
   sleep(500);
-  printf(1, "thread_join!!!\n");
   for (i = 1; i <= NUM_THREAD; i++){
     if (thread_join(threads[i-1], &retval) != 0 || (int)retval != i * 2 ){
+      printf(1, "two thread_join!!!\n");
       printf(1, "panic at thread_join\n");
       return -1;
     }
@@ -395,6 +397,7 @@ forktest(void)
   }
   for (i = 0; i < NUM_THREAD; i++){
     if (thread_join(threads[i], &retval) != 0){
+      printf(1, "fork thread_join!!!\n");
       printf(1, "panic at thread_join\n");
       return -1;
     }
@@ -430,6 +433,7 @@ exectest(void)
   }
   for (i = 0; i < NUM_THREAD; i++){
     if (thread_join(threads[i], &retval) != 0){
+      printf(1, "exec thread_join!!!\n");
       printf(1, "panic at thread_join\n");
       return -1;
     }
@@ -479,6 +483,7 @@ sbrktest(void)
   }
   for (i = 0; i < NUM_THREAD; i++){
     if (thread_join(threads[i], &retval) != 0){
+      printf(1, "sbrk thread_join!!!\n");
       printf(1, "panic at thread_join\n");
       return -1;
     }
@@ -511,6 +516,7 @@ killtest(void)
   }
   for (i = 0; i < NUM_THREAD; i++){
     if (thread_join(threads[i], &retval) != 0){
+      printf(1, "kill thread_join!!!\n");
       printf(1, "panic at thread_join\n");
       return -1;
     }
@@ -572,6 +578,7 @@ pipetest(void)
     }
     for (i = 0; i < NUM_THREAD; i++){
       if (thread_join(threads[i], &retval) != 0){
+        printf(1, "pipe thread_join!!!\n");
         printf(1, "panic at thread_join\n");
         return -1;
       }
@@ -590,6 +597,7 @@ pipetest(void)
     }
     for (i = 0; i < NUM_THREAD; i++){
       if (thread_join(threads[i], &retval) != 0){
+        printf(1, "pipe thread_join!!!\n");
         printf(1, "panic at thread_join\n");
         return -1;
       }
