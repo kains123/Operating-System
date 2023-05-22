@@ -118,6 +118,7 @@ sys_thread_exit(void)
 
   if (argptr(0, (char **)&retval, sizeof retval) < 0)
     return -1;
+  thread_exit(retval);
 
   return 0;
 }
@@ -133,7 +134,7 @@ sys_thread_join(void)
   
   if(argptr(1, (char **)&retval, sizeof retval) < 0)
     return -1;
-    
+
   return thread_join(thread, retval);
 }
 
