@@ -50,7 +50,7 @@ main(int argc, char *argv[])
 			pid[j] = '\0';
 			int pid_num = atoi(pid);
 
-			printf("------ %d ------\n", pid_num);
+			printf(1, "------ %d ------\n", pid_num);
 			if(kill(pid_num) == -1) {
 				printf(1, "kill failed\n");
 			} else {
