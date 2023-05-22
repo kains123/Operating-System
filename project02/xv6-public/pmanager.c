@@ -55,9 +55,9 @@ main(int argc, char *argv[])
 				printf(1, "kill failed\n");
 			} else {
 				printf(1, "kill success\n\n");
-			}	
+			}
+			printf(1, "*********WHAT'S WRONG 0*******\n\n");
 			continue;
-
 		} else if(array[0]==cmd3[0]){
 			printf(1,"<<EXECUTE>>\n");
 			int pid;
@@ -107,8 +107,6 @@ main(int argc, char *argv[])
 			else {
 				printf(1, "failed to fork\n");
 			}
-
-
 			continue;
 	  } else if(array[0]==cmd4[0]){
 			printf(1,"\n<<MEMLIM>>\n");
