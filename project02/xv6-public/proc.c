@@ -714,6 +714,7 @@ procdump(void)
 
 int thread_create(thread_t *thread, void *(*start_routine)(void *), void *arg)
 {
+  cprintf("Thread_create\n");
   struct proc *curproc = myproc();
   struct thread *t;
   int t_idx;
