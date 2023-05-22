@@ -836,11 +836,13 @@ int thread_join(thread_t thread, void **retval){
   struct thread *t;
 
   acquire(&ptable.lock);
+
   for (p = ptable.proc; p < &ptable.proc[NPROC]; ++p)
     if (p->state == RUNNABLE)
       for (t = p->threads; t < &p->threads[NTHREAD]; ++t)
         if (t->tid == thread && t->state != UNUSED)
           goto found;
+          
   release(&ptable.lock);
   return -1;
 
