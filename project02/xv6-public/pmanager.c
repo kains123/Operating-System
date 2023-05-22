@@ -16,14 +16,17 @@ main(int argc, char *argv[])
 	char *cmd4 = "memlim"; //memlim <pid> <limit>
 	char *cmd5 = "exit"; //exit
 
-	printf(1,"[PMANAGER]\n");
+	printf(1,"[PMANAGER]\n\n");
+
 	while(getcmd(array, sizeof(array)) >= 0){
+
 		while((fd = open("console", 0x002)) >= 0) {
 			if(fd >= 3) {
 				close(fd);
 				break;
 			}
 		}
+
 		if(array[0]==cmd5[0] && array[1]==cmd5[1] && array[2]==cmd5[2] && array[3]==cmd5[3]){
 			printf(1,"\n<<EXIT>>\n");
 			exit();
@@ -37,15 +40,24 @@ main(int argc, char *argv[])
 			printf(1,"\n<<KILL>>\n");
 			char *pid = (char*)malloc(sizeof(char)*15);
 			int j = 0;
+
+			
 			for(int i=5; i<strlen(array); i++){
 				pid[j] = array[i];
 				j++;
 			}
+
 			pid[j] = '\0';
 			int pid_num = atoi(pid);
-			// printf("------ %s ------\n", pid_num);
-			kill(pid_num);
+
+			printf("------ %s ------\n", pid_num);
+			if(kill(pid_num) == -1) {
+				printf(1, "kill failed\n");
+			} else {
+				printf(1, "kill success\n\n");
+			}	
 			continue;
+
 		} else if(array[0]==cmd3[0]){
 			printf(1,"<<EXECUTE>>\n");
 			int pid;
@@ -102,12 +114,32 @@ main(int argc, char *argv[])
 			printf(1,"\n<<MEMLIM>>\n");
 			int pid = 0;
 			int limit = 100;
-			if(setmemorylimit(pid, limit) == -1) {
-				printf(1, "setmemorylimit failed.\n");
+			int idx = 7;
+			if(array[idx] == " " || array[idx] == "\n"){
+				continue;
 			}
+
+			while (48 <= array[idx] && array[idx] <= 57)
+			{
+				pid *= 10;
+				pid += array[idx] - 48;
+				idx++;
+			}
+			idx++;
+			
+			while(48 <= array[idx] && array[idx] <= 57) {
+				limit *= 10;
+				limit += array[idx] - 48;
+				idx++;
+			}
+
+			if(setmemorylimit(pid, limit) == -1) {
+				printf(1, "setmemorylimit failed\n");
+			} else {
+				printf(1, "set memory limit success\n\n");
+			}	
 			continue;
 	  }
-		
   }
 	exit();
 };

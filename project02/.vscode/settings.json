@@ -8,6 +8,8 @@
     "spinlock.h": "c",
     "thread": "c",
     "random": "c",
-    "__threading_support": "c"
+    "__threading_support": "c",
+    "chrono": "c",
+    "variant": "c"
   }
 }
