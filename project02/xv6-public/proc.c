@@ -665,7 +665,7 @@ kill(int pid)
   cprintf("*******KILL START**************\n");
   struct proc *p;
   struct thread *t;
-  acquire(&ptable.lock);
+  // acquire(&ptable.lock);
   cprintf("*******KILL 1**************\n");
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
     if(p->pid == pid){
@@ -683,7 +683,7 @@ kill(int pid)
       return 0;
     }
   }
-  release(&ptable.lock);
+  // release(&ptable.lock);
   cprintf("*******KILL END**************\n");
   return -1;
 }
