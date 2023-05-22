@@ -732,7 +732,7 @@ int thread_create(thread_t *thread, void *(*start_routine)(void *), void *arg)
 
   release(&ptable.lock);
   
-  return 0;
+  return -1;
 
 found:
   t_idx = t - curproc->threads;
@@ -741,6 +741,7 @@ found:
 
   // Allocate kernel stack.
   if((t->kstack = kalloc()) == 0){
+    cprintf("Issue!\n thread_create\n");
     t->state = UNUSED;
     t->tid = 0;
     t->kstack = 0;
