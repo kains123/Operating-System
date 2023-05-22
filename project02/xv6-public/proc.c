@@ -666,14 +666,19 @@ kill(int pid)
   struct proc *p;
   struct thread *t;
   acquire(&ptable.lock);
+  cprintf("*******KILL 1**************\n");
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
     if(p->pid == pid){
+      cprintf("*******KILL 2**************\n");
       p->killed = 1;
       // Wake process from sleep if necessary.
       for (t = p->threads; t < &p->threads[NTHREAD]; ++t) {
+        cprintf("*******KILL 3**************\n");
         if(t->state == SLEEPING)
           t->state = RUNNABLE;
+        cprintf("*******KILL 4**************\n");
       }
+      cprintf("*******KILL 5**************\n");
       release(&ptable.lock);
       return 0;
     }
