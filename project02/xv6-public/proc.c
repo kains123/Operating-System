@@ -844,8 +844,8 @@ found:
     sleep((void*)thread, &ptable.lock);
   }
 
-  if (retval != 0)
-    *retval = t->retval;
+  // if (retval != 0)
+  *retval = t->retval;
 
   kfree(t->kstack);
   t->kstack = 0;
