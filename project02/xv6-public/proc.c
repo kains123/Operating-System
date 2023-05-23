@@ -783,7 +783,6 @@ found:
   *(uint *)sp = 0xffffffff;
 
   //go to start_routine
-  cprintf("Thread_create 2 \n");
   t->tf->esp = (uint)sp;
   t->tf->eip = (uint)start_routine;
 
@@ -845,6 +844,7 @@ found:
   }
 
   // if (retval != 0)
+  cprintf("\n&&&&&&&&&&&%d&&&&&&&&&&&&&&\n", t->retval);
   *retval = t->retval;
 
   kfree(t->kstack);
