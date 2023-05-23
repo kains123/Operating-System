@@ -278,9 +278,9 @@ fork(void)
   np->threads[0].state = RUNNABLE;
 
   for (i = 0; i < NTHREAD; ++i)
-    np->ustack_pool[i] = curproc->ustack_pool[i];
-  np->ustack_pool[0] = curproc->ustack_pool[curproc->curtid];
-  np->ustack_pool[curproc->curtid] = curproc->ustack_pool[0];
+    np->user_stack_pool[i] = curproc->user_stack_pool[i];
+  np->user_stack_pool[0] = curproc->user_stack_pool[curproc->curtid];
+  np->user_stack_pool[curproc->curtid] = curproc->user_stack_pool[0];
 
   release(&ptable.lock);
 
@@ -369,7 +369,7 @@ wait(void)
         cprintf("HERE\n");
         for (t = p->threads; t < &p->threads[NTHREAD]; ++t)
         {
-          p->ustack_pool[t - p->threads] = 0;
+          p->user_stack_pool[t - p->threads] = 0;
           if (t->kstack != 0)
             kfree(t->kstack);
 
@@ -714,7 +714,6 @@ procdump(void)
 
 int thread_create(thread_t *thread, void *(*start_routine)(void *), void *arg)
 {
-  cprintf("Thread_create 0 \n");
   struct proc *curproc = myproc();
   struct thread *t;
   int t_idx;
@@ -725,8 +724,6 @@ int thread_create(thread_t *thread, void *(*start_routine)(void *), void *arg)
 
   acquire(&ptable.lock);
 
-  // for(p = ptable.proc; p < &ptable.proc[NPROC]; p++)
-  //   if(p->state == UNUSED)
   for (t = curproc->threads; t < &curproc->threads[NTHREAD]; ++t)
     if (t->state == UNUSED)
       goto found;
@@ -736,7 +733,6 @@ int thread_create(thread_t *thread, void *(*start_routine)(void *), void *arg)
   return -1;
 
 found:
-  cprintf("Thread_create 1 \n");
   t_idx = t - curproc->threads;
   t->tid = nexttid++;
   t->state = EMBRYO;
@@ -766,7 +762,7 @@ found:
   memset(t->context, 0, sizeof *t->context);
   t->context->eip = (uint)forkret;
 
-  if (curproc->ustack_pool[t_idx] == 0)
+  if (curproc->user_stack_pool[t_idx] == 0)
   {
     sz = PGROUNDUP(curproc->sz);
     if ((sz = allocuvm(curproc->pgdir, sz, sz + PGSIZE)) == 0)
@@ -775,10 +771,10 @@ found:
       goto bad;
     }
 
-    curproc->ustack_pool[t_idx] = sz;
+    curproc->user_stack_pool[t_idx] = sz;
     curproc->sz = sz;
   }
-  sp = (char *)curproc->ustack_pool[t_idx];
+  sp = (char *)curproc->user_stack_pool[t_idx];
 
   sp -= 4;
   *(uint *)sp = (uint)arg;
@@ -840,7 +836,6 @@ int thread_join(thread_t thread, void **retval){
           cprintf("*********thread_join************\n");
           goto found;
         }
-  cprintf("*********thread_join_-1************\n");
   release(&ptable.lock);
   return -1;
 

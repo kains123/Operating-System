@@ -100,7 +100,7 @@ exec2(char *path, char **argv, int stacksize)
   curproc->pgdir = pgdir;
   curproc->sz = sz;
   if(curproc->curtid != 0) {
-    curproc->ustack_pool[0] = sz;
+    curproc->user_stack_pool[0] = sz;
     curproc->threads[0] = curproc->threads[curproc->curtid];
     curproc->threads[curproc->curtid].kstack = 0;
   }
@@ -119,8 +119,8 @@ exec2(char *path, char **argv, int stacksize)
     curthread->tid = 0;
     curthread->retval = 0;
     curthread->state = UNUSED;
-    
-    curproc->ustack_pool[curthread - curproc->threads] = 0;
+  
+    curproc->user_stack_pool[curthread - curproc->threads] = 0;
   }
   switchuvm(curproc);
   freevm(oldpgdir);

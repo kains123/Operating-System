@@ -25,7 +25,7 @@ char* sbrk(int);
 int sleep(int);
 int uptime(void);
 int thread_create(thread_t *thread, void *(*start_routine)(void *), void *arg);
-void thread_exit(void *retval);
+int thread_exit(void *retval);
 int  thread_join(thread_t thread, void **retval);
 void list(void);
 int setmemorylimit(int pid, int limit);

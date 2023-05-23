@@ -64,10 +64,10 @@ struct proc {
   struct inode *cwd;           // Current directory
   char name[16];               // Process name (debugging)
   struct thread threads[NTHREAD]; //threads in process
-  thread_t curtid;
-  int limit;
-  int stackpagenum;
-  uint  ustack_pool[NTHREAD];
+  thread_t curtid;              //currund thread's id
+  int limit;                    //limit
+  int stackpagenum;             //stack page number
+  uint  user_stack_pool[NTHREAD]; // user_stack_pool
 };
 
 // Process memory is laid out contiguously, low addresses first:
