@@ -844,7 +844,7 @@ found:
   }
 
   // if (retval != 0)
-  cprintf("\n&&&&&&&&&&&%d&&&&&&&&&&&&&&\n", t->retval);
+  cprintf("\n&&&&&&&&&&&%d&&&&&&&&&&&&&&\n", retval);
   *retval = t->retval;
 
   kfree(t->kstack);

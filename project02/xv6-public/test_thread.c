@@ -159,7 +159,6 @@ racingtest(void)
   }
 
   for (i = 0; i < NUM_THREAD; i++){
-    printf(1," (int)retval : %d\n\n",  &retval);
     if (thread_join(threads[i], &retval) != 0 || (int)retval != i+1){
   
       printf(1, "racing thread_join!!!\n");
