@@ -206,9 +206,9 @@ userinit(void)
   cprintf("*******USERINIT2*********\n");
   release(&ptable.lock);
 }
-
 // Grow current process's memory by n bytes.
 // Return 0 on success, -1 on failure.
+//sbrk() -> process에 memory할당하는 system call
 int
 growproc(int n)
 {
@@ -862,8 +862,6 @@ void list(void){
   acquire(&ptable.lock);
   struct proc *p;
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-    // if(p->state!=RUNNING)
-    //     continue;
     //RUNNABLE, RUNNING, SLEEPING
     if(p->pid != 0 && p->killed != 1 &&(p->state == RUNNABLE || p->state == SLEEPING || p->state == RUNNING)){
       cprintf("name: %s\npid: %d \nstackpagenum: %d\nsz: %d\nlimit: %d\n\n", p->name,p->pid, p->stackpagenum,p->sz,p->limit);
