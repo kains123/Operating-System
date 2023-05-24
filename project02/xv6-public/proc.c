@@ -864,7 +864,8 @@ void list(void){
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
     // if(p->state!=RUNNING)
     //     continue;
-    if(p->pid != 0 && p->killed != 1){
+    //RUNNABLE, RUNNING, SLEEPING
+    if(p->pid != 0 && p->killed != 1 &&(p->state == RUNNABLE || p->state == SLEEPING || p->state == RUNNING)){
       cprintf("name: %s\npid: %d \nstackpagenum: %d\nsz: %d\nlimit: %d\n\n", p->name,p->pid, p->stackpagenum,p->sz,p->limit);
     }
   }
