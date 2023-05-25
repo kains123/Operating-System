@@ -586,8 +586,6 @@ static void shift_thread(struct proc *p)
   t->state = RUNNING;
   p->curtid = t - p->threads;
 
-  incr_ticks(p, 1);
-
   // switchuvm for thread
   pushcli();
   mycpu()->ts.esp0 = (uint)t->kstack + KSTACKSIZE;
