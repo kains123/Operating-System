@@ -447,7 +447,7 @@ scheduler(void)
       
         switchuvm(p);
         t->state = RUNNING;
-        p->curtid = t - p->threads;
+        p->curtid = t->tid;
         cprintf("@@@@@@@@@PTHREAD: %d@@@@@@@@@@@@\n", t->tid);
 
       
