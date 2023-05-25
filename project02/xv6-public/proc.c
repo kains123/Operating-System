@@ -439,7 +439,6 @@ scheduler(void)
         //   panic("invalid logic");
         // start = 1;
 
-        p->curtid = t - p->threads;
         // Switch to chosen process.  It is the process's job
         // to release ptable.lock and then reacquire it
         // before jumping back to us.
@@ -447,6 +446,10 @@ scheduler(void)
       
         switchuvm(p);
         t->state = RUNNING;
+        p->curtid = t - p->threads;
+        cprintf("@@@@@@@@@%d@@@@@@@@@@@@\n", t - p->threads);
+
+      
           
         swtch(&(c->scheduler), t->context);
         
@@ -455,8 +458,8 @@ scheduler(void)
         // Process is done running for now.
         // It should have changed its p->state before coming back.
         c->proc = 0;
-        // if(p->state != RUNNABLE)
-        //   t = &p->threads[NTHREAD];
+        if(p->state != RUNNABLE)
+          t = &p->threads[NTHREAD];
       }
     }
     release(&ptable.lock);
