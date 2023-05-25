@@ -804,7 +804,7 @@ bad:
 
 void thread_exit(void *retval)
 {
-  cprintf("*********thread_exit************\n");
+  cprintf("*********thread_exit************ RETVAL: %d\n", retval);
   struct proc *curproc = myproc();
   struct thread *curthread = &CURTHREAD(curproc);
 
@@ -816,6 +816,9 @@ void thread_exit(void *retval)
   // Jump into the scheduler, never to return.
   curthread->retval = retval;
   curthread->state = ZOMBIE;
+  curproc->threads[curproc->curtid].retval = retval;
+  
+
 
   sched();
   panic("zombie exit");
@@ -843,12 +846,12 @@ found:
     sleep((void*)thread, &ptable.lock);
   }
 
-  // if (retval != 0)  
-  *retval = t->retval;
+  if (retval != 0)
+    *retval = t->retval;
 
   kfree(t->kstack);
   t->kstack = 0;
-  // t->retval = 0;
+  t->retval = 0;
   t->tid = 0;
   t->state = UNUSED;
   release(&ptable.lock);
