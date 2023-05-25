@@ -447,7 +447,7 @@ scheduler(void)
       
         switchuvm(p);
         t->state = RUNNING;
-        p->curtid = t->tid;
+        p->curtid = t - p->threads;
         cprintf("@@@@@@@@@PTHREAD: %d@@@@@@@@@@@@\n", t->tid);
 
       
@@ -459,8 +459,8 @@ scheduler(void)
         // Process is done running for now.
         // It should have changed its p->state before coming back.
         c->proc = 0;
-        // if(p->state != RUNNABLE)
-        //   t = &p->threads[NTHREAD];
+        if(p->state != RUNNABLE)
+          t = &p->threads[NTHREAD];
       }
     }
     release(&ptable.lock);
