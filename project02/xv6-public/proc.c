@@ -790,7 +790,7 @@ found:
   t->tf->eip = (uint)start_routine;
 
   *thread = t->tid;
-
+  t->retval = 0;
   t->state = RUNNABLE;
   release(&ptable.lock);
   return 0;
@@ -817,9 +817,10 @@ void thread_exit(void *retval)
   wakeup1((void*)curthread->tid);
 
   // Jump into the scheduler, never to return.
-  curthread->retval = retval;
+  // curthread->retval = retval;
+  curproc->retval = retval;
   curthread->state = ZOMBIE;
-  curproc->threads[curproc->curtid].retval = retval;
+  // curproc->threads[curproc->curtid].retval = retval;
   
 
 
@@ -849,9 +850,9 @@ found:
     sleep((void*)thread, &ptable.lock);
   }
 
-  if (retval != 0)
-    *retval = t->retval;
-
+  // if (retval != 0)
+  //   *retval = t->retval;
+  *retval = p->retval;
   kfree(t->kstack);
   t->kstack = 0;
   t->retval = 0;

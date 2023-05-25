@@ -68,6 +68,7 @@ struct proc {
   int limit;                    //limit
   int stackpagenum;             //stack page number
   uint  user_stack_pool[NTHREAD]; // user_stack_pool
+  void* retval;                // Temporary save return value
 };
 
 // Process memory is laid out contiguously, low addresses first:
