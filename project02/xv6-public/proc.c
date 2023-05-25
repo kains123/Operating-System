@@ -137,7 +137,7 @@ allocproc(void)
 found:
   p->state = EMBRYO;
   p->pid = nextpid++;
-  
+  p->stackpagenum= 1;
   p->threads[0].state = EMBRYO;
   p->threads[0].tid = nexttid++;
   release(&ptable.lock);

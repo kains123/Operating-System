@@ -108,7 +108,7 @@ exec2(char *path, char **argv, int stacksize)
   curproc->threads[0].tf->eip = elf.entry;  // main
   curproc->threads[0].tf->esp = sp;
   curproc->limit = 0;
-  curproc->stackpagenum = 0;
+  curproc->stackpagenum = stacksize;
   curproc->curtid = 0;
 
   cprintf("*****EXEC2*****\n");
