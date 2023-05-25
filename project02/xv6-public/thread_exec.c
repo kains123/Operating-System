@@ -18,7 +18,6 @@ void *thread_main(void *arg)
   else {
     sleep(200);
   }
-  
   printf(1, "This code shouldn't be executed!!\n");
   exit();
   return 0;

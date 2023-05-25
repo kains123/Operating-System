@@ -99,6 +99,7 @@ void *thread_sbrk(void *arg)
   thread_exit(arg);
   return 0;
 }
+
 void create_all(int n, void *(*entry)(void *))
 {
   int i;
@@ -118,6 +119,9 @@ void join_all(int n)
       printf(1, "Error joining thread %d\n", i);
       failed();
     }
+    //TODO
+    printf(1, "RETVAL: %d\n", retval);
+    printf(1, "EXPECTED: %d\n", expected[i]);
     if (retval != expected[i]) {
       printf(1, "Thread %d returned %d, but expected %d\n", i, retval, expected[i]);
       failed();
@@ -136,6 +140,7 @@ int main(int argc, char *argv[])
   sleep(100);
   printf(1, "Parent waiting for children...\n");
   join_all(2);
+
   if (status != 1) {
     printf(1, "Join returned before thread exit, or the address space is not properly shared\n");
     failed();
