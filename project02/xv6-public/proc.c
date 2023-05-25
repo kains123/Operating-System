@@ -447,7 +447,6 @@ scheduler(void)
       
         switchuvm(p);
         t->state = RUNNING;
-        t = &p->threads[0];
         p->curtid = t - p->threads;
         cprintf("@@@@@@@@@PTHREAD: %d@@@@@@@@@@@@\n", t->tid);
 
@@ -553,18 +552,68 @@ sched(void)
   mycpu()->intena = intena;
 }
 
+
+// choose next thread
+static void shift_thread(struct proc *p)
+{
+  int intena;
+  struct thread *t;
+  struct thread *curthread = &CURTHREAD(p);
+
+  acquire(&ptable.lock);
+
+  for (t = &p->threads[(p->curtid + 1) % NTHREAD]; ; ++t)
+  {
+    if (t == &p->threads[NTHREAD])
+      t = p->threads;
+
+    if (t == curthread)
+    {
+      if (t->state == RUNNING)
+      {
+        release(&ptable.lock);
+        return;
+      }
+
+      sched();
+      panic("zombie thread");
+    }
+    if (t->state == RUNNABLE)
+      break;
+  }
+
+  curthread->state = RUNNABLE;
+  t->state = RUNNING;
+  p->curtid = t - p->threads;
+
+  incr_ticks(p, 1);
+
+  // switchuvm for thread
+  pushcli();
+  mycpu()->ts.esp0 = (uint)t->kstack + KSTACKSIZE;
+  popcli();
+
+  // sched for thread
+  intena = mycpu()->intena;
+  swtch(&curthread->context, t->context);
+  mycpu()->intena = intena;
+
+  release(&ptable.lock);
+}
+
 // Give up the CPU for one scheduling round.
 void
 yield(void)
 {
   struct proc *p = myproc();
-  struct thread *t = &CURTHREAD(p);
-  acquire(&ptable.lock);  //DOC: yieldlock 
-  CURTHREAD(p).state = RUNNABLE;
-  p->curtid = t - p->threads;
-  // cprintf("*******YEILD*********\n");
-  sched();
-  release(&ptable.lock);
+  // struct thread *t = &CURTHREAD(p);
+  // acquire(&ptable.lock);  //DOC: yieldlock 
+  // CURTHREAD(p).state = RUNNABLE;
+  // p->curtid = t - p->threads;
+  // // cprintf("*******YEILD*********\n");
+  // sched();
+  // release(&ptable.lock);
+  shift_thread(p);
 }
 
 // A fork child's very first scheduling by scheduler()
