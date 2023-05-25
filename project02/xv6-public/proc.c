@@ -438,6 +438,7 @@ scheduler(void)
         // if (start && t == &CURTHREAD(p))
         //   panic("invalid logic");
         // start = 1;
+
         p->curtid = t - p->threads;
         // Switch to chosen process.  It is the process's job
         // to release ptable.lock and then reacquire it
@@ -552,8 +553,10 @@ void
 yield(void)
 {
   struct proc *p = myproc();
+  struct thread *t = &CURTHREAD(p);
   acquire(&ptable.lock);  //DOC: yieldlock 
   CURTHREAD(p).state = RUNNABLE;
+  p->curtid = t - p->threads;
   // cprintf("*******YEILD*********\n");
   sched();
   release(&ptable.lock);
