@@ -843,13 +843,12 @@ found:
     sleep((void*)thread, &ptable.lock);
   }
 
-  // if (retval != 0)
-  cprintf("\n&&&&&&&&&&&%d&&&&&&&&&&&&&&\n", retval);
+  // if (retval != 0)  
   *retval = t->retval;
 
   kfree(t->kstack);
   t->kstack = 0;
-  t->retval = 0;
+  // t->retval = 0;
   t->tid = 0;
   t->state = UNUSED;
   release(&ptable.lock);
