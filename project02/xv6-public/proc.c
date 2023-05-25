@@ -432,6 +432,10 @@ scheduler(void)
       for(t = p->threads; t < &p->threads[NTHREAD]; t++){
         if(t->state != RUNNABLE)
           continue;
+        
+        if(p == 0){
+          cprintf("NULL\n");
+        }
       
         t = &CURTHREAD(p);
           
