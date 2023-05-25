@@ -432,10 +432,7 @@ scheduler(void)
       for(t = p->threads; t < &p->threads[NTHREAD]; t++){
         if(t->state != RUNNABLE)
           continue;
-        
-        if(p == 0){
-          cprintf("NULL\n");
-        }
+    
       
         t = &CURTHREAD(p);
           
@@ -451,7 +448,7 @@ scheduler(void)
         switchuvm(p);
         t->state = RUNNING;
         p->curtid = t - p->threads;
-        cprintf("@@@@@@@@@%d@@@@@@@@@@@@\n", t - p->threads);
+        cprintf("@@@@@@@@@%d@@@@@@@@@@@@\n", p->pid);
 
       
           
