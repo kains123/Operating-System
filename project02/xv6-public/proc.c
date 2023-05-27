@@ -555,52 +555,6 @@ sched(void)
   mycpu()->intena = intena;
 }
 
-
-// choose next thread
-static void shift_thread(struct proc *p)
-{
-  int intena;
-  struct thread *t;
-  struct thread *curthread = &CURTHREAD(p);
-
-  acquire(&ptable.lock);
-
-  for (t = &p->threads[(p->curtid + 1) % NTHREAD]; ; ++t)
-  {
-    if (t == &p->threads[NTHREAD])
-      t = p->threads;
-
-    if (t == curthread)
-    {
-      if (t->state == RUNNING)
-      {
-        release(&ptable.lock);
-        return;
-      }
-      sched();
-      panic("zombie thread");
-    }
-    if (t->state == RUNNABLE)
-      break;
-  }
-
-  curthread->state = RUNNABLE;
-  t->state = RUNNING;
-  p->curtid = t - p->threads;
-
-  // switchuvm for thread
-  pushcli();
-  mycpu()->ts.esp0 = (uint)t->kstack + KSTACKSIZE;
-  popcli();
-
-  // sched for thread
-  intena = mycpu()->intena;
-  swtch(&curthread->context, t->context);
-  mycpu()->intena = intena;
-
-  release(&ptable.lock);
-}
-
 // Give up the CPU for one scheduling round.
 void
 yield(void)
