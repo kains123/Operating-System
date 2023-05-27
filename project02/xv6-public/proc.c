@@ -428,6 +428,9 @@ void scheduler(void)
     acquire(&ptable.lock);
 
     int start = 0;
+    for(p = ptable.proc; p < &ptable.proc[NPROC]; p++)
+      if(p->state != RUNNABLE)
+          continue;
     for(t = p->threads; t < &p->threads[NTHREAD]; t++)
       if(t->state == RUNNABLE)
           continue;
