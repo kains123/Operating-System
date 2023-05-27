@@ -432,39 +432,73 @@ scheduler(void)
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
       if(p->state != RUNNABLE)
           continue;
+      if (p != 0)
+      {
+          for (t = &CURTHREAD(p); ; ++t)
+          {
+            if (t == &p->threads[NTHREAD])
+              t = &p->threads[0];
+
+            if (t->state == RUNNABLE)
+              break;
+
+            if (t == &CURTHREAD(p))
+              panic("invalid logic");
+          }
+
+          p->curtid = t - p->threads;
+          t = &CURTHREAD(p);
+            // Switch to chosen process.  It is the process's job
+            // to release ptable.lock and then reacquire it
+            // before jumping back to us.
+            c->proc = p;
+          
+            switchuvm(p);
+            t->state = RUNNING;
+            p->curtid = t - p->threads;
+
+          
+              
+            swtch(&(c->scheduler), t->context);
+            
+            switchkvm();
+            
+            // Process is done running for now.
+            // It should have changed its p->state before coming back.
+            c->proc = 0;
+      }
       //thread num이 = 0 이면 지나가고 0 이상이면 
-      for(t = p->threads; t < &p->threads[NTHREAD]; t++){
-        if(t->state != RUNNABLE)
-          continue;
+      // for(t = p->threads; t < &p->threads[NTHREAD]; t++){
+      //   if(t->state != RUNNABLE)
+      //     continue;
     
-      
-        t = &CURTHREAD(p);
+        // t = &CURTHREAD(p);
           
-        // if (start && t == &CURTHREAD(p))
-        //   panic("invalid logic");
-        // start = 1;
+        // // if (start && t == &CURTHREAD(p))
+        // //   panic("invalid logic");
+        // // start = 1;
 
-        // Switch to chosen process.  It is the process's job
-        // to release ptable.lock and then reacquire it
-        // before jumping back to us.
-        c->proc = p;
+        // // Switch to chosen process.  It is the process's job
+        // // to release ptable.lock and then reacquire it
+        // // before jumping back to us.
+        // c->proc = p;
       
-        switchuvm(p);
-        t->state = RUNNING;
-        p->curtid = t - p->threads;
+        // switchuvm(p);
+        // t->state = RUNNING;
+        // p->curtid = t - p->threads;
 
       
           
-        swtch(&(c->scheduler), t->context);
+        // swtch(&(c->scheduler), t->context);
         
-        switchkvm();
+        // switchkvm();
         
         // Process is done running for now.
         // It should have changed its p->state before coming back.
-        c->proc = 0;
-        if(p->state != RUNNABLE)
-          t = &p->threads[NTHREAD];
-      }
+        // c->proc = 0;
+        // if(p->state != RUNNABLE)
+        //   t = &p->threads[NTHREAD];
+      // }
     }
     release(&ptable.lock);
     // cprintf("************SCHEDULER*******\n");
@@ -567,8 +601,6 @@ yield(void)
   // cprintf("*******YEILD*********\n");
   // sched();
   // release(&ptable.lock);
-
-  // shift_thread(p);
   int intena;
   struct thread *t;
   struct thread *curthread = &CURTHREAD(p);
@@ -659,7 +691,7 @@ sleep(void *chan, struct spinlock *lk)
   // Go to sleep.
   t->chan = chan;
   t->state = SLEEPING;
-  // cprintf("*******SLEEP*********\n");
+  cprintf("*******SLEEP*********\n");
   sched();
   // Tidy up.
   t->chan = 0;
