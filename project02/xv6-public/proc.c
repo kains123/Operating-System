@@ -427,7 +427,7 @@ void scheduler(void)
     // Loop over process table looking for process to run.
     acquire(&ptable.lock);
 
-    int start = 0;
+    // int start = 0;
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++)
       if(p->state != RUNNABLE)
           continue;
@@ -444,9 +444,9 @@ void scheduler(void)
         if (t->state == RUNNABLE)
           break;
 
-        if (start && t == &CURTHREAD(p))
-          panic("invalid logic");
-        start = 1;
+        // if (start && t == &CURTHREAD(p))
+        //   panic("invalid logic");
+        // start = 1;
       }
 
       p->curtid = t - p->threads;
