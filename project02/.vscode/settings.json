@@ -15,6 +15,7 @@
     "semaphore": "c",
     "memory": "c",
     "stop_token": "c",
-    "condition_variable": "c"
+    "condition_variable": "c",
+    "typeinfo": "c"
   }
 }
