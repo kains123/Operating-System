@@ -574,7 +574,6 @@ static void shift_thread(struct proc *p)
         release(&ptable.lock);
         return;
       }
-
       sched();
       panic("zombie thread");
     }
@@ -608,7 +607,7 @@ yield(void)
   // acquire(&ptable.lock);  //DOC: yieldlock 
   // CURTHREAD(p).state = RUNNABLE;
   // p->curtid = t - p->threads;
-  // // cprintf("*******YEILD*********\n");
+  // cprintf("*******YEILD*********\n");
   // sched();
   // release(&ptable.lock);
   shift_thread(p);
