@@ -413,57 +413,120 @@ wait(void)
 //  - eventually that process transfers control
 //      via swtch back to the scheduler.
 
-void
-scheduler(void)
+void scheduler(void)
 {
-  // int start = 0;
   struct proc *p;
   struct thread *t;
   struct cpu *c = mycpu();
   c->proc = 0;
 
-  for(;;){
+  for (;;)
+  {
     // Enable interrupts on this processor.
     sti();
+
     // Loop over process table looking for process to run.
-  
     acquire(&ptable.lock);
-  
-    for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-      if(p->state != RUNNABLE)
-          continue;
-      //thread num이 = 0 이면 지나가고 0 이상이면 
-      for(t = p->threads; t < &p->threads[NTHREAD]; t++){
-        if(t->state != RUNNABLE)
-          continue;
-    
-        t = &CURTHREAD(p);
 
-        // Switch to chosen process.  It is the process's job
-        // to release ptable.lock and then reacquire it
-        // before jumping back to us.
-        c->proc = p;
-      
-        switchuvm(p);
-        t->state = RUNNING;
-        p->curtid = t - p->threads;
+    int start = 0;
+    for(t = p->threads; t < &p->threads[NTHREAD]; t++)
+      if(t->state == RUNNABLE)
+          continue;
+    if (p != 0)
+    {
+      for (t = &CURTHREAD(p); ; ++t)
+      {
+        if (t == &p->threads[NTHREAD])
+          t = &p->threads[0];
 
-      
-          
-        swtch(&(c->scheduler), t->context);
-        
-        switchkvm();
-        
-        // Process is done running for now.
-        // It should have changed its p->state before coming back.
-        c->proc = 0;
-        if(p->state != RUNNABLE)
-          t = &p->threads[NTHREAD];
+        if (t->state == RUNNABLE)
+          break;
+
+        if (start && t == &CURTHREAD(p))
+          panic("invalid logic");
+        start = 1;
       }
+
+      p->curtid = t - p->threads;
+    }
+      
+    t = p ? &CURTHREAD(p) : 0;
+
+    if (p != 0)
+    {
+      // Switch to chosen process.  It is the process's job
+      // to release ptable. lock and then reacquire it
+      // before jumping back to us.
+      c->proc = p;
+      switchuvm(p);
+      t->state = RUNNING;
+
+      // after intoducing thread concept,
+      // state of process can be only UNUSED, EMBRYO, or RUNNABLE
+      // p->state = RUNNING;
+
+      swtch(&(c->scheduler), t->context);
+      switchkvm();
+
+      // Process is done running for now.
+      // It should have changed its p->state before coming back.
+      c->proc = 0;
     }
     release(&ptable.lock);
   }
 }
+
+// void
+// scheduler(void)
+// {
+//   // int start = 0;
+//   struct proc *p;
+//   struct thread *t;
+//   struct cpu *c = mycpu();
+//   c->proc = 0;
+
+//   for(;;){
+//     // Enable interrupts on this processor.
+//     sti();
+//     // Loop over process table looking for process to run.
+  
+//     acquire(&ptable.lock);
+  
+//     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+//       if(p->state != RUNNABLE)
+//           continue;
+//       //thread num이 = 0 이면 지나가고 0 이상이면 
+//       for(t = p->threads; t < &p->threads[NTHREAD]; t++){
+//         if(t->state != RUNNABLE)
+//           continue;
+    
+//         t = &CURTHREAD(p);
+
+//         // Switch to chosen process.  It is the process's job
+//         // to release ptable.lock and then reacquire it
+//         // before jumping back to us.
+//         c->proc = p;
+      
+//         switchuvm(p);
+//         t->state = RUNNING;
+//         p->curtid = t - p->threads;
+
+      
+          
+//         swtch(&(c->scheduler), t->context);
+        
+//         switchkvm();
+        
+//         // Process is done running for now.
+//         // It should have changed its p->state before coming back.
+//         c->proc = 0;
+//         if(p->state != RUNNABLE)
+//           t = &p->threads[NTHREAD];
+//       }
+//     }
+//     release(&ptable.lock);
+//   }
+// }
 // void
 // scheduler(void)
 // {
