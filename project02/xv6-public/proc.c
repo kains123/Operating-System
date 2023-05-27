@@ -946,8 +946,8 @@ found:
   }
 
   // if (retval != 0)
-  //   *retval = t->retval;
-  *retval = p->retval;
+  *retval = t->retval;
+  // *retval = p->retval;
   kfree(t->kstack);
   t->kstack = 0;
   t->retval = 0;
