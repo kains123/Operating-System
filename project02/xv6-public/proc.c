@@ -432,20 +432,7 @@ scheduler(void)
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
       if(p->state != RUNNABLE)
           continue;
-        if (p != 0)
-        {
-          for (t = &CURTHREAD(p); ; ++t)
-          {
-            if (t == &p->threads[NTHREAD])
-              t = &p->threads[0];
-
-            if (t->state == RUNNABLE)
-              break;
-            // if (t == &CURTHREAD(p))
-            //   panic("invalid logic");
-          }
-          p->curtid = t - p->threads;
-        }
+          
       //thread num이 = 0 이면 지나가고 0 이상이면 
       for(t = p->threads; t < &p->threads[NTHREAD]; t++){
         if(t->state != RUNNABLE)
