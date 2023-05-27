@@ -10,6 +10,11 @@
     "random": "c",
     "__threading_support": "c",
     "chrono": "c",
-    "variant": "c"
+    "variant": "c",
+    "__mutex_base": "c",
+    "semaphore": "c",
+    "memory": "c",
+    "stop_token": "c",
+    "condition_variable": "c"
   }
 }

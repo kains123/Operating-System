@@ -140,6 +140,7 @@ found:
   p->stackpagenum= 1;
   p->threads[0].state = EMBRYO;
   p->threads[0].tid = nexttid++;
+  p->limit = 0;
   release(&ptable.lock);
 
   // Allocate kernel stack.
@@ -208,7 +209,7 @@ userinit(void)
 }
 // Grow current process's memory by n bytes.
 // Return 0 on success, -1 on failure.
-//sbrk() -> process에 memory할당하는 system call
+//sbrk() : system call which allocates memory to process
 int
 growproc(int n)
 {
@@ -217,6 +218,10 @@ growproc(int n)
   
   acquire(&ptable.lock); //ptable.lock
   sz = curproc->sz;
+
+  if(curproc->limit < sz+n && curproc->limit != 0){
+    return -1;
+  }
   if(n > 0){
     if((sz = allocuvm(curproc->pgdir, sz, sz + n)) == 0) {
       release(&ptable.lock);
@@ -362,10 +367,7 @@ wait(void)
       if(p->state == ZOMBIE)
       {
         // Found one.
-        // pid = p->pid;
-        // freevm(p->pgdir);
-        // kfree(p->kstack);
-        // p->kstack = 0;
+      
         cprintf("HERE\n");
         for (t = p->threads; t < &p->threads[NTHREAD]; ++t)
         {
@@ -448,7 +450,6 @@ scheduler(void)
         switchuvm(p);
         t->state = RUNNING;
         p->curtid = t - p->threads;
-        cprintf("@@@@@@@@@PTHREAD: %d@@@@@@@@@@@@\n", t->tid);
 
       
           
@@ -942,12 +943,11 @@ int setmemorylimit(int pid, int limit) {
     if(p->pid == pid) {
       check_point = 0;
       if(p->sz >= limit) {
-
-         //if the received memory is less than limit return -1
+        //if the received memory is less than limit return -1
         release(&ptable.lock);
         return -1;
       } else {
-        p->limit = limit;
+        p->limit = limit; //set limit.
         break;
       }
     }
