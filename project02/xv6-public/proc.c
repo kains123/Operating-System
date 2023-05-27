@@ -432,17 +432,12 @@ scheduler(void)
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
       if(p->state != RUNNABLE)
           continue;
-          
       //thread num이 = 0 이면 지나가고 0 이상이면 
       for(t = p->threads; t < &p->threads[NTHREAD]; t++){
         if(t->state != RUNNABLE)
           continue;
     
         t = &CURTHREAD(p);
-          
-        // if (start && t == &CURTHREAD(p))
-        //   panic("invalid logic");
-        // start = 1;
 
         // Switch to chosen process.  It is the process's job
         // to release ptable.lock and then reacquire it
@@ -467,7 +462,6 @@ scheduler(void)
       }
     }
     release(&ptable.lock);
-    // cprintf("************SCHEDULER*******\n");
   }
 }
 // void
@@ -741,19 +735,23 @@ procdump(void)
   };
   int i;
   struct proc *p;
+  struct thread *t;
   char *state;
   uint pc[10];
 
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
     if(p->state == UNUSED)
       continue;
-    if(p->state >= 0 && p->state < NELEM(states) && states[p->state])
-      state = states[p->state];
+    // if(p->state >= 0 && p->state < NELEM(states) && states[p->state])
+    //   state = states[p->state];
+    t = &p->threads[p->curtid];
+    if(t->state >= 0 && t->state < NELEM(states) && states[t->state])
+      state = states[t->state];
     else
       state = "???";
     cprintf("%d %s %s", p->pid, state, p->name);
-    if(p->state == SLEEPING){
-      getcallerpcs((uint*)p->context->ebp+2, pc);
+    if(t->state == SLEEPING){
+      getcallerpcs((uint*)t->context->ebp+2, pc);
       for(i=0; i<10 && pc[i] != 0; i++)
         cprintf(" %p", pc[i]);
     }
