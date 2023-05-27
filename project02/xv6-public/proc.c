@@ -257,13 +257,15 @@ fork(void)
   // Copy process state from proc.
   if((np->pgdir = copyuvm(curproc->pgdir, curproc->sz)) == 0){
     kfree(np->threads[0].kstack);
-    np->threads[0].kstack = 0;
     np->state = UNUSED;
     np->threads[0].state = UNUSED;
+    np->threads[0].kstack = 0;
     return -1;
   }
   np->sz = curproc->sz;
   np->parent = curproc;
+  np->curtid = 0;
+
   *np->threads[0].tf = *CURTHREAD(curproc).tf;
   // Clear %eax so that fork returns 0 in the child.
   np->threads[0].tf->eax = 0;
@@ -611,7 +613,48 @@ yield(void)
   // cprintf("*******YEILD*********\n");
   // sched();
   // release(&ptable.lock);
-  shift_thread(p);
+
+  // shift_thread(p);
+  int intena;
+  struct thread *t;
+  struct thread *curthread = &CURTHREAD(p);
+
+  acquire(&ptable.lock);
+
+  for (t = &p->threads[(p->curtid + 1) % NTHREAD]; ; ++t)
+  {
+    if (t == &p->threads[NTHREAD])
+      t = p->threads;
+
+    if (t == curthread)
+    {
+      if (t->state == RUNNING)
+      {
+        release(&ptable.lock);
+        return;
+      }
+      sched();
+      panic("zombie thread");
+    }
+    if (t->state == RUNNABLE)
+      break;
+  }
+
+  curthread->state = RUNNABLE;
+  t->state = RUNNING;
+  p->curtid = t - p->threads;
+
+  // switchuvm for thread
+  pushcli();
+  mycpu()->ts.esp0 = (uint)t->kstack + KSTACKSIZE;
+  popcli();
+
+  // sched for thread
+  intena = mycpu()->intena;
+  swtch(&curthread->context, t->context);
+  mycpu()->intena = intena;
+
+  release(&ptable.lock);
 }
 
 // A fork child's very first scheduling by scheduler()
@@ -869,7 +912,7 @@ void thread_exit(void *retval)
   wakeup1((void*)curthread->tid);
 
   // Jump into the scheduler, never to return.
-  // curthread->retval = retval;
+  curthread->retval = retval;
   curproc->retval = retval;
   curthread->state = ZOMBIE;
   // curproc->threads[curproc->curtid].retval = retval;
