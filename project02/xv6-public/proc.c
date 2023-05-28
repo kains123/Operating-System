@@ -655,7 +655,7 @@ kill(int pid)
   acquire(&ptable.lock);
   for (p = ptable.proc; p < &ptable.proc[NPROC]; p++)
   {
-    if (p->pid == pid)
+    if (p->pid == pid && p->killed != 1)
     {
       p->killed = 1;
       // Wake threads from sleep if necessary.

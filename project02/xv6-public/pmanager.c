@@ -95,7 +95,6 @@ main(int argc, char *argv[])
 			printf(1,"\n<<KILL>>\n");
 			char *pid = (char*)malloc(sizeof(char)*15);
 			int j = 0;
-
 			
 			for(int i=5; i<strlen(array); i++){
 				pid[j] = array[i];
