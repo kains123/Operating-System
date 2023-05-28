@@ -13,7 +13,7 @@ void *thread_main(void *arg)
     char *pname = "/hello_thread";
     char *args[2] = {pname, 0};
     printf(1, "Executing...\n");
-    exec2(pname, args, 50);
+    exec(pname, args);
   }
   else {
     sleep(200);
