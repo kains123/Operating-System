@@ -649,24 +649,7 @@ wakeup(void *chan)
 int
 kill(int pid)
 {
-  // cprintf("*******KILL START**************\n");
-  // struct proc *p;
-  // struct thread *t;
-  // acquire(&ptable.lock);
-  // for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-  //   if(p->pid == pid){
-  //     p->killed = 1;
-  //     // Wake process from sleep if necessary.
-      // for (t = p->threads; t < &p->threads[NTHREAD]; ++t) {
-      //   if(t->state == SLEEPING)
-      //     t->state = RUNNABLE;
-      // }
-  //     release(&ptable.lock);
-  //     return 0;
-  //   }
-  // }
-  // release(&ptable.lock);
-  // return -1;
+  cprintf("*******KILL START**************\n");
   struct proc *p;
   struct thread *t;
   acquire(&ptable.lock);
@@ -674,13 +657,27 @@ kill(int pid)
     if(p->pid == pid){
       p->killed = 1;
       // Wake process from sleep if necessary.
+      if(p->pid != 1){
+        for (t = p->threads; t < &p->threads[NTHREAD]; ++t) {
+          if(t->state == SLEEPING)
+            t->state = RUNNABLE;
+        }
+      }
+      release(&ptable.lock);
+      return 0;
+    }
+  }
+  release(&ptable.lock);
+  return -1;
+  struct proc *p;
+
+  acquire(&ptable.lock);
+  for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+    if(p->pid == pid){
+      p->killed = 1;
+      // Wake process from sleep if necessary.
       if(p->state == SLEEPING)
         p->state = RUNNABLE;
-        
-      for (t = p->threads; t < &p->threads[NTHREAD]; ++t) {
-        if(t->state == SLEEPING)
-          t->state = RUNNABLE;
-      }
       release(&ptable.lock);
       return 0;
     }
