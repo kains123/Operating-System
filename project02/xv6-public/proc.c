@@ -719,7 +719,6 @@ int thread_create(thread_t *thread, void *(*start_routine)(void *), void *arg)
   struct thread *t;
   int t_idx;
   uint sz;
-
   // struct proc *p;
   char *sp;
 

@@ -128,7 +128,6 @@ void join_all(int n)
     }
   }
 }
-
 int main(int argc, char *argv[])
 {
   int i;
@@ -146,7 +145,6 @@ int main(int argc, char *argv[])
     failed();
   }
   printf(1, "Test 1 passed\n\n");
-
   printf(1, "Test 2: Fork test\n");
   create_all(NUM_THREAD, thread_fork);
   join_all(NUM_THREAD);
