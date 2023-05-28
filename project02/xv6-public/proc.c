@@ -784,11 +784,11 @@ found:
   *(uint *)sp = 0xffffffff;
 
   //go to start_routine
-  t->tf->esp = (uint)sp;
   t->tf->eip = (uint)start_routine;
+  t->tf->esp = (uint)sp;
 
   *thread = t->tid;
-  t->retval = 0;
+  // t->retval = 0;
   t->state = RUNNABLE;
   release(&ptable.lock);
   return 0;
