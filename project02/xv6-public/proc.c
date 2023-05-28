@@ -711,55 +711,57 @@ procdump(void)
   }
 }
 
-int thread_create(thread_t *thread, void *(*start_routine)(void*), void *arg)
+int thread_create(thread_t *thread, void *(*start_routine)(void *), void *arg)
 {
-  struct thread *nt;
   struct proc *curproc = myproc();
-  char *sp;
+  struct thread *t;
+  int t_idx;
   uint sz;
-  int tidx;
+  // struct proc *p;
+  char *sp;
 
   acquire(&ptable.lock);
 
-  for (nt = curproc->threads; nt < &curproc->threads[NTHREAD]; ++nt)
-    if (nt->state == UNUSED)
+  for (t = curproc->threads; t < &curproc->threads[NTHREAD]; ++t)
+    if (t->state == UNUSED)
       goto found;
 
-  cprintf("cannot found unused thread\n");
   release(&ptable.lock);
-
+  
   return -1;
 
 found:
-  tidx = nt - curproc->threads;
-  nt->state = EMBRYO;
-  nt->tid = nexttid++;
+  t_idx = t - curproc->threads;
+  t->tid = nexttid++;
+  t->state = EMBRYO;
 
   // Allocate kernel stack.
-  if ((nt->kstack = kalloc()) == 0)
-  {
-    cprintf("cannot alloc kernel stack\n");
-    goto bad;
+  if((t->kstack = kalloc()) == 0){
+    cprintf("Issue!\n thread_create\n");
+    t->state = UNUSED;
+    t->tid = 0;
+    t->kstack = 0;
+    return -1;
   }
-  sp = nt->kstack + KSTACKSIZE;
+  sp = t->kstack + KSTACKSIZE;
 
   // Leave room for trap frame.
-  sp -= sizeof *nt->tf;
-  nt->tf = (struct trapframe *)sp;
-  *nt->tf = *CURTHREAD(curproc).tf;
-
+  sp -= sizeof *t->tf;
+  t->tf = (struct trapframe*)sp;
+  *t->tf = *CURTHREAD(curproc).tf;
   // Set up new context to start executing at forkret,
   // which returns to trapret.
+
   sp -= 4;
-  *(uint *)sp = (uint)trapret;
+  *(uint*)sp = (uint)trapret;
 
-  sp -= sizeof *nt->context;
-  nt->context = (struct context *) sp;
-  memset(nt->context, 0, sizeof *nt->context);
-  nt->context->eip = (uint)forkret;
+  sp -= sizeof *t->context;
+  t->context = (struct context*)sp;
+  memset(t->context, 0, sizeof *t->context);
+  //return address forkret.
+  t->context->eip = (uint)forkret;
 
-  // Allocate user stack.
-  if (curproc->user_stack_pool[tidx] == 0)
+  if (curproc->user_stack_pool[t_idx] == 0)
   {
     sz = PGROUNDUP(curproc->sz);
     if ((sz = allocuvm(curproc->pgdir, sz, sz + PGSIZE)) == 0)
@@ -768,132 +770,36 @@ found:
       goto bad;
     }
 
-    curproc->user_stack_pool[tidx] = sz;
+    curproc->user_stack_pool[t_idx] = sz;
     curproc->sz = sz;
   }
-  sp = (char *)curproc->user_stack_pool[tidx];
+  sp = (char *)curproc->user_stack_pool[t_idx];
 
-  // Push argument, prepare rest of stack in ustack.
   sp -= 4;
   *(uint *)sp = (uint)arg;
 
-  // fake return PC
   sp -= 4;
   *(uint *)sp = 0xffffffff;
 
-  // Commit to the user image.
-  nt->tf->eip = (uint)start_routine;
-  nt->tf->esp = (uint)sp;
+  //go to start_routine
+  t->tf->eip = (uint)start_routine;
+  t->tf->esp = (uint)sp;
 
-  *thread = nt->tid;
-
-  nt->state = RUNNABLE;
-
+  *thread = t->tid;
+  // t->retval = 0;
+  t->state = RUNNABLE;
   release(&ptable.lock);
-
   return 0;
 
 bad:
-  nt->kstack = 0;
-  nt->tid = 0;
-  nt->state = UNUSED;
+  t->kstack = 0;
+  t->tid = 0;
+  t->state = UNUSED;
 
   release(&ptable.lock);
 
   return -1;
 }
-
-
-
-// int thread_create(thread_t *thread, void *(*start_routine)(void *), void *arg)
-// {
-//   struct proc *curproc = myproc();
-//   struct thread *t;
-//   int t_idx;
-//   uint sz;
-//   // struct proc *p;
-//   char *sp;
-
-//   acquire(&ptable.lock);
-
-//   for (t = curproc->threads; t < &curproc->threads[NTHREAD]; ++t)
-//     if (t->state == UNUSED)
-//       goto found;
-
-//   release(&ptable.lock);
-  
-//   return -1;
-
-// found:
-//   t_idx = t - curproc->threads;
-//   t->tid = nexttid++;
-//   t->state = EMBRYO;
-
-//   // Allocate kernel stack.
-//   if((t->kstack = kalloc()) == 0){
-//     cprintf("Issue!\n thread_create\n");
-//     t->state = UNUSED;
-//     t->tid = 0;
-//     t->kstack = 0;
-//     return -1;
-//   }
-//   sp = t->kstack + KSTACKSIZE;
-
-//   // Leave room for trap frame.
-//   sp -= sizeof *t->tf;
-//   t->tf = (struct trapframe*)sp;
-//   *t->tf = *CURTHREAD(curproc).tf;
-//   // Set up new context to start executing at forkret,
-//   // which returns to trapret.
-
-//   sp -= 4;
-//   *(uint*)sp = (uint)trapret;
-
-//   sp -= sizeof *t->context;
-//   t->context = (struct context*)sp;
-//   memset(t->context, 0, sizeof *t->context);
-//   //return address forkret.
-//   t->context->eip = (uint)forkret;
-
-//   if (curproc->user_stack_pool[t_idx] == 0)
-//   {
-//     sz = PGROUNDUP(curproc->sz);
-//     if ((sz = allocuvm(curproc->pgdir, sz, sz + PGSIZE)) == 0)
-//     {
-//       cprintf("cannot alloc user stack\n");
-//       goto bad;
-//     }
-
-//     curproc->user_stack_pool[t_idx] = sz;
-//     curproc->sz = sz;
-//   }
-//   sp = (char *)curproc->user_stack_pool[t_idx];
-
-//   sp -= 4;
-//   *(uint *)sp = (uint)arg;
-
-//   sp -= 4;
-//   *(uint *)sp = 0xffffffff;
-
-//   //go to start_routine
-//   t->tf->eip = (uint)start_routine;
-//   t->tf->esp = (uint)sp;
-
-//   *thread = t->tid;
-//   // t->retval = 0;
-//   t->state = RUNNABLE;
-//   release(&ptable.lock);
-//   return 0;
-
-// bad:
-//   t->kstack = 0;
-//   t->tid = 0;
-//   t->state = UNUSED;
-
-//   release(&ptable.lock);
-
-//   return -1;
-// }
 
 void thread_exit(void *retval)
 {
