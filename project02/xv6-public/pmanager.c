@@ -25,7 +25,7 @@ pipetest(void)
       for(i = 0; i < 1033; i++)
         buf[i] = seq++;
       if(write(fds[1], buf, 1033) != 1033){
-        printf(1, "pipetest oops 1\n");
+        printf(1, "pipetest failed 1\n");
         exit();
       }
     }
@@ -37,7 +37,7 @@ pipetest(void)
     while((n = read(fds[0], buf, cc)) > 0){
       for(i = 0; i < n; i++){
         if((buf[i] & 0xff) != (seq++ & 0xff)){
-          printf(1, "pipetest oops 2\n");
+          printf(1, "pipetest failed 2\n");
           return;
         }
       }
@@ -47,7 +47,7 @@ pipetest(void)
         cc = sizeof(buf);
     }
     if(total != 5 * 1033){
-      printf(1, "pipetest oops 3 total %d\n", total);
+      printf(1, "pipetest failed 3 total %d\n", total);
       exit();
     }
     close(fds[0]);

@@ -114,7 +114,6 @@ int
 sys_thread_exit(void)
 {
   void* retval;
-
   if (argptr(0, (char **)&retval, sizeof retval) < 0)
     return -1;
   thread_exit(retval);
@@ -144,7 +143,6 @@ sys_list(void)
   list();
   return 0;
 }
-
 
 int 
 sys_setmemorylimit(void){

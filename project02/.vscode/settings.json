@@ -16,6 +16,8 @@
     "memory": "c",
     "stop_token": "c",
     "condition_variable": "c",
-    "typeinfo": "c"
+    "typeinfo": "c",
+    "locale": "c",
+    "string": "c"
   }
 }
