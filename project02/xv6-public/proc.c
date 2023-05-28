@@ -881,10 +881,8 @@ int setmemorylimit(int pid, int limit) {
   }
 
   acquire(&ptable.lock);
-  cprintf("123!!!!!!\n");
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
     if(p->pid == pid) {
-      cprintf("HERE!!!!!!\n");
       check_point = 0;
       if(p->sz <= limit) {
         //if the received memory is less than limit return -1
