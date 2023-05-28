@@ -49,7 +49,7 @@ fetchstr(uint addr, char **pp)
 int
 argint(int n, int *ip)
 {
-  return fetchint((myproc()->tf->esp) + 4 + 4*n, ip);
+  return fetchint((CURTHREAD(myproc()).tf->esp) + 4 + 4*n, ip);
 }
 
 // Fetch the nth word-sized system call argument as a pointer
@@ -103,6 +103,10 @@ extern int sys_unlink(void);
 extern int sys_wait(void);
 extern int sys_write(void);
 extern int sys_uptime(void);
+
+extern int sys_getppid(void);
+extern int sys_yield(void);
+extern int sys_getlev(void);
 extern int sys_thread_create(void);
 extern int sys_thread_exit(void);
 extern int sys_thread_join(void);
@@ -110,33 +114,35 @@ extern int sys_exec2(void);
 extern int sys_list(void);
 extern int sys_setmemorylimit(void);
 
-
 static int (*syscalls[])(void) = {
-[SYS_fork]    sys_fork,
-[SYS_exit]    sys_exit,
-[SYS_wait]    sys_wait,
-[SYS_pipe]    sys_pipe,
-[SYS_read]    sys_read,
-[SYS_kill]    sys_kill,
-[SYS_exec]    sys_exec,
-[SYS_fstat]   sys_fstat,
-[SYS_chdir]   sys_chdir,
-[SYS_dup]     sys_dup,
-[SYS_getpid]  sys_getpid,
-[SYS_sbrk]    sys_sbrk,
-[SYS_sleep]   sys_sleep,
-[SYS_uptime]  sys_uptime,
-[SYS_open]    sys_open,
-[SYS_write]   sys_write,
-[SYS_mknod]   sys_mknod,
-[SYS_unlink]  sys_unlink,
-[SYS_link]    sys_link,
-[SYS_mkdir]   sys_mkdir,
-[SYS_close]   sys_close,
+[SYS_fork]          sys_fork,
+[SYS_exit]          sys_exit,
+[SYS_wait]          sys_wait,
+[SYS_pipe]          sys_pipe,
+[SYS_read]          sys_read,
+[SYS_kill]          sys_kill,
+[SYS_exec]          sys_exec,
+[SYS_fstat]         sys_fstat,
+[SYS_chdir]         sys_chdir,
+[SYS_dup]           sys_dup,
+[SYS_getpid]        sys_getpid,
+[SYS_sbrk]          sys_sbrk,
+[SYS_sleep]         sys_sleep,
+[SYS_uptime]        sys_uptime,
+[SYS_open]          sys_open,
+[SYS_write]         sys_write,
+[SYS_mknod]         sys_mknod,
+[SYS_unlink]        sys_unlink,
+[SYS_link]          sys_link,
+[SYS_mkdir]         sys_mkdir,
+[SYS_close]         sys_close,
+[SYS_getppid]       sys_getppid,
+[SYS_yield]         sys_yield,
+[SYS_getlev]        sys_getlev,
 [SYS_thread_create] sys_thread_create,
 [SYS_thread_exit]   sys_thread_exit,
 [SYS_thread_join]   sys_thread_join,
-[SYS_exec2]    sys_exec2,
+[SYS_exec2]         sys_exec2,
 [SYS_list]   sys_list,
 [SYS_setmemorylimit]   sys_setmemorylimit,
 
@@ -151,11 +157,10 @@ syscall(void)
 
   num = curthread->tf->eax;
   if(num > 0 && num < NELEM(syscalls) && syscalls[num]) {
-    // curproc->tf->eax = syscalls[num]();
     curthread->tf->eax = syscalls[num]();
   } else {
     cprintf("%d %d %s: unknown sys call %d\n",
-            curproc->pid,curthread->tid, curproc->name, num);
+            curproc->pid, curthread->tid, curproc->name, num);
     curthread->tf->eax = -1;
   }
 }

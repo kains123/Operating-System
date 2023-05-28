@@ -27,7 +27,6 @@ int             exec(char*, char**);
 
 // exec2.c
 int             exec2(char *path, char **argv, int stacksize);
-
 // file.c
 struct file*    filealloc(void);
 void            fileclose(struct file*);
@@ -113,7 +112,6 @@ int             growproc(int);
 int             kill(int);
 struct cpu*     mycpu(void);
 struct proc*    myproc();
-struct thread   mythread(struct proc*);
 void            pinit(void);
 void            procdump(void);
 void            scheduler(void) __attribute__((noreturn));
@@ -124,9 +122,9 @@ void            userinit(void);
 int             wait(void);
 void            wakeup(void*);
 void            yield(void);
-int             thread_create(thread_t *, void *(*)(void *), void *);
-void            thread_exit(void *);
-int             thread_join(thread_t, void **);
+int             thread_create(thread_t *thread, void *(*start_routine)(void*), void* arg);
+void            thread_exit(void *retval);
+int             thread_join(thread_t thread, void **retval);
 void            list(void);
 int				      setmemorylimit(int,int);
 
@@ -194,6 +192,7 @@ void            switchuvm(struct proc*);
 void            switchkvm(void);
 int             copyout(pde_t*, uint, void*, uint);
 void            clearpteu(pde_t *pgdir, char *uva);
+
 
 // number of elements in fixed-size array
 #define NELEM(x) (sizeof(x)/sizeof((x)[0]))

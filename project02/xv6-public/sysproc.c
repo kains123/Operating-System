@@ -91,6 +91,30 @@ sys_uptime(void)
 }
 
 int
+sys_getppid(void)
+{
+  return myproc()->parent->pid;
+}
+
+int
+sys_yield(void)
+{
+  yield();
+  return 0;
+}
+
+int
+sys_getlev(void)
+{
+  struct proc *p = myproc();
+
+  if (p == 0)
+    return -1;
+  return p->level;
+}
+
+
+int
 sys_thread_create(void)
 {
   thread_t *thread;
@@ -106,7 +130,6 @@ sys_thread_create(void)
   if (argptr(2, (char **)&arg, sizeof arg) < 0)
     return -1;  
 
-  
   return thread_create(thread, start_routine, arg);
 }
 
@@ -114,8 +137,10 @@ int
 sys_thread_exit(void)
 {
   void* retval;
+
   if (argptr(0, (char **)&retval, sizeof retval) < 0)
     return -1;
+
   thread_exit(retval);
 
   return 0;
@@ -127,10 +152,10 @@ sys_thread_join(void)
   thread_t thread;
   void **retval;
 
-  if(argint(0, &thread) < 0)
+  if (argint(0, &thread) < 0)
     return -1;
-  
-  if(argptr(1, (char **)&retval, sizeof retval) < 0)
+
+  if (argptr(1, (char **)&retval, sizeof retval) < 0)
     return -1;
 
   return thread_join(thread, retval);

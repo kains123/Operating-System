@@ -75,9 +75,7 @@ runcmd(struct cmd *cmd)
     ecmd = (struct execcmd*)cmd;
     if(ecmd->argv[0] == 0)
       exit();
-    //TODO
     exec(ecmd->argv[0], ecmd->argv);
-    // exec2(ecmd->argv[0], ecmd->argv, 100);
     printf(2, "exec %s failed\n", ecmd->argv[0]);
     break;
 
@@ -123,7 +121,6 @@ runcmd(struct cmd *cmd)
     wait();
     break;
 
-  //TODO
   case BACK:
     bcmd = (struct backcmd*)cmd;
     if(fork1() == 0)
