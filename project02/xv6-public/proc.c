@@ -886,7 +886,7 @@ int setmemorylimit(int pid, int limit) {
     if(p->pid == pid) {
       cprintf("HERE!!!!!!\n");
       check_point = 0;
-      if(p->sz >= limit) {
+      if(p->sz <= limit) {
         //if the received memory is less than limit return -1
         release(&ptable.lock);
         return -1;
