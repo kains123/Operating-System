@@ -158,7 +158,7 @@ switchuvm(struct proc *p)
 {
   if(p == 0)
     panic("switchuvm: no process");
-  if(p->threads[0].kstack == 0)
+  if(CURTHREAD(p).kstack == 0)
     panic("switchuvm: no kstack");
   if(p->pgdir == 0)
     panic("switchuvm: no pgdir");
