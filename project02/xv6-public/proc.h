@@ -75,7 +75,7 @@ struct proc {
 //   original data and bss
 //   fixed-size stack
 //   expandable heap
-
+#define MAIN(p) ((p)->threads[0])
 #define CURTHREAD(p) ((p)->threads[(p)->curtid])
 
 // extern struct cpu *cpu asm("%gs:0");       // &cpus[cpunum()]

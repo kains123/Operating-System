@@ -115,7 +115,6 @@
 //   return -1;
 // }
 
-
 #include "types.h"
 #include "param.h"
 #include "memlayout.h"
@@ -128,7 +127,6 @@
 int
 exec(char *path, char **argv)
 {
-  
   char *s, *last;
   int i, off;
   uint argc, sz, sp, ustack[3+MAXARG+1];
@@ -137,13 +135,13 @@ exec(char *path, char **argv)
   struct proghdr ph;
   pde_t *pgdir, *oldpgdir;
   struct proc *curproc = myproc();
-  struct thread *curthread;
+  struct thread *t;
 
   begin_op();
 
   if((ip = namei(path)) == 0){
     end_op();
-    cprintf("exec2: fail\n");
+    cprintf("exec: fail\n");
     return -1;
   }
   ilock(ip);
@@ -182,11 +180,11 @@ exec(char *path, char **argv)
 
   // Allocate two pages at the next page boundary.
   // Make the first inaccessible.  Use the second as the user stack.
+  sz = PGROUNDUP(sz);
   if((sz = allocuvm(pgdir, sz, sz + 2*PGSIZE)) == 0)
     goto bad;
   clearpteu(pgdir, (char*)(sz - 2*PGSIZE));
   sp = sz;
-
 
   // Push argument strings, prepare rest of stack in ustack.
   for(argc = 0; argv[argc]; argc++) {
@@ -217,28 +215,28 @@ exec(char *path, char **argv)
   oldpgdir = curproc->pgdir;
   curproc->pgdir = pgdir;
   curproc->sz = sz;
-  if(curproc->curtid != 0) {
+  if (curproc->curtid != 0)
+  {
     curproc->user_stack_pool[0] = sz;
-    curproc->threads[0] = curproc->threads[curproc->curtid];
+    MAIN(curproc) = curproc->threads[curproc->curtid];
     curproc->threads[curproc->curtid].kstack = 0;
   }
-
-  curproc->threads[0].tf->eip = elf.entry;  // main
-  curproc->threads[0].tf->esp = sp;
-  curproc->limit = 0;
+  MAIN(curproc).tf->eip = elf.entry;  // main
+  MAIN(curproc).tf->esp = sp;
   curproc->curtid = 0;
 
-  cprintf("*****EXEC1*****\n");
-  for(curthread = &curproc->threads[1]; curthread < &curproc->threads[64]; curthread++) {
-    if (curthread->kstack)
-      kfree(curthread->kstack);
-    curthread->kstack = 0;
-    curthread->tid = 0;
-    curthread->retval = 0;
-    curthread->state = UNUSED;
-  
-    curproc->user_stack_pool[curthread - curproc->threads] = 0;
+  for (t = &curproc->threads[1]; t < &curproc->threads[NTHREAD]; ++t)
+  {
+    if (t->kstack)
+      kfree(t->kstack);
+    t->kstack = 0;
+    t->state = UNUSED;
+    t->tid = 0;
+    t->retval = 0;
+    
+    curproc->user_stack_pool[t - curproc->threads] = 0;
   }
+
   switchuvm(curproc);
   freevm(oldpgdir);
   return 0;
