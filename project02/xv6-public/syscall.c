@@ -149,7 +149,7 @@ syscall(void)
   struct proc *curproc = myproc();
   struct thread *curthread = &CURTHREAD(curproc);
 
-  num = curproc->tf->eax;
+  num = curthread->tf->eax;
   if(num > 0 && num < NELEM(syscalls) && syscalls[num]) {
     // curproc->tf->eax = syscalls[num]();
     curthread->tf->eax = syscalls[num]();
