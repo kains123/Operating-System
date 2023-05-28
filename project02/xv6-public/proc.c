@@ -646,23 +646,23 @@ wakeup(void *chan)
 // Kill the process with the given pid.
 // Process won't exit until it returns
 // to user space (see trap in trap.c).
-int
+int 
 kill(int pid)
 {
-  cprintf("*******KILL START**************\n");
   struct proc *p;
-  // struct thread *t;
+  struct thread *t;
+
   acquire(&ptable.lock);
-  for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-    if(p->pid == pid){
+  for (p = ptable.proc; p < &ptable.proc[NPROC]; p++)
+  {
+    if (p->pid == pid)
+    {
       p->killed = 1;
-      // Wake process from sleep if necessary.
-      // if(p->pid != 1){
-      //   for (t = p->threads; t < &p->threads[NTHREAD]; ++t) {
-      //     if(t->state == SLEEPING)
-      //       t->state = RUNNABLE;
-      //   }
-      // }
+      // Wake threads from sleep if necessary.
+      for (t = p->threads; t < &p->threads[NTHREAD]; ++t)
+        if (t->state == SLEEPING)
+          t->state = RUNNABLE;
+
       release(&ptable.lock);
       return 0;
     }
