@@ -657,12 +657,12 @@ kill(int pid)
     if(p->pid == pid){
       p->killed = 1;
       // Wake process from sleep if necessary.
-      if(p->pid != 1){
-        for (t = p->threads; t < &p->threads[NTHREAD]; ++t) {
-          if(t->state == SLEEPING)
-            t->state = RUNNABLE;
-        }
-      }
+      // if(p->pid != 1){
+      //   for (t = p->threads; t < &p->threads[NTHREAD]; ++t) {
+      //     if(t->state == SLEEPING)
+      //       t->state = RUNNABLE;
+      //   }
+      // }
       release(&ptable.lock);
       return 0;
     }
