@@ -8,7 +8,7 @@ int fd;
 char buf[8192];
 
 void
-pipe1(void)
+pipetest(void)
 {
   int fds[2], pid;
   int seq, i, n, cc, total;
@@ -25,7 +25,7 @@ pipe1(void)
       for(i = 0; i < 1033; i++)
         buf[i] = seq++;
       if(write(fds[1], buf, 1033) != 1033){
-        printf(1, "pipe1 oops 1\n");
+        printf(1, "pipetest oops 1\n");
         exit();
       }
     }
@@ -37,7 +37,7 @@ pipe1(void)
     while((n = read(fds[0], buf, cc)) > 0){
       for(i = 0; i < n; i++){
         if((buf[i] & 0xff) != (seq++ & 0xff)){
-          printf(1, "pipe1 oops 2\n");
+          printf(1, "pipetest oops 2\n");
           return;
         }
       }
@@ -47,7 +47,7 @@ pipe1(void)
         cc = sizeof(buf);
     }
     if(total != 5 * 1033){
-      printf(1, "pipe1 oops 3 total %d\n", total);
+      printf(1, "pipetest oops 3 total %d\n", total);
       exit();
     }
     close(fds[0]);
@@ -56,7 +56,7 @@ pipe1(void)
     printf(1, "fork() failed\n");
     exit();
   }
-  printf(1, "pipe1 ok\n");
+  printf(1, "pipetest ok\n");
 }
 
 
@@ -69,7 +69,7 @@ main(int argc, char *argv[])
 	char *cmd3 = "execute"; //execute <path> <stacksize>
 	char *cmd4 = "memlim"; //memlim <pid> <limit>
 	char *cmd5 = "exit"; //exit
-	pipe1();
+	pipetest();
 
 	printf(1,"[PMANAGER]\n\n");
 
