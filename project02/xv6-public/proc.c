@@ -605,7 +605,6 @@ sleep(void *chan, struct spinlock *lk)
   // Go to sleep.
   t->chan = chan;
   t->state = SLEEPING;
-  cprintf("*******SLEEP*********\n");
   sched();
   // Tidy up.
   t->chan = 0;
