@@ -172,7 +172,7 @@ main(int argc, char *argv[])
 	  } else if(array[0]==cmd4[0]){
 			printf(1,"\n<<MEMLIM>>\n");
 			int pid = 0;
-			int limit = 100;
+			int limit = 0;
 			int idx = 7;
 			// if(array[idx] == " " || array[idx] == "\n"){
 			// 	continue;

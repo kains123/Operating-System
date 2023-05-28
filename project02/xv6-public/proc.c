@@ -767,7 +767,7 @@ found:
     if ((sz = allocuvm(curproc->pgdir, sz, sz + PGSIZE)) == 0)
     {
       cprintf("cannot alloc user stack\n");
-      goto bad;
+      goto err;
     }
 
     curproc->user_stack_pool[t_idx] = sz;
@@ -791,7 +791,7 @@ found:
   release(&ptable.lock);
   return 0;
 
-bad:
+err:
   t->kstack = 0;
   t->tid = 0;
   t->state = UNUSED;
