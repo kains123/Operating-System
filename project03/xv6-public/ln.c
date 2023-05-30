@@ -5,7 +5,7 @@
 int
 main(int argc, char *argv[])
 {
-  if(argc != 3){
+  if(argc != 3  && (argc != 4 || (argc == 4 && !strcmp(argv[2], "-s")))){
     printf(2, "Usage: ln old new or symlink\n");
     exit();
   }
