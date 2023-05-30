@@ -22,7 +22,7 @@ struct inode {
   short minor;
   short nlink;
   uint size;
-  uint addrs[NDIRECT+1+1+1];//TODO
+  uint addrs[NDIRECT+3];//TODO
 };
 
 // table mapping major device number to
