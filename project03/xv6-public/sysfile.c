@@ -488,15 +488,17 @@ sys_pread(void)
 }
 
 
-int sys_symlink(void)
+int 
+sys_symlink(void)
+//create symlink
 {
   char *target, *path;
-  //    int fd;
   struct file *f;
   struct inode *ip;
 
   if (argstr(0, &target) < 0 || argstr(1, &path) < 0)
     return -1;
+
   begin_op();
   ip = create(path, T_SYMLINK, 0, 0);
   if (ip == 0)
@@ -508,7 +510,7 @@ int sys_symlink(void)
   end_op();
 
   if ((f = filealloc()) == 0)
-  { //|| (fd = fdalloc(f)) < 0){
+  {
     if (f)
       fileclose(f);
     iunlockput(ip);
