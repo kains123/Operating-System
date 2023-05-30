@@ -6,7 +6,7 @@ int
 main(int argc, char *argv[])
 {
   if(argc != 3){
-    printf(2, "Usage: ln old new\n");
+    printf(2, "Usage: ln old new or symlink\n");
     exit();
   }
   if(link(argv[1], argv[2]) < 0) {
