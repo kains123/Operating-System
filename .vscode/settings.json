@@ -8,6 +8,7 @@
     "user.h": "c",
     "defs.h": "c",
     "mmu.h": "c",
-    "date.h": "c"
+    "date.h": "c",
+    "stat.h": "c"
   }
 }
