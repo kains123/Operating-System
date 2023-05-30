@@ -123,16 +123,19 @@ sys_link(void)
   struct inode *dp, *ip;
 
   if(argstr(0, &old) < 0 || argstr(1, &new) < 0)
+    cprintf("TURN 0\n");
     return -1;
 
   begin_op();
   if((ip = namei(old)) == 0){
     end_op();
+    cprintf("TURN 1\n");
     return -1;
   }
 
   ilock(ip);
   if(ip->type == T_DIR){
+    cprintf("TURN 2\n");
     iunlockput(ip);
     end_op();
     return -1;
@@ -162,6 +165,7 @@ bad:
   iupdate(ip);
   iunlockput(ip);
   end_op();
+  cprintf("TURN 3\n");
   return -1;
 }
 
