@@ -492,6 +492,7 @@ int
 sys_symlink(void)
 //create symlink
 {
+  cprintf("SYS_SYMLINK\n");
   char *target, *path;
   struct file *f;
   struct inode *ip;
