@@ -121,6 +121,41 @@ recover_from_log(void)
   write_head(); // clear the log
 }
 
+void
+commit_sync(int locked)
+{
+  if (!locked) acquire(&log.lock);
+
+  while (log.outstanding > 0)
+  {
+    sleep(&log, &log.lock);
+  }
+
+  // now log.oustanding is 0. so there is no running fs syscall.
+  // therefore just one committing is required.
+  if (log.committing)
+  {
+	while (log.committing)
+	  sleep(&log, &log.lock);
+
+	if (!locked) release(&log.lock);
+
+    return;
+  }
+    
+  log.committing = 1;
+  release(&log.lock);
+
+  // call commit w/o holding locks, since not allowed
+  // to sleep with locks.
+  commit();
+  acquire(&log.lock);
+  log.committing = 0;
+  wakeup(&log);
+
+  if (!locked) release(&log.lock);
+}
+
 // called at the start of each FS system call.
 void
 begin_op(void)
@@ -131,7 +166,8 @@ begin_op(void)
       sleep(&log, &log.lock);
     } else if(log.lh.n + (log.outstanding+1)*MAXOPBLOCKS > LOGSIZE){
       // this op might exhaust log space; wait for commit.
-      sleep(&log, &log.lock);
+      // sleep(&log, &log.lock);
+      commit_sync(1);
     } else {
       log.outstanding += 1;
       release(&log.lock);
@@ -232,3 +268,7 @@ log_write(struct buf *b)
   release(&log.lock);
 }
 
+int get_log_num(void)
+{
+  return log.lh.n;
+}

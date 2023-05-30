@@ -180,7 +180,6 @@ growproc(int n)
 int
 fork(void)
 {
-  cprintf("FORK");
   int i, pid;
   struct proc *np;
   struct proc *curproc = myproc();
