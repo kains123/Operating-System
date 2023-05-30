@@ -118,6 +118,7 @@ sys_fstat(void)
 int
 sys_link(void)
 {
+  cprintf("SYS_LINK\n");
   char name[DIRSIZ], *new, *old;
   struct inode *dp, *ip;
 
