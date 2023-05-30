@@ -122,10 +122,10 @@ sys_link(void)
   char name[DIRSIZ], *new, *old;
   struct inode *dp, *ip;
 
-  if(argstr(0, &old) < 0 || argstr(1, &new) < 0)
+  if(argstr(0, &old) < 0 || argstr(1, &new) < 0){
     cprintf("TURN 0\n");
     return -1;
-
+  }
   begin_op();
   if((ip = namei(old)) == 0){
     end_op();
