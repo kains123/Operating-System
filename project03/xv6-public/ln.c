@@ -9,11 +9,10 @@ main(int argc, char *argv[])
     printf(2, "Usage: ln old new or symlink\n");
     exit();
   }
+  printf(2, "%s********\n",argv[2]);
   if(strcmp(argv[2], "-h") && link(argv[1], argv[2]) < 0) {
     printf(2, "link %s %s: failed\n", argv[1], argv[2]);
-  } 
-  
-  if (strcmp(argv[2], "-s") && symlink(argv[2], argv[3]) < 0)
+  } else if (strcmp(argv[2], "-s") && symlink(argv[2], argv[3]) < 0)
     printf(2, "symlink %s %s: failed\n", argv[2], argv[3]);
   
 
