@@ -27,6 +27,7 @@ int sync(void);
 int get_log_num(void);
 int pwrite(int, void*, int, int);
 int pread(int, void*, int, int);
+int symlink(char*, char*);
 
 // ulib.c
 int stat(const char*, struct stat*);

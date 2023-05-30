@@ -24,3 +24,4 @@
 #define SYS_get_log_num 23
 #define SYS_pwrite 24
 #define SYS_pread 25
+#define SYS_symlink 26

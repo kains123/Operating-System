@@ -253,6 +253,11 @@ create(char *path, short type, short major, short minor)
     ilock(ip);
     if(type == T_FILE && ip->type == T_FILE)
       return ip;
+    if (type == T_SYMLINK)
+    {
+      ip->symlink = 1;
+      return ip;
+    }
     iunlockput(ip);
     return 0;
   }
@@ -480,4 +485,46 @@ sys_pread(void)
     return -1;
 
   return filepread(f, p, n, off);
+}
+
+
+int sys_symlink(void)
+{
+  char *target, *path;
+  //    int fd;
+  struct file *f;
+  struct inode *ip;
+
+  if (argstr(0, &target) < 0 || argstr(1, &path) < 0)
+    return -1;
+  begin_op();
+  ip = create(path, T_SYMLINK, 0, 0);
+  if (ip == 0)
+  {
+    end_op();
+    return -1;
+  }
+  ip->symlink = 1;
+  end_op();
+
+  if ((f = filealloc()) == 0)
+  { //|| (fd = fdalloc(f)) < 0){
+    if (f)
+      fileclose(f);
+    iunlockput(ip);
+    return -1;
+  }
+
+  //change the inode
+  if (strlen(target) > 50)
+    panic("target soft link path is too long ");
+  safestrcpy((char *)ip->addrs, target, 50);
+  iunlock(ip);
+
+  f->ip = ip;
+  f->off = 0;
+  f->readable = 1; //readable
+  f->writable = 0; //not writable
+
+  return 0;
 }

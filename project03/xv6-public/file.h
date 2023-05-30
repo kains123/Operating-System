@@ -23,7 +23,9 @@ struct inode {
   short nlink;
   uint size;
   uint addrs[NDIRECT+3];//TODO
+  char symlink;
 };
+
 
 // table mapping major device number to
 // device functions
