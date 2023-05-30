@@ -10,12 +10,12 @@ main(int argc, char *argv[])
     exit();
   }
   printf(2, "%s********\n",argv[1]);
-  if(!strcmp(argv[1], "-s")) {
+  if(strcmp(argv[1], "-h") == 0) {
     if(link(argv[2], argv[3]) < 0) {
       printf(2, "link %s %s: failed\n", argv[1], argv[2]);
     }
   }
-  if(!strcmp(argv[1], "-h")) {
+  if(strcmp(argv[1], "-s") == 0) {
     if (symlink(argv[2], argv[3]) < 0) {
       printf(2, "symlink %s %s: failed\n", argv[2], argv[3]);
     }
