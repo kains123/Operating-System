@@ -12,9 +12,10 @@ main(int argc, char *argv[])
   printf(2, "%s********\n",argv[2]);
   if(strcmp(argv[1], "-h") && link(argv[2], argv[3]) < 0) {
     printf(2, "link %s %s: failed\n", argv[1], argv[2]);
-  } else if (strcmp(argv[1], "-s") && symlink(argv[2], argv[3]) < 0)
+  } 
+  if (strcmp(argv[1], "-s") && symlink(argv[2], argv[3]) < 0) {
     printf(2, "symlink %s %s: failed\n", argv[2], argv[3]);
-  
+  }
 
   exit();
 }
