@@ -5,6 +5,11 @@
     "istream": "c",
     "locale": "c",
     "streambuf": "c",
-    "*.tcc": "c"
+    "*.tcc": "c",
+    "user.h": "c",
+    "sleeplock.h": "c",
+    "__config": "c",
+    "chrono": "c",
+    "functional": "c"
   }
 }

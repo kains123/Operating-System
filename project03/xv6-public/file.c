@@ -179,6 +179,7 @@ filepwrite(struct file *f, char *addr, int n, int off)
   if (f->writable == 0 || f->type != FD_INODE)
     return -1;
 
+  //i-node, idirect block
   int max = ((MAXOPBLOCKS-1-1-2) / 2) * 512;
   int i = 0;
 
@@ -191,14 +192,15 @@ filepwrite(struct file *f, char *addr, int n, int off)
     begin_op();
     ilock(f->ip);
     r = writei(f->ip, addr + i, off, n1);
-    iunlock(f->ip);
-    end_op();
 
     if (r < 0)
       break;
     if (r != n1)
-      panic("short filepwrite");
+      panic("short filewrite");
     i += r;
+  
+    iunlock(f->ip);
+    end_op();
   }
   return i == n ? n : -1;
 }

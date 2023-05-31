@@ -21,13 +21,13 @@ struct superblock {
   uint bmapstart;    // Block number of first free map block
 };
 
-#define NDIRECT 10 //TODO minus 2
-// #define NINDIRECT (BSIZE / sizeof(uint))
-// #define MAXFILE (NDIRECT + NINDIRECT)
+#define NDIRECT 10 //(DOU, TRI) minus 2 //init val = 12
 #define NINDIRECT (BSIZE / sizeof(uint))
-#define NINDIRECT_D (NINDIRECT * (BSIZE / sizeof(uint)))
-#define NINDIRECT_T (NINDIRECT_D * (BSIZE / sizeof(uint)))
-#define MAXFILE (NDIRECT + NINDIRECT + NINDIRECT_D + NINDIRECT_T)
+// #define MAXFILE (NDIRECT + NINDIRECT)
+
+#define NINDIRECT_DOU (NINDIRECT * (BSIZE / sizeof(uint)))
+#define NINDIRECT_TRI (NINDIRECT_DOU * (BSIZE / sizeof(uint)))
+#define MAXFILE (NDIRECT + NINDIRECT + NINDIRECT_DOU + NINDIRECT_TRI)
 
 enum FS_ADDR_TYPE {
   FS_ADDR_DIRECT = 0,
