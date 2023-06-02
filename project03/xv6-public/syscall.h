@@ -21,7 +21,8 @@
 #define SYS_mkdir  20
 #define SYS_close  21
 #define SYS_sync 22
-#define SYS_get_log_num 23
+#define SYS_get_log_val 23
 #define SYS_pwrite 24
 #define SYS_pread 25
 #define SYS_symlink 26
+#define SYS_readlink 27

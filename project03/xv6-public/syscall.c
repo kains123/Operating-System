@@ -104,10 +104,11 @@ extern int sys_wait(void);
 extern int sys_write(void);
 extern int sys_uptime(void);
 extern int sys_sync(void);
-extern int sys_get_log_num(void);
+extern int sys_get_log_val(void);
 extern int sys_pwrite(void);
 extern int sys_pread(void);
 extern int sys_symlink(void);
+extern int sys_readlink(void);
 
 static int (*syscalls[])(void) = {
 [SYS_fork]    sys_fork,
@@ -132,10 +133,12 @@ static int (*syscalls[])(void) = {
 [SYS_mkdir]   sys_mkdir,
 [SYS_close]   sys_close,
 [SYS_sync] sys_sync,
-[SYS_get_log_num] sys_get_log_num,
+[SYS_get_log_val] sys_get_log_val,
 [SYS_pwrite] sys_pwrite,
 [SYS_pread] sys_pread,
 [SYS_symlink] sys_symlink,
+[SYS_readlink] sys_readlink,
+
 };
 
 void

@@ -461,9 +461,9 @@ sys_sync(void)
 }
 
 int
-sys_get_log_num(void)
+sys_get_log_val(void)
 {
-  return get_log_num();
+  return get_log_val();
 }
 
 int
@@ -535,4 +535,39 @@ sys_symlink(void)
   f->writable = 0; //not writable
 
   return 0;
+}
+
+//TODO
+int sys_readlink(void)
+{
+  char *pathname;
+  char *buf;
+  int bufsize;
+  if (argstr(0, &pathname) < 0 || argstr(1, &buf) < 0 || argint(2, &bufsize))
+    return -1;
+  else
+    return readlink(pathname, buf, bufsize);
+}
+
+int readlink(char *pathname, char *buf, int bufsize)
+{
+  struct inode *ip; //, *sym_ip;
+                    // int i;
+  if ((ip = namei(pathname)) == 0)
+    return -1;
+  ilock(ip);
+
+  if (!ip->symlink)
+  {
+    iunlock(ip);
+    return -1;
+  }
+  if (ip->symlink)
+  {
+    safestrcpy(buf, (char *)ip->addrs, bufsize);
+    iunlock(ip);
+    return 0;
+  }
+  iunlock(ip);
+  return -1;
 }
