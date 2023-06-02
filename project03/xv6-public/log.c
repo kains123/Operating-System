@@ -166,8 +166,8 @@ begin_op(void)
       sleep(&log, &log.lock);
     } else if(log.lh.n + (log.outstanding+1)*MAXOPBLOCKS > LOGSIZE){
       // this op might exhaust log space; wait for commit.
-      sleep(&log, &log.lock);
-      // commit_sync(1);
+      // sleep(&log, &log.lock);
+      commit_sync(1);
     } else {
       log.outstanding += 1;
       release(&log.lock);
