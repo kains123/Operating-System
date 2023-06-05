@@ -456,8 +456,10 @@ sys_pipe(void)
 int
 sys_sync(void)
 {
+  //TODO
+  int block = 0;
   commit_sync(0);
-  return 0;
+  return block;
 }
 
 int

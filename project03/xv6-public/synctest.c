@@ -12,7 +12,7 @@ int
 main(int argc, char *argv[])
 {
     int fd, i; 
-    int r, log_num;
+    int r, log_val;
     int old_log = -1;
     char data[BUFSIZE];
 
@@ -32,12 +32,12 @@ main(int argc, char *argv[])
         printf(1, "write returned %d : failed\n", r);
         exit();
       }
-      if ((log_num = get_log_val()) < 0) {
-        printf(1, "get log num returned %d : failed\n", log_num);
+      if ((log_val = get_log_val()) < 0) {
+        printf(1, "get log val returned %d : failed\n", log_val);
         exit();
       } 
-      printf(1, "get log num : %d -> %d\n", old_log, log_num);
-      old_log = log_num;
+      printf(1, "get_log_val : %d -> %d\n", old_log, log_val);
+      old_log = log_val;
     }
     printf(1, "%d bytes written\n", BUF_PER_FILE * BUFSIZE);
     close(fd);
@@ -53,7 +53,7 @@ main(int argc, char *argv[])
         exit();
       }
       if ((old_log = get_log_val()) < 0) {
-        printf(1, "get log num returned %d : failed\n", log_num);
+        printf(1, "get log num returned %d : failed\n", log_val);
         exit();
       } 
 
@@ -62,11 +62,11 @@ main(int argc, char *argv[])
         exit();
       }
 
-      if ((log_num = get_log_val()) < 0) {
-        printf(1, "get log num returned %d : failed\n", log_num);
+      if ((log_val = get_log_val()) < 0) {
+        printf(1, "get log num returned %d : failed\n", log_val);
         exit();
       } 
-      printf(1, "get log num : %d -> %d\n", old_log, log_num);
+      printf(1, "get log num : %d -> %d\n", old_log, log_val);
 
     }
     printf(1, "%d bytes written\n", BUF_PER_FILE * BUFSIZE);

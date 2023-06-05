@@ -130,24 +130,19 @@ commit_sync(int locked)
   {
     sleep(&log, &log.lock);
   }
-  
-  // now log.oustanding is 0. so there is no running fs syscall.
-  // therefore just one committing is required.
   if (log.committing)
   {
 	while (log.committing)
 	  sleep(&log, &log.lock);
 
 	if (!locked) release(&log.lock);
-
     return;
   }
     
   log.committing = 1;
   release(&log.lock);
-
-  // call commit w/o holding locks, since not allowed
-  // to sleep with locks.
+  
+  //implement commit w/o
   commit();
   acquire(&log.lock);
   log.committing = 0;
@@ -164,7 +159,7 @@ begin_op(void)
   while(1){
     if(log.committing){
       sleep(&log, &log.lock);
-    } else if(log.lh.n + (log.outstanding+1)*MAXOPBLOCKS > LOGSIZE){
+    } else if(log.lh.n + (log.outstanding+1)*MAXOPBLOCKS > LOGSIZE -1){
       // this op might exhaust log space; wait for commit.
       // sleep(&log, &log.lock);
       commit_sync(1);
@@ -272,6 +267,7 @@ log_write(struct buf *b)
   if (i == log.lh.n)
     log.lh.n++;
   b->flags |= B_DIRTY; // prevent eviction
+  // cprintf("B_DIRTY: flush\n");
   release(&log.lock);
 }
 
