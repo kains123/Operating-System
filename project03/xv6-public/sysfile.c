@@ -127,7 +127,7 @@ sys_link(void)
     return -1;
   }
   begin_op();
-  if((ip = namei(old)) == 0){
+  if((ip = namei(old, 1)) == 0){
     end_op();
     cprintf("TURN 1\n");
     return -1;
@@ -312,7 +312,7 @@ sys_open(void)
       return -1;
     }
   } else {
-    if((ip = namei(path)) == 0){
+    if((ip = namei(path, 1)) == 0){
       end_op();
       return -1;
     }
@@ -386,7 +386,7 @@ sys_chdir(void)
   struct proc *curproc = myproc();
   
   begin_op();
-  if(argstr(0, &path) < 0 || (ip = namei(path)) == 0){
+  if(argstr(0, &path) < 0 || (ip = namei(path, 1)) == 0){
     end_op();
     return -1;
   }
@@ -530,7 +530,7 @@ int readlink(char *pathname, char *buf, int bufsize)
 {
   struct inode *ip; //, *sym_ip;
                     // int i;
-  if ((ip = namei(pathname)) == 0)
+  if ((ip = namei(pathname, 1)) == 0)
     return -1;
   ilock(ip);
 
