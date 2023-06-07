@@ -10,6 +10,7 @@
     "sleeplock.h": "c",
     "__config": "c",
     "chrono": "c",
-    "functional": "c"
+    "functional": "c",
+    "fcntl.h": "c"
   }
 }
