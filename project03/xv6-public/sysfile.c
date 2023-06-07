@@ -317,29 +317,34 @@ sys_open(void)
       return -1;
     }
     ilock(ip);
+    int cnt =10;
+    while (ip->type==T_SYMLINK &&!(omode&O_NOFOLLOW)&&cnt)
+    {
+      if(readi(ip,0,(int)path,0)!=ip->size){
+        iunlockput(ip);
+        end_op();
+        return -1;
+      }
+      iunlockput(ip);
+      if((ip = namei(path)) == 0){
+        end_op();
+        return -1;
+      }
+      ilock(ip);
+      cnt--;
+    }
+    if(!cnt){
+      iunlockput(ip);
+      end_op();
+      return -1;
+    }
+
     if(ip->type == T_DIR && omode != O_RDONLY){
       iunlockput(ip);
       end_op();
       return -1;
     }
   }
-
-  if((f = filealloc()) == 0 || (fd = fdalloc(f)) < 0){
-    if(f)
-      fileclose(f);
-    iunlockput(ip);
-    end_op();
-    return -1;
-  }
-  iunlock(ip);
-  end_op();
-
-  f->type = FD_INODE;
-  f->ip = ip;
-  f->off = 0;
-  f->readable = !(omode & O_WRONLY);
-  f->writable = (omode & O_WRONLY) || (omode & O_RDWR);
-  return fd;
 }
 
 int
