@@ -26,6 +26,13 @@
     "vector": "c",
     "string_view": "c",
     "ranges": "c",
-    "utility": "c"
+    "utility": "c",
+    "ostream": "c",
+    "exception": "c",
+    "memory_resource": "c",
+    "iosfwd": "c",
+    "new": "c",
+    "sstream": "c",
+    "stop_token": "c"
   }
 }

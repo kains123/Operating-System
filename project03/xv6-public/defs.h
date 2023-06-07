@@ -35,8 +35,7 @@ int             filestat(struct file*, struct stat*);
 int             filewrite(struct file*, char*, int n);
 void            commit_sync(int);
 int             get_log_val(void);
-int             filepread(struct file*, char*, int, int);
-int             filepwrite(struct file*, char*, int, int);
+
 // fs.c
 void            readsb(int dev, struct superblock *sb);
 int             dirlink(struct inode*, char*, uint);

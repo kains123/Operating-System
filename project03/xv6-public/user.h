@@ -25,8 +25,6 @@ int sleep(int);
 int uptime(void);
 int sync(void);
 int get_log_val(void);
-int pwrite(int, void*, int, int);
-int pread(int, void*, int, int);
 int symlink(char*, char*);
 int readlink(char*, char*, int);
 

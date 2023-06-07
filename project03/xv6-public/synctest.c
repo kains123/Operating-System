@@ -56,7 +56,6 @@ main(int argc, char *argv[])
         printf(1, "get log num returned %d : failed\n", log_val);
         exit();
       } 
-
       if (sync()) {
         printf(1, "sync failed\n");
         exit();

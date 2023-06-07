@@ -31,7 +31,6 @@ SYSCALL(sleep)
 SYSCALL(uptime)
 SYSCALL(sync)
 SYSCALL(get_log_val)
-SYSCALL(pwrite)
-SYSCALL(pread)
+
 SYSCALL(symlink)
 SYSCALL(readlink)
