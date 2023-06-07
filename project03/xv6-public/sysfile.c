@@ -317,28 +317,6 @@ sys_open(void)
       return -1;
     }
     ilock(ip);
-    int cnt =10;
-    while (ip->type==T_SYMLINK &&!(omode&O_NOFOLLOW)&&cnt)
-    {
-      if(readi(ip,0,(int)path,0)!=ip->size){
-        iunlockput(ip);
-        end_op();
-        return -1;
-      }
-      iunlockput(ip);
-      if((ip = namei(path)) == 0){
-        end_op();
-        return -1;
-      }
-      ilock(ip);
-      cnt--;
-    }
-    if(!cnt){
-      iunlockput(ip);
-      end_op();
-      return -1;
-    }
-
     if(ip->type == T_DIR && omode != O_RDONLY){
       iunlockput(ip);
       end_op();
@@ -521,16 +499,15 @@ int
 sys_symlink(void)
 //create symlink
 {
+  cprintf("SYS_SYMLINK\n");
   char *target, *path;
   struct file *f;
   struct inode *ip;
-  int fd;
 
   if (argstr(0, &target) < 0 || argstr(1, &path) < 0)
     return -1;
 
   begin_op();
-
   ip = create(path, T_SYMLINK, 0, 0);
   if (ip == 0)
   {
@@ -540,12 +517,11 @@ sys_symlink(void)
   ip->symlink = 1;
   end_op();
 
-  if ((f = filealloc()) == 0 || (fd = fdalloc(f)) < 0)
+  if ((f = filealloc()) == 0)
   {
     if (f)
       fileclose(f);
     iunlockput(ip);
-    end_op();
     return -1;
   }
 
@@ -558,11 +534,8 @@ sys_symlink(void)
   f->ip = ip;
   f->off = 0;
   f->readable = 1; //readable
-  f->writable = 1; //writable
+  f->writable = 0; //not writable
 
-  iupdate(ip);
-  iunlockput(ip);
-  end_op();
   return 0;
 }
 
