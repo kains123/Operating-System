@@ -331,42 +331,6 @@ sys_open(void)
     end_op();
     return -1;
   }
-    if(!(omode & O_NOFOLLOW)) {
-    uint cnt = 0;
-    while(ip->type == T_SYMLINK && cnt < 10) {
-      int len = 0;
-      readi(ip, 0, (int)&len, sizeof(int));
-      
-      if(len > 50)
-        panic("open: corrupted symlink inode");
-      
-      readi(ip, 0, (int)path, sizeof(int));
-      iunlockput(ip);
-
-      if((ip = namei(path)) == 0){
-        end_op(ROOTDEV);
-        return -1;
-      }
-
-      ilock(ip);
-      
-      if(ip->type == T_DIR && omode != O_RDONLY){
-        iunlockput(ip);
-        end_op(ROOTDEV);
-        return -1;
-      }
-      // printf("open: resolve symlink -> %s len=%d\n", path, len);
-
-      cnt++;
-    }
-
-    if(cnt >= 10) {
-      iunlockput(ip);
-      end_op(ROOTDEV);
-      return -1;
-    }
-  }
-
   iunlock(ip);
   end_op();
 
