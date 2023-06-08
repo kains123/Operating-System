@@ -66,7 +66,7 @@ get_ip(struct inode *ip, char* path) {
       
           cprintf("Error: Inode cannot found. Original file could be deleted or possible inode corruption occured.\n");
           end_op();
-          return ip;
+          return NULL;
         }
         ilock(ip); // * Lock again; readi.
         // * If newly updated ip is symbolic link,
