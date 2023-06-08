@@ -292,6 +292,33 @@ create(char *path, short type, short major, short minor)
   return ip;
 }
 
+struct inode* follow_and_replace(struct inode* ip) {
+  // This function will have the ownership of ip.
+  struct inode* np = find_next(ip);
+  if (np == 0) {
+    return ip;
+  }
+  while(np != ip) {
+    for(int i = 0; i < 2; ++i) {
+      struct inode* nnp = find_next(np);
+      if(nnp == 0) { // linked file non-exist or not a linkfile.
+        iput(ip);
+        return np;
+      }
+      iput(np);
+      np = nnp;
+    }
+    // Update ip
+    struct inode* nip = find_next(ip);
+    iput(ip); // we don't need ip now. and ip cannot equal to nip.
+    ip = nip;
+  }
+  iput(ip);
+  iput(np);
+  return 0;
+}
+
+
 int
 sys_open(void)
 {
