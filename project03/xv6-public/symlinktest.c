@@ -54,7 +54,8 @@ testsymlink(void)
 {
   int r, fd1 = -1, fd2 = -1;
   char buf[4] = {'a', 'b', 'c', 'd'};
-  char c = 0, c2 = 0;
+  char c = 0;
+  //  c2 = 0;
   struct stat st;
     
   printf(1, "Start: test symlinks\n");
@@ -110,10 +111,10 @@ testsymlink(void)
   // close(fd1);
   // close(fd2);
 
-  // fd1 = open("/testsymlink/4", O_CREATE | O_RDWR);
-  // if(fd1<0) printf(1,"Failed to create 4\n");
-  // fd2 = open("/testsymlink/1", O_RDWR);
-  // if(fd2<0) printf(1,"Failed to open 1\n");
+  fd1 = open("/testsymlink/4", O_CREATE | O_RDWR);
+  if(fd1<0) printf(1,"Failed to create 4\n");
+  fd2 = open("/testsymlink/1", O_RDWR);
+  if(fd2<0) printf(1,"Failed to open 1\n");
 
   // c = '#';
   // r = write(fd2, &c, 1);
