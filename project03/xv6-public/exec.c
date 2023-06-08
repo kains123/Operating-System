@@ -22,12 +22,13 @@ exec(char *path, char **argv)
 
   begin_op();
 
-  ip = get_ip(ip,  path);
+  
   if((ip = namei(path, 1)) == 0){
     end_op();
     cprintf("exec: fail\n");
     return -1;
   }
+  ip = get_ip(ip,  path);
   // if (readlink(path, pathname, 64) == 0)
   // {
   //   if ((ip = namei(pathname, 1)) == 0)
