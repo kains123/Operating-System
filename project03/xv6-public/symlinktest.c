@@ -11,7 +11,6 @@
 
 
 static void testsymlink(void);
-static void concur(void);
 static void cleanup(void);
 
 int
