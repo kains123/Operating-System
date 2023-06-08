@@ -30,10 +30,10 @@ ls(char *path)
   struct dirent de;
   struct stat st;
 
-  if(readlink(path,pathname,64) == 0){
-    printf(1, "READ");
-    strcpy(path,pathname);
-  }
+  // if(readlink(path,pathname,64) == 0){
+  //   printf(1, "READ");
+  //   strcpy(path,pathname);
+  // }
 
   if((fd = open(path, 0)) < 0){
     printf(2, "ls: cannot open %s\n", path);
