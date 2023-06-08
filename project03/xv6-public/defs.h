@@ -190,7 +190,7 @@ void            clearpteu(pde_t *pgdir, char *uva);
 
 //sysfile.c
 int             readlink(char*, char*, int);
-int             get_ip(struct inode*, char*);
+struct inode*   get_ip(struct inode*, char*);
 
 // number of elements in fixed-size array
 #define NELEM(x) (sizeof(x)/sizeof((x)[0]))
