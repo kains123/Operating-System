@@ -345,7 +345,7 @@ sys_open(void)
     if(ip->type == T_SYMLINK && (omode != O_NOFOLLOW)) { 
       int count = 0;
       do {
-        cprintf("HERE!.\n");
+        // cprintf("HERE!.\n");
         readi(ip, (char*)&length, 0, sizeof(int));
         readi(ip, path, sizeof(int), length + 1);
         iunlockput(ip);
