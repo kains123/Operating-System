@@ -18,15 +18,15 @@ exec(char *path, char **argv)
   struct proghdr ph;
   pde_t *pgdir, *oldpgdir;
   struct proc *curproc = myproc();
-  char pathname[64]; 
+  // char pathname[64]; 
 
   begin_op();
 
-  // if((ip = namei(path)) == 0){
-  //   end_op();
-  //   cprintf("exec: fail\n");
-  //   return -1;
-  // }
+  if((ip = namei(path, 1)) == 0){
+    end_op();
+    cprintf("exec: fail\n");
+    return -1;
+  }
   // if (readlink(path, pathname, 64) == 0)
   // {
   //   if ((ip = namei(pathname, 1)) == 0)
@@ -36,15 +36,15 @@ exec(char *path, char **argv)
   //     return -1;
   //   }
   // }
-
+  
   // else
   // {
-    if ((ip = namei(path,1)) == 0)
-    {
-      end_op();
-      cprintf("exec: fail\n");
-      return -1;
-    }
+  //   if ((ip = namei(path,1)) == 0)
+  //   {
+  //     end_op();
+  //     cprintf("exec: fail\n");
+  //     return -1;
+  //   }
   // }
   ilock(ip);
   pgdir = 0;
