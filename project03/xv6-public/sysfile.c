@@ -610,6 +610,10 @@ int sys_get_ip(void)
 {
   char *path;
   struct inode *ip;
+  if((ip = namei(path, 64)) == 0){
+      end_op();
+      return -1;
+  }
   if (argstr(1, &path) < 0)
     return -1;
   get_ip(ip, path);
