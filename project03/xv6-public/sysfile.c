@@ -61,7 +61,7 @@ get_ip(struct inode *ip, char* path) {
         readi(ip, (char*)&length, 0, sizeof(int));
         readi(ip, path, sizeof(int), length + 1);
         iunlockput(ip);
-        if((ip = namei(path, 64)) == 0){
+        if((ip = namei(path)) == 0){
       
           cprintf("Error: Inode cannot found. Original file could be deleted or possible inode corruption occured.\n");
           end_op();
@@ -148,7 +148,7 @@ sys_link(void)
     return -1;
   }
   begin_op();
-  if((ip = namei(old, 1)) == 0){
+  if((ip = namei(old)) == 0){
     end_op();
     
     return -1;
@@ -332,7 +332,7 @@ sys_open(void)
       return -1;
     }
   } else {
-    if((ip = namei(path, 64)) == 0){
+    if((ip = namei(path)) == 0){
       end_op();
       return -1;
     }
@@ -349,7 +349,7 @@ sys_open(void)
         readi(ip, (char*)&length, 0, sizeof(int));
         readi(ip, path, sizeof(int), length + 1);
         iunlockput(ip);
-        if((ip = namei(path, 64)) == 0){
+        if((ip = namei(path)) == 0){
           cprintf("Error: Inode cannot found. Original file could be deleted or possible inode corruption occured.\n");
           end_op();
           return -1;
@@ -445,7 +445,7 @@ sys_chdir(void)
   struct proc *curproc = myproc();
   
   begin_op();
-  if(argstr(0, &path) < 0 || (ip = namei(path, 1)) == 0){
+  if(argstr(0, &path) < 0 || (ip = namei(path)) == 0){
     end_op();
     return -1;
   }
@@ -529,55 +529,142 @@ sys_get_log_val(void)
 
 
 
-int 
-sys_symlink(void)
-//create symlink
+// int 
+// sys_symlink(void)
+// //create symlink
+// {
+//   cprintf("SYS_SYMLINK\n");
+//   char *target, *path;
+//   // struct file *f;
+//   struct inode *ip;
+
+//   if (argstr(0, &target) < 0 || argstr(1, &path) < 0)
+//     return -1;
+
+//   begin_op();
+//   ip = create(path, T_SYMLINK, 0, 0);
+//   if (ip == 0)
+//   {
+//     end_op();
+//     return -1;
+//   }
+//   ip->symlink = 1;
+//   // end_op();
+
+//   // if ((f = filealloc()) == 0)
+//   // {
+//   //   if (f)
+//   //     fileclose(f);
+//   //   iunlockput(ip);
+//   //   return -1;
+//   // }
+
+//   // //change the inode
+//   // if (strlen(target) > 50)
+//   //   panic("target soft link path is too long ");
+//   // safestrcpy((char *)ip->addrs, target, 50);
+//   // iunlock(ip);
+
+//   // f->ip = ip;
+//   // f->off = 0;
+//   // f->readable = 1; //readable
+//   // f->writable = 1; //not writable
+//   int len = strlen(target);
+//   writei(ip, 0, (int)&len, 0);
+//   writei(ip, 0, (int)target, sizeof(int));
+//   iupdate(ip);
+//   iunlockput(ip);
+
+//   end_op(ROOTDEV);
+
+//   return 0;
+// }
+// Create the path new as a link to the same inode as old.
+//* Link will now support symbolic link
+int
+sys_link(void)
 {
-  cprintf("SYS_SYMLINK\n");
-  char *target, *path;
-  // struct file *f;
-  struct inode *ip;
+  char name[DIRSIZ], *new, *old, *flag;
+  int length;
+  struct inode *dp, *ip;
 
-  if (argstr(0, &target) < 0 || argstr(1, &path) < 0)
-    return -1;
-
-  begin_op();
-  ip = create(path, T_SYMLINK, 0, 0);
-  if (ip == 0)
-  {
-    end_op();
+  if(argstr(0, &flag) < 0 || argstr(1, &old) < 0 || argstr(2, &new) < 0){
+    cprintf("link: read argument failed\n");
     return -1;
   }
-  ip->symlink = 1;
-  // end_op();
 
-  // if ((f = filealloc()) == 0)
-  // {
-  //   if (f)
-  //     fileclose(f);
-  //   iunlockput(ip);
-  //   return -1;
-  // }
+  begin_op();
+  if(flag[0] == '-' && flag[1] == 'h'){
+    //* Standard scheme: Hard link - share I-node
+    if((ip = namei(old)) == 0){ //* namei: get inode for current old path.
+      end_op();
+      return -1;
+    }
 
-  // //change the inode
-  // if (strlen(target) > 50)
-  //   panic("target soft link path is too long ");
-  // safestrcpy((char *)ip->addrs, target, 50);
-  // iunlock(ip);
+    ilock(ip);
+    if(ip->type == T_DIR){ //* If current inode is directory
+      iunlockput(ip);
+      end_op();
+      return -1;
+    }
 
-  // f->ip = ip;
-  // f->off = 0;
-  // f->readable = 1; //readable
-  // f->writable = 1; //not writable
-  int len = strlen(target);
-  writei(ip, 0, (int)&len, 0);
-  writei(ip, 0, (int)target, sizeof(int));
-  iupdate(ip);
-  iunlockput(ip);
+    ip->nlink++; //* Increase inode's linked number.
+    iupdate(ip); //* iupdate() copy a modified in-memory inode to disk
+                 //- called after every changes of ip->xxx
+    iunlock(ip);
 
-  end_op(ROOTDEV);
+    if((dp = nameiparent(new, name)) == 0) //* nameiparent: get inode of the parent, and copy.
+      goto bad;
+    ilock(dp);
+    if(dp->dev != ip->dev || dirlink(dp, name, ip->inum) < 0){
+      iunlockput(dp);
+      goto bad;
+    }
+    iunlockput(dp);
+    iput(ip);
+  }else if(flag[0] == '-' && flag[1] == 's'){
+    if((ip = create(new, T_SYMLINK, 0, 0)) == 0){ //* T_SBLK: symbolic type - need to be differentiated.
+      end_op();
+      cprintf("Error while creating symlink\n");
+      return -1;
+    }
+    //* old: will be path for current symbolic link.
+
+    //* Step 2) Save path information in current inode.
+    //* Required info: path length, path string
+    /*
+      --------
+     |  path  |
+     | length |
+      --------
+     |  path  |
+     |(string)|
+      --------
+     */
+    //* later used to refer current path and namei() it.
+    length = strlen(old);
+    //* Lock
+    //ilock(ip);
+
+    //* Write path length and path info
+    writei(ip, (char*)&length, 0, sizeof(int));
+    writei(ip, old, sizeof(int), length + 1); //* Save length information. +1 for null character '\0'
+
+    //* Unlock
+    iupdate(ip);
+    iunlockput(ip);
+  }
+  end_op();
 
   return 0;
+
+bad:
+  ilock(ip);
+  ip->nlink--;
+  iupdate(ip);
+  iunlockput(ip);
+  end_op();
+  return -1;
 }
 
 //syslink read
@@ -596,7 +683,7 @@ int sys_readlink(void)
 int readlink(char *pathname, char *buf, int bufsize)
 {
   struct inode *ip;
-  if ((ip = namei(pathname, 1)) == 0)
+  if ((ip = namei(pathname)) == 0)
     return -1;
   ilock(ip);
 
@@ -621,7 +708,7 @@ int sys_get_ip(void)
   struct inode *ip;
   if (argstr(1, &path) < 0)
     return -1;
-  if((ip = namei(path, 64)) == 0){
+  if((ip = namei(path)) == 0){
       end_op();
       return -1;
     }

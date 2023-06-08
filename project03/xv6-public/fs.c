@@ -806,17 +806,12 @@ skipelem(char *path, char *name)
 // path element into name, which must have room for DIRSIZ bytes.
 // Must be called inside a transaction since it calls iput().
 static struct inode*
-namex(struct inode *root, char *path, int nameiparent, char *name, int depth,int follow)
+namex(char *path, int nameiparent, char *name)
 {
   struct inode *ip, *next;
-  char buf[100], tname[DIRSIZ];
-  if(depth > 31)
-    return 0;
 
   if(*path == '/')
     ip = iget(ROOTDEV, ROOTINO);
-  else if(root)
-    ip = idup(root);
   else
     ip = idup(myproc()->cwd);
 
@@ -835,21 +830,7 @@ namex(struct inode *root, char *path, int nameiparent, char *name, int depth,int
       iunlockput(ip);
       return 0;
     }
-    iunlock(ip);
-    ilock(next);
-    if(next->type == T_SYMLINK && follow){
-      if(next->size >= sizeof(buf) || readi(next, buf, 0, next->size) != next->size){
-        iunlockput(next);
-        iput(ip);
-        return 0;
-      }
-      buf[next->size] = 0;
-      iunlockput(next);
-      next = namex(next, buf, 0, tname, depth+1,follow);
-    } else {
-      iunlock(next);
-    }
-    iput(ip);
+    iunlockput(ip);
     ip = next;
   }
   if(nameiparent){
@@ -859,15 +840,16 @@ namex(struct inode *root, char *path, int nameiparent, char *name, int depth,int
   return ip;
 }
 
+
 struct inode*
-namei(char *path,int follow)
+namei(char *path)
 {
   char name[DIRSIZ];
-  return namex(0, path, 0, name, 0,follow);
+  return namex(path, 0, name);
 }
 
 struct inode*
 nameiparent(char *path, char *name)
 {
-  return namex(0, path, 1, name, 0,1);
+  return namex(path, 1, name);
 }
