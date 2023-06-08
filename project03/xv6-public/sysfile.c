@@ -357,7 +357,7 @@ sys_open(void)
         ilock(ip); 
         count++;
 
-        if(count >= 10){
+        if(count >= 100){
             cprintf("Cycle!\n");
             iunlockput(ip);
             end_op(ROOTDEV);
