@@ -583,74 +583,74 @@ sys_symlink(void)
 }
 // Create the path new as a link to the same inode as old.
 //* Link will now support symbolic link
-int
-sys_link(void)
-{
-  char name[DIRSIZ], *new, *old, *flag;
-  int length;
-  struct inode *dp, *ip;
+// int
+// sys_link(void)
+// {
+//   char name[DIRSIZ], *new, *old, *flag;
+//   int length;
+//   struct inode *dp, *ip;
 
-  if(argstr(0, &flag) < 0 || argstr(1, &old) < 0 || argstr(2, &new) < 0){
-    cprintf("link: read argument failed\n");
-    return -1;
-  }
+//   if(argstr(0, &flag) < 0 || argstr(1, &old) < 0 || argstr(2, &new) < 0){
+//     cprintf("link: read argument failed\n");
+//     return -1;
+//   }
 
-  begin_op();
-  if(flag[0] == '-' && flag[1] == 'h'){
-    //* Standard scheme: Hard link - share I-node
-    if((ip = namei(old)) == 0){ //* namei: get inode for current old path.
-      end_op();
-      return -1;
-    }
+//   begin_op();
+//   if(flag[0] == '-' && flag[1] == 'h'){
+//     //* Standard scheme: Hard link - share I-node
+//     if((ip = namei(old)) == 0){ //* namei: get inode for current old path.
+//       end_op();
+//       return -1;
+//     }
 
-    ilock(ip);
-    if(ip->type == T_DIR){ //* If current inode is directory
-      iunlockput(ip);
-      end_op();
-      return -1;
-    }
+//     ilock(ip);
+//     if(ip->type == T_DIR){ //* If current inode is directory
+//       iunlockput(ip);
+//       end_op();
+//       return -1;
+//     }
 
-    ip->nlink++; //* Increase inode's linked number.
-    iupdate(ip); //* iupdate() copy a modified in-memory inode to disk
-                 //- called after every changes of ip->xxx
-    iunlock(ip);
+//     ip->nlink++; //* Increase inode's linked number.
+//     iupdate(ip); //* iupdate() copy a modified in-memory inode to disk
+//                  //- called after every changes of ip->xxx
+//     iunlock(ip);
 
-    if((dp = nameiparent(new, name)) == 0) //* nameiparent: get inode of the parent, and copy.
-      goto bad;
-    ilock(dp);
-    if(dp->dev != ip->dev || dirlink(dp, name, ip->inum) < 0){
-      iunlockput(dp);
-      goto bad;
-    }
-    iunlockput(dp);
-    iput(ip);
-  }else if(flag[0] == '-' && flag[1] == 's'){
-    if((ip = create(new, T_SYMLINK, 0, 0)) == 0){ //* T_SBLK: symbolic type - need to be differentiated.
-      end_op();
-      cprintf("Error while creating symlink\n");
-      return -1;
-    }
-    length = strlen(old);
-    //* Write path length and path info
-    writei(ip, (char*)&length, 0, sizeof(int));
-    writei(ip, old, sizeof(int), length + 1); //* Save length information. +1 for null character '\0'
+//     if((dp = nameiparent(new, name)) == 0) //* nameiparent: get inode of the parent, and copy.
+//       goto bad;
+//     ilock(dp);
+//     if(dp->dev != ip->dev || dirlink(dp, name, ip->inum) < 0){
+//       iunlockput(dp);
+//       goto bad;
+//     }
+//     iunlockput(dp);
+//     iput(ip);
+//   }else if(flag[0] == '-' && flag[1] == 's'){
+//     if((ip = create(new, T_SYMLINK, 0, 0)) == 0){ //* T_SBLK: symbolic type - need to be differentiated.
+//       end_op();
+//       cprintf("Error while creating symlink\n");
+//       return -1;
+//     }
+//     length = strlen(old);
+//     //* Write path length and path info
+//     writei(ip, (char*)&length, 0, sizeof(int));
+//     writei(ip, old, sizeof(int), length + 1); //* Save length information. +1 for null character '\0'
 
-    //* Unlock
-    iupdate(ip);
-    iunlockput(ip);
-  }
-  end_op();
+//     //* Unlock
+//     iupdate(ip);
+//     iunlockput(ip);
+//   }
+//   end_op();
 
-  return 0;
+//   return 0;
 
-bad:
-  ilock(ip);
-  ip->nlink--;
-  iupdate(ip);
-  iunlockput(ip);
-  end_op();
-  return -1;
-}
+// bad:
+//   ilock(ip);
+//   ip->nlink--;
+//   iupdate(ip);
+//   iunlockput(ip);
+//   end_op();
+//   return -1;
+// }
 
 //syslink read
 int sys_readlink(void)
