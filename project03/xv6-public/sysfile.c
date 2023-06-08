@@ -52,7 +52,7 @@ fdalloc(struct file *f)
   return -1;
 }
 
-int 
+struct inode*
 get_ip(struct inode *ip, char* path) {
   char length;
   if(ip->type == T_SYMLINK) { 
@@ -72,7 +72,8 @@ get_ip(struct inode *ip, char* path) {
         // * If newly updated ip is symbolic link,
         // * loop again until non-symbolic found.
       } while(ip->type == T_SYMLINK);
-    }
+  }
+  return ip;
 }
 
 int
