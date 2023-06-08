@@ -535,7 +535,7 @@ sys_symlink(void)
 {
   cprintf("SYS_SYMLINK\n");
   char *target, *path;
-  struct file *f;
+  // struct file *f;
   struct inode *ip;
 
   if (argstr(0, &target) < 0 || argstr(1, &path) < 0)
