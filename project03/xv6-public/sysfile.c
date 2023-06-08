@@ -612,5 +612,6 @@ int sys_get_ip(void)
   struct inode *ip;
   if (argstr(1, &path) < 0)
     return -1;
- return get_ip(ip, path);
+  get_ip(ip, path);
+ return 0;
 }
