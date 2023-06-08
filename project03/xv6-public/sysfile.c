@@ -1,4 +1,4 @@
-//
+
 // File-system system calls.
 // Mostly argument checking, since we don't trust
 // user code, and calls into file.c and fs.c.
@@ -610,12 +610,12 @@ int sys_get_ip(void)
 {
   char *path;
   struct inode *ip;
+  if (argstr(1, &path) < 0)
+    return -1;
   if((ip = namei(path, 64)) == 0){
       end_op();
       return -1;
-  }
-  if (argstr(1, &path) < 0)
-    return -1;
+    }
   get_ip(ip, path);
  return 0;
 }
