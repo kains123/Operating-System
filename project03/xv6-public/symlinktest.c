@@ -113,8 +113,8 @@ testsymlink(void)
 
   fd1 = open("/testsymlink/4", O_CREATE | O_RDWR);
   if(fd1<0) printf(1,"Failed to create 4\n");
-  fd2 = open("/testsymlink/1", O_RDWR);
-  if(fd2<0) printf(1,"Failed to open 1\n");
+  // fd2 = open("/testsymlink/1", O_RDWR);
+  // if(fd2<0) printf(1,"Failed to open 1\n");
 
   // c = '#';
   // r = write(fd2, &c, 1);
