@@ -56,8 +56,8 @@ struct inode*
 get_ip(struct inode *ip, char* path) {
   char length;
   if(ip->type == T_SYMLINK) { 
+    cprintf("HI\n");
       do {
-        
         readi(ip, (char*)&length, 0, sizeof(int));
         readi(ip, path, sizeof(int), length + 1);
         iunlockput(ip);
