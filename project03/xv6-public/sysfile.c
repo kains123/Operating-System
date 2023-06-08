@@ -52,6 +52,29 @@ fdalloc(struct file *f)
   return -1;
 }
 
+int 
+get_ip(struct inode *ip, char path) {
+  char length;
+  if(ip->type == T_SYMLINK) { 
+      do {
+        
+        readi(ip, (char*)&length, 0, sizeof(int));
+        readi(ip, path, sizeof(int), length + 1);
+        iunlockput(ip);
+
+        if((ip = namei(path, 64)) == 0){
+      
+          cprintf("Error: Inode cannot found. Original file could be deleted or possible inode corruption occured.\n");
+          end_op();
+          return -1;
+        }
+        ilock(ip); // * Lock again; readi.
+        // * If newly updated ip is symbolic link,
+        // * loop again until non-symbolic found.
+      } while(ip->type == T_SYMLINK);
+    }
+}
+
 int
 sys_dup(void)
 {
@@ -118,24 +141,22 @@ sys_fstat(void)
 int
 sys_link(void)
 {
-  cprintf("SYS_LINK\n");
   char name[DIRSIZ], *new, *old;
   struct inode *dp, *ip;
 
   if(argstr(0, &old) < 0 || argstr(1, &new) < 0){
-    cprintf("TURN 0\n");
     return -1;
   }
   begin_op();
   if((ip = namei(old, 1)) == 0){
     end_op();
-    cprintf("TURN 1\n");
+    
     return -1;
   }
 
   ilock(ip);
   if(ip->type == T_DIR){
-    cprintf("TURN 2\n");
+  
     iunlockput(ip);
     end_op();
     return -1;
@@ -165,7 +186,6 @@ bad:
   iupdate(ip);
   iunlockput(ip);
   end_op();
-  cprintf("TURN 3\n");
   return -1;
 }
 
@@ -296,7 +316,7 @@ int
 sys_open(void)
 {
   char *path;
-  int fd, omode;
+  int fd, omode, length;
   struct file *f;
   struct inode *ip;
 
@@ -312,17 +332,53 @@ sys_open(void)
       return -1;
     }
   } else {
-    if((ip = namei(path, 1)) == 0){
+    if((ip = namei(path, 64)) == 0){
       end_op();
       return -1;
     }
     ilock(ip);
-    if(ip->type == T_DIR && omode != O_RDONLY){
+    if(ip->type == T_DIR && (omode != O_RDONLY && omode != O_NOFOLLOW)){ //* not readonly nor not follow
       iunlockput(ip);
       end_op();
       return -1;
     }
+    if(ip->type == T_SYMLINK && (omode != O_NOFOLLOW)) { 
+
+      do {
+        
+        readi(ip, (char*)&length, 0, sizeof(int));
+        readi(ip, path, sizeof(int), length + 1);
+        iunlockput(ip);
+
+        
+        if((ip = namei(path, 64)) == 0){
+          
+          
+          cprintf("Error: Inode cannot found. Original file could be deleted or possible inode corruption occured.\n");
+          end_op();
+          return -1;
+        }
+        ilock(ip); 
+      
+      } while(ip->type == T_SYMLINK);
+    }
   }
+
+  
+  
+  
+  // else {
+  //   if((ip = namei(path, 1)) == 0){
+  //     end_op();
+  //     return -1;
+  //   }
+  //   ilock(ip);
+  //   if(ip->type == T_DIR && omode != O_RDONLY){
+  //     iunlockput(ip);
+  //     end_op();
+  //     return -1;
+  //   }
+  // }
 
   if((f = filealloc()) == 0 || (fd = fdalloc(f)) < 0){
     if(f)

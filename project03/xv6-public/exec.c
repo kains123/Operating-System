@@ -18,10 +18,11 @@ exec(char *path, char **argv)
   struct proghdr ph;
   pde_t *pgdir, *oldpgdir;
   struct proc *curproc = myproc();
-  // char pathname[64]; 
+  char pathname[64]; 
 
   begin_op();
 
+  ip = get_ip(ip,  path);
   if((ip = namei(path, 1)) == 0){
     end_op();
     cprintf("exec: fail\n");
@@ -36,7 +37,6 @@ exec(char *path, char **argv)
   //     return -1;
   //   }
   // }
-  
   // else
   // {
   //   if ((ip = namei(path,1)) == 0)
