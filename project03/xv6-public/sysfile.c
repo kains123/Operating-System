@@ -53,7 +53,7 @@ fdalloc(struct file *f)
 }
 
 int 
-get_ip(struct inode *ip, char path) {
+get_ip(struct inode *ip, char* path) {
   char length;
   if(ip->type == T_SYMLINK) { 
       do {

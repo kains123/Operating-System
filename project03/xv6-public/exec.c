@@ -18,7 +18,7 @@ exec(char *path, char **argv)
   struct proghdr ph;
   pde_t *pgdir, *oldpgdir;
   struct proc *curproc = myproc();
-  char pathname[64]; 
+  // char pathname[64]; 
 
   begin_op();
 

@@ -34,6 +34,7 @@
     "new": "c",
     "sstream": "c",
     "stop_token": "c",
-    "atomic": "c"
+    "atomic": "c",
+    "defs.h": "c"
   }
 }
