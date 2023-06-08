@@ -141,6 +141,7 @@ commit_sync(int locked)
     
   log.committing = 1;
   release(&log.lock);
+  int buffer_num = log.lh.n;
   
   //implement commit w/o
   commit();
@@ -150,7 +151,7 @@ commit_sync(int locked)
 
   if (!locked) release(&log.lock);
   //log.lh.n 
-  return log.lh.n;
+  return buffer_num;
 }
 
 // called at the start of each FS system call.
