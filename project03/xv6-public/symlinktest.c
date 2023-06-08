@@ -122,7 +122,7 @@ testsymlink(void)
   if(c!=c2)
     printf(1,"Value read from 4 differed from value written to 1\n");
   printf(1, "test symlinks: ok\n");
-done:
+  
   close(fd1);
   close(fd2);
 }
