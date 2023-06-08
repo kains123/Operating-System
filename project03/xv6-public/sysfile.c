@@ -529,59 +529,62 @@ sys_get_log_val(void)
 
 
 
-// int 
-// sys_symlink(void)
-// //create symlink
-// {
-//   cprintf("SYS_SYMLINK\n");
-//   char *target, *path;
-//   // struct file *f;
-//   struct inode *ip;
-
-//   if (argstr(0, &target) < 0 || argstr(1, &path) < 0)
-//     return -1;
-
-//   begin_op();
-//   ip = create(path, T_SYMLINK, 0, 0);
-//   if (ip == 0)
-//   {
-//     end_op();
-//     return -1;
-//   }
-//   ip->symlink = 1;
-//   // end_op();
-
-//   // if ((f = filealloc()) == 0)
-//   // {
-//   //   if (f)
-//   //     fileclose(f);
-//   //   iunlockput(ip);
-//   //   return -1;
-//   // }
-
-//   // //change the inode
-//   // if (strlen(target) > 50)
-//   //   panic("target soft link path is too long ");
-//   // safestrcpy((char *)ip->addrs, target, 50);
-//   // iunlock(ip);
-
-//   // f->ip = ip;
-//   // f->off = 0;
-//   // f->readable = 1; //readable
-//   // f->writable = 1; //not writable
-//   int len = strlen(target);
-//   writei(ip, 0, (int)&len, 0);
-//   writei(ip, 0, (int)target, sizeof(int));
-//   iupdate(ip);
-//   iunlockput(ip);
-
-//   end_op(ROOTDEV);
-
-//   return 0;
-// }
-// Create the path new as a link to the same inode as old.
-int
+int 
 sys_symlink(void)
+//create symlink
+{
+  cprintf("SYS_SYMLINK\n");
+  char *target, *path;
+  // struct file *f;
+  struct inode *ip;
+
+  if (argstr(0, &target) < 0 || argstr(1, &path) < 0)
+    return -1;
+
+  begin_op();
+  ip = create(path, T_SYMLINK, 0, 0);
+  if (ip == 0)
+  {
+    end_op();
+    return -1;
+  }
+  ip->symlink = 1;
+  // end_op();
+
+  // if ((f = filealloc()) == 0)
+  // {
+  //   if (f)
+  //     fileclose(f);
+  //   iunlockput(ip);
+  //   return -1;
+  // }
+
+  // //change the inode
+  // if (strlen(target) > 50)
+  //   panic("target soft link path is too long ");
+  // safestrcpy((char *)ip->addrs, target, 50);
+  // iunlock(ip);
+
+  // f->ip = ip;
+  // f->off = 0;
+  // f->readable = 1; //readable
+  // f->writable = 1; //not writable
+  // length = strlen(old);
+  //* Write path length and path info
+  int len = strlen(target);
+  writei(ip, (char*)&len, 0, sizeof(int));
+  writei(ip, target, sizeof(int), len + 1); //* Save length information. +1 for null character '\0'
+  iupdate(ip);
+  iunlockput(ip);
+
+  end_op(ROOTDEV);
+
+  return 0;
+}
+// Create the path new as a link to the same inode as old.
+//* Link will now support symbolic link
+int
+sys_link(void)
 {
   char name[DIRSIZ], *new, *old, *flag;
   int length;
@@ -627,24 +630,7 @@ sys_symlink(void)
       cprintf("Error while creating symlink\n");
       return -1;
     }
-    //* old: will be path for current symbolic link.
-
-    //* Step 2) Save path information in current inode.
-    //* Required info: path length, path string
-    /*
-      --------
-     |  path  |
-     | length |
-      --------
-     |  path  |
-     |(string)|
-      --------
-     */
-    //* later used to refer current path and namei() it.
     length = strlen(old);
-    //* Lock
-    //ilock(ip);
-
     //* Write path length and path info
     writei(ip, (char*)&length, 0, sizeof(int));
     writei(ip, old, sizeof(int), length + 1); //* Save length information. +1 for null character '\0'

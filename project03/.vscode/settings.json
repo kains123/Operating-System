@@ -35,6 +35,10 @@
     "sstream": "c",
     "stop_token": "c",
     "atomic": "c",
-    "defs.h": "c"
+    "defs.h": "c",
+    "__locale": "c",
+    "__string": "c",
+    "string": "c",
+    "tuple": "c"
   }
 }
