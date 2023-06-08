@@ -457,8 +457,8 @@ int
 sys_sync(void)
 {
   //TODO
-  int block = 0;
-  commit_sync(0);
+  int block = commit_sync(0);
+  
   return block;
 }
 

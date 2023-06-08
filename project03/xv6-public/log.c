@@ -121,7 +121,7 @@ recover_from_log(void)
   write_head(); // clear the log
 }
 
-void
+int
 commit_sync(int locked)
 {
   if (!locked) acquire(&log.lock);
@@ -136,7 +136,7 @@ commit_sync(int locked)
 	  sleep(&log, &log.lock);
 
 	if (!locked) release(&log.lock);
-    return;
+    return -1;
   }
     
   log.committing = 1;
@@ -149,6 +149,8 @@ commit_sync(int locked)
   wakeup(&log);
 
   if (!locked) release(&log.lock);
+  //log.lh.n 
+  return log.lh.n;
 }
 
 // called at the start of each FS system call.

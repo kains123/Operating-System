@@ -33,7 +33,7 @@ void            fileinit(void);
 int             fileread(struct file*, char*, int n);
 int             filestat(struct file*, struct stat*);
 int             filewrite(struct file*, char*, int n);
-void            commit_sync(int);
+int             commit_sync(int);
 int             get_log_val(void);
 
 // fs.c
