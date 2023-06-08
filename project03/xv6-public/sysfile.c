@@ -549,26 +549,33 @@ sys_symlink(void)
     return -1;
   }
   ip->symlink = 1;
-  end_op();
+  // end_op();
 
-  if ((f = filealloc()) == 0)
-  {
-    if (f)
-      fileclose(f);
-    iunlockput(ip);
-    return -1;
-  }
+  // if ((f = filealloc()) == 0)
+  // {
+  //   if (f)
+  //     fileclose(f);
+  //   iunlockput(ip);
+  //   return -1;
+  // }
 
-  //change the inode
-  if (strlen(target) > 50)
-    panic("target soft link path is too long ");
-  safestrcpy((char *)ip->addrs, target, 50);
-  iunlock(ip);
+  // //change the inode
+  // if (strlen(target) > 50)
+  //   panic("target soft link path is too long ");
+  // safestrcpy((char *)ip->addrs, target, 50);
+  // iunlock(ip);
 
-  f->ip = ip;
-  f->off = 0;
-  f->readable = 1; //readable
-  f->writable = 1; //not writable
+  // f->ip = ip;
+  // f->off = 0;
+  // f->readable = 1; //readable
+  // f->writable = 1; //not writable
+  int len = strlen(target);
+  writei(ip, 0, (int)&len, 0);
+  writei(ip, 0, (int)target, sizeof(int));
+  iupdate(ip);
+  iunlockput(ip);
+
+  end_op(ROOTDEV);
 
   return 0;
 }
