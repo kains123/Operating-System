@@ -580,9 +580,8 @@ sys_get_log_val(void)
 //   return 0;
 // }
 // Create the path new as a link to the same inode as old.
-//* Link will now support symbolic link
 int
-sys_link(void)
+sys_symlink(void)
 {
   char name[DIRSIZ], *new, *old, *flag;
   int length;
