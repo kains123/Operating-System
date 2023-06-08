@@ -24,3 +24,4 @@
 #define SYS_get_log_val 23
 #define SYS_symlink 24
 #define SYS_readlink 25
+#define SYS_get_ip 26

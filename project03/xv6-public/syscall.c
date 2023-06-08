@@ -107,6 +107,7 @@ extern int sys_sync(void);
 extern int sys_get_log_val(void);
 extern int sys_symlink(void);
 extern int sys_readlink(void);
+extern int sys_get_ip(void);
 
 static int (*syscalls[])(void) = {
 [SYS_fork]    sys_fork,
@@ -134,7 +135,7 @@ static int (*syscalls[])(void) = {
 [SYS_get_log_val] sys_get_log_val,
 [SYS_symlink] sys_symlink,
 [SYS_readlink] sys_readlink,
-
+[SYS_get_ip] sys_get_ip,
 };
 
 void

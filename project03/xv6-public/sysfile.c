@@ -582,6 +582,7 @@ int sys_readlink(void)
     return readlink(pathname, buf, bufsize);
 }
 
+
 int readlink(char *pathname, char *buf, int bufsize)
 {
   struct inode *ip;
@@ -602,4 +603,13 @@ int readlink(char *pathname, char *buf, int bufsize)
   }
   iunlock(ip);
   return -1;
+}
+
+int sys_get_ip(void)
+{
+  char *path;
+  struct inode *ip;
+  if (argstr(1, &path) < 0)
+    return -1;
+ return get_ip(ip, path);
 }
