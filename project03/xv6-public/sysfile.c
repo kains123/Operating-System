@@ -291,52 +291,6 @@ create(char *path, short type, short major, short minor)
 
   return ip;
 }
-struct inode* find_next(struct inode* ip) {
-  char path[128];
-  ilock(ip);
-  readi(ip, 0, (uint)path, 0);
-  iunlock(ip);
-  struct inode* next = namei(path, 1);
-  if(next == 0) return 0;
-  int type = next->type;
-  if(!next->valid) { // here we need to load the item from disk if not already.
-    ilock(next);
-    type = next->type;
-    iunlock(next);
-  }
-  if(type != T_SYMLINK) {
-    iput(next);
-    return 0;
-  }
-  return next;
-}
-
-struct inode* follow_and_replace(struct inode* ip) {
-  // This function will have the ownership of ip.
-  struct inode* np = find_next(ip);
-  if (np == 0) {
-    return ip;
-  }
-  while(np != ip) {
-    for(int i = 0; i < 2; ++i) {
-      struct inode* nnp = find_next(np);
-      if(nnp == 0) { // linked file non-exist or not a linkfile.
-        iput(ip);
-        return np;
-      }
-      iput(np);
-      np = nnp;
-    }
-    // Update ip
-    struct inode* nip = find_next(ip);
-    iput(ip); // we don't need ip now. and ip cannot equal to nip.
-    ip = nip;
-  }
-  iput(ip);
-  iput(np);
-  return 0;
-}
-
 
 int
 sys_open(void)
@@ -350,23 +304,6 @@ sys_open(void)
     return -1;
 
   begin_op();
-
-  if(!(omode & O_NOFOLLOW)) {
-    if((ip = namei(path, 1)) != 0) {
-      // There is some file associated with the path.
-      if (ip->type == T_SYMLINK) {
-        ip = follow_and_replace(ip);
-        if (ip == 0){
-          return -1;
-        }
-        // now copy name to path and discard ip.
-        ilock(ip);
-        readi(ip, 0, (int)path, 0);
-        iunlock(ip);
-      }
-      iput(ip);
-    }
-  }
 
   if(omode & O_CREATE){
     ip = create(path, T_FILE, 0, 0);

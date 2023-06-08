@@ -33,6 +33,7 @@
     "iosfwd": "c",
     "new": "c",
     "sstream": "c",
-    "stop_token": "c"
+    "stop_token": "c",
+    "atomic": "c"
   }
 }
