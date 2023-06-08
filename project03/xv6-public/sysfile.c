@@ -514,7 +514,7 @@ sys_symlink(void)
   return 0;
 }
 
-//TODO
+//syslink read
 int sys_readlink(void)
 {
   char *pathname;
@@ -528,8 +528,7 @@ int sys_readlink(void)
 
 int readlink(char *pathname, char *buf, int bufsize)
 {
-  struct inode *ip; //, *sym_ip;
-                    // int i;
+  struct inode *ip;
   if ((ip = namei(pathname, 1)) == 0)
     return -1;
   ilock(ip);

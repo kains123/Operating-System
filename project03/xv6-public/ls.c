@@ -30,9 +30,10 @@ ls(char *path)
   struct dirent de;
   struct stat st;
 
-  if(readlink(path,pathname,64) == 0){//added this to be able to do ls when have some symlink in path
+  if(readlink(path,pathname,64) == 0){
     strcpy(path,pathname);
   }
+  printf("***%d***", fd);
 
   if((fd = open(path, 0)) < 0){
     printf(2, "ls: cannot open %s\n", path);

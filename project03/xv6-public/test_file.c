@@ -8,6 +8,7 @@ int main(int argc, char *argv[])
     int fd, i;
     char path[] = "file0";
     char data[512];
+    
     memset(data, 'a', sizeof data);
 
     // file0
