@@ -31,6 +31,7 @@ ls(char *path)
   struct stat st;
 
   if(readlink(path,pathname,64) == 0){
+    printf(1, "READ");
     strcpy(path,pathname);
   }
 
