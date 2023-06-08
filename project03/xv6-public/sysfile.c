@@ -291,6 +291,25 @@ create(char *path, short type, short major, short minor)
 
   return ip;
 }
+struct inode* find_next(struct inode* ip) {
+  char path[128];
+  ilock(ip);
+  readi(ip, 0, (uint)path, 0);
+  iunlock(ip);
+  struct inode* next = namei(path, 1);
+  if(next == 0) return 0;
+  int type = next->type;
+  if(!next->valid) { // here we need to load the item from disk if not already.
+    ilock(next);
+    type = next->type;
+    iunlock(next);
+  }
+  if(type != T_SYMLINK) {
+    iput(next);
+    return 0;
+  }
+  return next;
+}
 
 struct inode* follow_and_replace(struct inode* ip) {
   // This function will have the ownership of ip.
