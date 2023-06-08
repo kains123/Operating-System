@@ -27,24 +27,25 @@ exec(char *path, char **argv)
   //   cprintf("exec: fail\n");
   //   return -1;
   // }
-  if (readlink(path, pathname, 64) == 0)
-  {
-    if ((ip = namei(pathname, 1)) == 0)
-    {
-      end_op();
-      cprintf("exec: fail\n");
-      return -1;
-    }
-  }
-  else
-  {
+  // if (readlink(path, pathname, 64) == 0)
+  // {
+  //   if ((ip = namei(pathname, 1)) == 0)
+  //   {
+  //     end_op();
+  //     cprintf("exec: fail\n");
+  //     return -1;
+  //   }
+  // }
+
+  // else
+  // {
     if ((ip = namei(path,1)) == 0)
     {
       end_op();
       cprintf("exec: fail\n");
       return -1;
     }
-  }
+  // }
   ilock(ip);
   pgdir = 0;
 
