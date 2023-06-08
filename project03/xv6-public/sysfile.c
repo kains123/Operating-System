@@ -56,12 +56,11 @@ struct inode*
 get_ip(struct inode *ip, char* path) {
   char length;
   if(ip->type == T_SYMLINK) { 
-    cprintf("HI\n");
       do {
+        cprintf("get_ip\n");
         readi(ip, (char*)&length, 0, sizeof(int));
         readi(ip, path, sizeof(int), length + 1);
         iunlockput(ip);
-
         if((ip = namei(path, 64)) == 0){
       
           cprintf("Error: Inode cannot found. Original file could be deleted or possible inode corruption occured.\n");
@@ -338,15 +337,14 @@ sys_open(void)
       return -1;
     }
     ilock(ip);
-    if(ip->type == T_DIR && (omode != O_RDONLY && omode != O_NOFOLLOW)){ //* not readonly nor not follow
+    if(ip->type == T_DIR && (omode != O_RDONLY && omode != O_NOFOLLOW)){
       iunlockput(ip);
       end_op();
       return -1;
     }
     if(ip->type == T_SYMLINK && (omode != O_NOFOLLOW)) { 
-
       do {
-        
+        cprintf("HERE!.\n");
         readi(ip, (char*)&length, 0, sizeof(int));
         readi(ip, path, sizeof(int), length + 1);
         iunlockput(ip);
