@@ -305,6 +305,23 @@ sys_open(void)
 
   begin_op();
 
+  if(!(omode & O_NOFOLLOW)) {
+    if((ip = namei(path, 1)) != 0) {
+      // There is some file associated with the path.
+      if (ip->type == T_SYMLINK) {
+        ip = follow_and_replace(ip);
+        if (ip == 0){
+          return -1;
+        }
+        // now copy name to path and discard ip.
+        ilock(ip);
+        readi(ip, 0, (int)path, 0);
+        iunlock(ip);
+      }
+      iput(ip);
+    }
+  }
+
   if(omode & O_CREATE){
     ip = create(path, T_FILE, 0, 0);
     if(ip == 0){
