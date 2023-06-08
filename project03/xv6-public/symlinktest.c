@@ -84,6 +84,7 @@ testsymlink(void)
     printf(1,"failed to read bytes from b");
 
   unlink("/testsymlink/a");
+  
   if(open("/testsymlink/b", O_RDWR) >= 0)
     printf(1,"Should not be able to open b after deleting a");
 
@@ -122,7 +123,7 @@ testsymlink(void)
   if(c!=c2)
     printf(1,"Value read from 4 differed from value written to 1\n");
   printf(1, "test symlinks: ok\n");
-  
+
   close(fd1);
   close(fd2);
 }

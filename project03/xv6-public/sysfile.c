@@ -509,7 +509,7 @@ sys_symlink(void)
   f->ip = ip;
   f->off = 0;
   f->readable = 1; //readable
-  f->writable = 0; //not writable
+  f->writable = 1; //not writable
 
   return 0;
 }
