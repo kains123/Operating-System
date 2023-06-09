@@ -57,20 +57,17 @@ get_ip(struct inode *ip, char* path) {
   char length;
   if(ip->type == T_SYMLINK) { 
       do {
-        cprintf("get_ip\n");
+        // cprintf("get_ip\n");  //* get ip from the symlink
         readi(ip, (char*)&length, 0, sizeof(int));
         readi(ip, path, sizeof(int), length + 1);
         iunlockput(ip);
-        if((ip = namei(path)) == 0){
-      
-          cprintf("Error: Inode cannot found. Original file could be deleted or possible inode corruption occured.\n");
+        if((ip = namei(path)) == 0){ //* if namei return 0, the way is broken.
+          cprintf("[ERROR] You can't access the data. It might be deleted.\n");
           end_op();
           return ip;
         }
-        ilock(ip); // * Lock again; readi.
-        // * If newly updated ip is symbolic link,
-        // * loop again until non-symbolic found.
-      } while(ip->type == T_SYMLINK);
+        ilock(ip);
+      } while(ip->type == T_SYMLINK); //* if the type is T_SYMLINK
   }
   return ip;
 }
@@ -342,10 +339,10 @@ sys_open(void)
       end_op();
       return -1;
     }
+    //* There is a 
     if(ip->type == T_SYMLINK && (omode != O_NOFOLLOW)) { 
       int count = 0;
-      do {
-        // cprintf("HERE!.\n");
+      while(ip->type == T_SYMLINK && count < 10) {
         readi(ip, (char*)&length, 0, sizeof(int));
         readi(ip, path, sizeof(int), length + 1);
         iunlockput(ip);
@@ -363,7 +360,7 @@ sys_open(void)
             end_op(ROOTDEV);
             return -1;
         }
-      } while(ip->type == T_SYMLINK && count < 10);
+      } 
     }
   }
 
@@ -517,7 +514,6 @@ sys_sync(void)
 {
   //TODO
   int block = commit_sync(0);
-  
   return block;
 }
 
@@ -549,27 +545,7 @@ sys_symlink(void)
     return -1;
   }
   ip->symlink = 1;
-  // end_op();
 
-  // if ((f = filealloc()) == 0)
-  // {
-  //   if (f)
-  //     fileclose(f);
-  //   iunlockput(ip);
-  //   return -1;
-  // }
-
-  // //change the inode
-  // if (strlen(target) > 50)
-  //   panic("target soft link path is too long ");
-  // safestrcpy((char *)ip->addrs, target, 50);
-  // iunlock(ip);
-
-  // f->ip = ip;
-  // f->off = 0;
-  // f->readable = 1; //readable
-  // f->writable = 1; //not writable
-  // length = strlen(old);
   //* Write path length and path info
   int len = strlen(target);
   writei(ip, (char*)&len, 0, sizeof(int));
@@ -581,76 +557,7 @@ sys_symlink(void)
 
   return 0;
 }
-// Create the path new as a link to the same inode as old.
-//* Link will now support symbolic link
-// int
-// sys_link(void)
-// {
-//   char name[DIRSIZ], *new, *old, *flag;
-//   int length;
-//   struct inode *dp, *ip;
 
-//   if(argstr(0, &flag) < 0 || argstr(1, &old) < 0 || argstr(2, &new) < 0){
-//     cprintf("link: read argument failed\n");
-//     return -1;
-//   }
-
-//   begin_op();
-//   if(flag[0] == '-' && flag[1] == 'h'){
-//     //* Standard scheme: Hard link - share I-node
-//     if((ip = namei(old)) == 0){ //* namei: get inode for current old path.
-//       end_op();
-//       return -1;
-//     }
-
-//     ilock(ip);
-//     if(ip->type == T_DIR){ //* If current inode is directory
-//       iunlockput(ip);
-//       end_op();
-//       return -1;
-//     }
-
-//     ip->nlink++; //* Increase inode's linked number.
-//     iupdate(ip); //* iupdate() copy a modified in-memory inode to disk
-//                  //- called after every changes of ip->xxx
-//     iunlock(ip);
-
-//     if((dp = nameiparent(new, name)) == 0) //* nameiparent: get inode of the parent, and copy.
-//       goto bad;
-//     ilock(dp);
-//     if(dp->dev != ip->dev || dirlink(dp, name, ip->inum) < 0){
-//       iunlockput(dp);
-//       goto bad;
-//     }
-//     iunlockput(dp);
-//     iput(ip);
-//   }else if(flag[0] == '-' && flag[1] == 's'){
-//     if((ip = create(new, T_SYMLINK, 0, 0)) == 0){ //* T_SBLK: symbolic type - need to be differentiated.
-//       end_op();
-//       cprintf("Error while creating symlink\n");
-//       return -1;
-//     }
-//     length = strlen(old);
-//     //* Write path length and path info
-//     writei(ip, (char*)&length, 0, sizeof(int));
-//     writei(ip, old, sizeof(int), length + 1); //* Save length information. +1 for null character '\0'
-
-//     //* Unlock
-//     iupdate(ip);
-//     iunlockput(ip);
-//   }
-//   end_op();
-
-//   return 0;
-
-// bad:
-//   ilock(ip);
-//   ip->nlink--;
-//   iupdate(ip);
-//   iunlockput(ip);
-//   end_op();
-//   return -1;
-// }
 
 //syslink read
 int sys_readlink(void)
@@ -687,13 +594,13 @@ int readlink(char *pathname, char *buf, int bufsize)
   return -1;
 }
 
-int sys_get_ip(void)
+int sys_get_ip(void) //* get system_ip 
 {
   char *path;
   struct inode *ip;
-  if (argstr(1, &path) < 0)
+  if (argstr(1, &path) < 0) //* check validation
     return -1;
-  if((ip = namei(path)) == 0){
+  if((ip = namei(path)) == 0){ //* check validation
       end_op();
       return -1;
     }

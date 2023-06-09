@@ -28,7 +28,9 @@ exec(char *path, char **argv)
     return -1;
   }
 
-  ip = get_ip(ip,  path);
+  //* if the path is by symlink, have to change ip to point origin. 
+  ip = get_ip(ip,  path); 
+
   // if (readlink(path, pathname, 64) == 0)
   // {
   //   if ((ip = namei(pathname, 1)) == 0)

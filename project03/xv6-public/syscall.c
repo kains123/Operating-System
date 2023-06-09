@@ -134,8 +134,8 @@ static int (*syscalls[])(void) = {
 [SYS_sync] sys_sync,
 [SYS_get_log_val] sys_get_log_val,
 [SYS_symlink] sys_symlink,
-[SYS_readlink] sys_readlink,
-[SYS_get_ip] sys_get_ip,
+[SYS_readlink] sys_readlink, //! for the symlink but it's just a trial and error.
+[SYS_get_ip] sys_get_ip, //* for the symlink
 };
 
 void

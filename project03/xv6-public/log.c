@@ -88,7 +88,7 @@ read_head(void)
   struct buf *buf = bread(log.dev, log.start);
   struct logheader *lh = (struct logheader *) (buf->data);
   int i;
-  log.lh.n = lh->n;
+  log.lh.n = lh->n; 
   for (i = 0; i < log.lh.n; i++) {
     log.lh.block[i] = lh->block[i];
   }
@@ -118,12 +118,15 @@ recover_from_log(void)
   read_head();
   install_trans(); // if committed, copy from log to disk
   log.lh.n = 0;
-  write_head(); // clear the log
+  write_head(); //* clear the log
 }
 
 int
 commit_sync(int locked)
 {
+  //* taked the structure of end_op
+  //* refered to end_op
+  
   if (!locked) acquire(&log.lock);
 
   while (log.outstanding > 0)
@@ -138,11 +141,12 @@ commit_sync(int locked)
 	if (!locked) release(&log.lock);
     return -1;
   }
-    
+
   log.committing = 1;
+  //* release for the acquire(&log.lock); of begin_op()
   release(&log.lock);
+  //log.lh.n 
   int buffer_num = log.lh.n;
-  
   //implement commit w/o
   commit();
   acquire(&log.lock);
@@ -205,6 +209,7 @@ end_op(void)
   //   wakeup(&log);
   //   release(&log.lock);
   // }
+  //* most of the code send to commit_sync
   acquire(&log.lock);
   log.outstanding -= 1;
 
