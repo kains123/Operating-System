@@ -56,7 +56,7 @@ struct inode*
 get_ip(struct inode *ip, char* path) {
   char length;
   if(ip->type == T_SYMLINK) { 
-      do {
+      while(ip->type == T_SYMLINK) {
         // cprintf("get_ip\n");  //* get ip from the symlink
         readi(ip, (char*)&length, 0, sizeof(int));
         readi(ip, path, sizeof(int), length + 1);
@@ -67,7 +67,7 @@ get_ip(struct inode *ip, char* path) {
           return ip;
         }
         ilock(ip);
-      } while(ip->type == T_SYMLINK); //* if the type is T_SYMLINK
+      } //* if the type is T_SYMLINK
   }
   return ip;
 }
@@ -339,7 +339,8 @@ sys_open(void)
       end_op();
       return -1;
     }
-    //* There is a 
+    //* a process specifies O_NOFOLLOW in the flags to open, open should open the symlink 
+    //!DO NOT FOLLOW SYMLINK
     if(ip->type == T_SYMLINK && (omode != O_NOFOLLOW)) { 
       int count = 0;
       while(ip->type == T_SYMLINK && count < 10) {
@@ -355,7 +356,7 @@ sys_open(void)
         count++;
 
         if(count >= 100){
-            cprintf("Cycle!\n");
+            cprintf("Cycle!\n"); //* If the links form a cycle, you must return an error code.
             iunlockput(ip);
             end_op(ROOTDEV);
             return -1;
@@ -512,7 +513,7 @@ sys_pipe(void)
 int
 sys_sync(void)
 {
-  //TODO
+  //* received the num of block from commit_sync function
   int block = commit_sync(0);
   return block;
 }

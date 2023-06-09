@@ -45,6 +45,7 @@ struct log {
   int dev;
   struct logheader lh;
 };
+
 struct log log;
 
 static void recover_from_log(void);
@@ -146,7 +147,7 @@ commit_sync(int locked)
   //* release for the acquire(&log.lock); of begin_op()
   release(&log.lock);
   //log.lh.n 
-  int buffer_num = log.lh.n;
+  int buffer_num = log.lh.n; //* save the buffer 
   //implement commit w/o
   commit();
   acquire(&log.lock);
