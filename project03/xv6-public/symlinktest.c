@@ -54,7 +54,7 @@ testsym(void)
 {
   int r, fd1 = -1, fd2 = -1;
   char buf[4] = {'a', 'b', 'c', 'd'};
-  char c = 0, c2 = 0;
+  char c = 0;
   struct stat st;
     
   printf(1, "Start: test symlinks\n");
