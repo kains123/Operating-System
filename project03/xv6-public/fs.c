@@ -375,7 +375,7 @@ bmap(struct inode *ip, uint bn)
 {
   uint addr, *a;
   struct buf *bp;
-
+  //* check bn
   if(bn < NDIRECT){
     if((addr = ip->addrs[bn]) == 0)
       ip->addrs[bn] = addr = balloc(ip->dev);
@@ -384,9 +384,9 @@ bmap(struct inode *ip, uint bn)
   bn -= NDIRECT;
 
   if(bn < NINDIRECT){
-    // Load indirect block, allocating if necessary.
-    if((addr = ip->addrs[FS_ADDR_SINGLE_INDIRECT]) == 0)
-      ip->addrs[FS_ADDR_SINGLE_INDIRECT] = addr = balloc(ip->dev);
+    //* Load indirect block, allocating if necessary.
+    if((addr = ip->addrs[FS_SINGLE_INDIRECT]) == 0)
+      ip->addrs[FS_SINGLE_INDIRECT] = addr = balloc(ip->dev);
     bp = bread(ip->dev, addr);
     a = (uint*)bp->data;
     if((addr = a[bn]) == 0){
@@ -399,9 +399,9 @@ bmap(struct inode *ip, uint bn)
   bn -= NINDIRECT;
 
   if (bn < NINDIRECT_DOU) {
-    // Load doubly indirect block, allocating if necessary.
-    if ((addr = ip->addrs[FS_ADDR_DOUBLY_INDIRECT]) == 0)
-      ip->addrs[FS_ADDR_DOUBLY_INDIRECT] = addr = balloc(ip->dev);
+    //* Load doubly indirect block, allocating if necessary.
+    if ((addr = ip->addrs[FS_DOUBLY_INDIRECT]) == 0)
+      ip->addrs[FS_DOUBLY_INDIRECT] = addr = balloc(ip->dev);
 
     // Load block
     bp = bread(ip->dev, addr);
@@ -426,11 +426,11 @@ bmap(struct inode *ip, uint bn)
   bn -= NINDIRECT_DOU;
 
   if (bn < NINDIRECT_TRI) {
-    // Load doubly indirect block, allocating if necessary.
-    if ((addr = ip->addrs[FS_ADDR_TRIPLE_INDIRECT]) == 0)
-      ip->addrs[FS_ADDR_TRIPLE_INDIRECT] = addr = balloc(ip->dev);
+    //* Load doubly indirect block, allocating if necessary.
+    if ((addr = ip->addrs[FS_TRIPLE_INDIRECT]) == 0)
+      ip->addrs[FS_TRIPLE_INDIRECT] = addr = balloc(ip->dev);
 
-    // Load first block
+    //* first block load 
     bp = bread(ip->dev, addr);
     a = (uint*)bp->data;
     if ((addr = a[bn / NINDIRECT_DOU]) == 0) {
@@ -439,7 +439,7 @@ bmap(struct inode *ip, uint bn)
     }
     brelse(bp);
 
-    // Load second block
+    //* second block load
     bp = bread(ip->dev, addr);
     a = (uint*)bp->data;
     if ((addr = a[(bn % NINDIRECT_DOU) / NINDIRECT]) == 0) {
@@ -448,7 +448,7 @@ bmap(struct inode *ip, uint bn)
     }
     brelse(bp);
 
-    // Load address block
+    //* address block load 
     bp = bread(ip->dev, addr);
     a = (uint*)bp->data;
     if ((addr = a[(bn % NINDIRECT_DOU) % NINDIRECT]) == 0) {
@@ -512,20 +512,20 @@ itrunc(struct inode *ip)
     }
   }
 
-  if(ip->addrs[FS_ADDR_SINGLE_INDIRECT]){
-    bp = bread(ip->dev, ip->addrs[FS_ADDR_SINGLE_INDIRECT]);
+  if(ip->addrs[FS_SINGLE_INDIRECT]){
+    bp = bread(ip->dev, ip->addrs[FS_SINGLE_INDIRECT]);
     a = (uint*)bp->data;
     for(j = 0; j < NINDIRECT; j++){
       if(a[j])
         bfree(ip->dev, a[j]);
     }
     brelse(bp);
-    bfree(ip->dev, ip->addrs[FS_ADDR_SINGLE_INDIRECT]);
-    ip->addrs[FS_ADDR_SINGLE_INDIRECT] = 0;
+    bfree(ip->dev, ip->addrs[FS_SINGLE_INDIRECT]);
+    ip->addrs[FS_SINGLE_INDIRECT] = 0;
   }
 
-  if (ip->addrs[FS_ADDR_DOUBLY_INDIRECT]) {
-    bp = bread(ip->dev, ip->addrs[FS_ADDR_DOUBLY_INDIRECT]);
+  if (ip->addrs[FS_DOUBLY_INDIRECT]) {
+    bp = bread(ip->dev, ip->addrs[FS_DOUBLY_INDIRECT]);
     a = (uint*)bp->data;
     for (j = 0; j < NINDIRECT; j++) {
       if (a[j]) {
@@ -544,12 +544,12 @@ itrunc(struct inode *ip)
     }
 
     brelse(bp);
-    bfree(ip->dev, ip->addrs[FS_ADDR_DOUBLY_INDIRECT]);
-    ip->addrs[FS_ADDR_DOUBLY_INDIRECT] = 0;
+    bfree(ip->dev, ip->addrs[FS_DOUBLY_INDIRECT]);
+    ip->addrs[FS_DOUBLY_INDIRECT] = 0;
   }
 
-  if (ip->addrs[FS_ADDR_TRIPLE_INDIRECT]) {
-    bp = bread(ip->dev, ip->addrs[FS_ADDR_TRIPLE_INDIRECT]);
+  if (ip->addrs[FS_TRIPLE_INDIRECT]) {
+    bp = bread(ip->dev, ip->addrs[FS_TRIPLE_INDIRECT]);
     a = (uint*)bp->data;
     for (k = 0; k < NINDIRECT; k++) {
       if (a[k]) {
@@ -579,8 +579,8 @@ itrunc(struct inode *ip)
     }
 
     brelse(bp);
-    bfree(ip->dev, ip->addrs[FS_ADDR_TRIPLE_INDIRECT]);
-    ip->addrs[FS_ADDR_TRIPLE_INDIRECT] = 0;
+    bfree(ip->dev, ip->addrs[FS_TRIPLE_INDIRECT]);
+    ip->addrs[FS_TRIPLE_INDIRECT] = 0;
   }
 
   ip->size = 0;
