@@ -348,7 +348,7 @@ sys_open(void)
         readi(ip, path, sizeof(int), length + 1);
         iunlockput(ip);
         if((ip = namei(path)) == 0){
-          cprintf("Error: Inode cannot found. Original file could be deleted or possible inode corruption occured.\n");
+          cprintf("[ERROR] You can't access the data. It might be deleted.\n");
           end_op();
           return -1;
         }
@@ -364,8 +364,6 @@ sys_open(void)
       } 
     }
   }
-
-  
   
   
   // else {
