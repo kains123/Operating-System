@@ -55,7 +55,7 @@ testsym(void)
   int r, fd1 = -1, fd2 = -1;
   char buf[4] = {'a', 'b', 'c', 'd'};
   char c = 0;
-  //  c2 = 0;
+   c2 = 0;
   struct stat st;
     
   printf(1, "Start: test symlinks\n");
@@ -81,49 +81,49 @@ testsym(void)
   if(fd2 < 0)
     printf(1,"failed to open b");
   read(fd2, &c, 1);
-  // if (c != 'a')
-  //   printf(1,"failed to read bytes from b");
+  if (c != 'a')
+    printf(1,"failed to read bytes from b");
 
-  // unlink("/testsym/a");
+  unlink("/testsym/a");
 
-  // if(open("/testsym/b", O_RDWR) >= 0)
-  //   printf(1,"Should not be able to open b after deleting a");
+  if(open("/testsym/b", O_RDWR) >= 0)
+    printf(1,"Should not be able to open b after deleting a");
 
-  // r = symlink("/testsym/b", "/testsym/a");
-  // if(r < 0)
-  //   printf(1,"symlink a -> b failed");
+  r = symlink("/testsym/b", "/testsym/a");
+  if(r < 0)
+    printf(1,"symlink a -> b failed");
 
-  // r = open("/testsym/b", O_RDWR);
-  // if(r >= 0)
-  //   printf(1,"Should not be able to open b (cycle b->a->b->..)\n");
+  r = open("/testsym/b", O_RDWR);
+  if(r >= 0)
+    printf(1,"Should not be able to open b (cycle b->a->b->..)\n");
   
-  // r = symlink("/testsym/nonexistent", "/testsym/c");
-  // if(r != 0)
-  //   printf(1,"Symlinking to nonexistent file should succeed\n");
+  r = symlink("/testsym/nonexistent", "/testsym/c");
+  if(r != 0)
+    printf(1,"Symlinking to nonexistent file should succeed\n");
 
-  // r = symlink("/testsym/2", "/testsym/1");
-  // if(r) printf(1,"Failed to link 1->2");
-  // r = symlink("/testsym/3", "/testsym/2");
-  // if(r) printf(1,"Failed to link 2->3");
-  // r = symlink("/testsym/4", "/testsym/3");
-  // if(r) printf(1,"Failed to link 3->4");
+  r = symlink("/testsym/2", "/testsym/1");
+  if(r) printf(1,"Failed to link 1->2");
+  r = symlink("/testsym/3", "/testsym/2");
+  if(r) printf(1,"Failed to link 2->3");
+  r = symlink("/testsym/4", "/testsym/3");
+  if(r) printf(1,"Failed to link 3->4");
 
-  // close(fd1);
-  // close(fd2);
+  close(fd1);
+  close(fd2);
 
   fd1 = open("/testsym/4", O_CREATE | O_RDWR);
   if(fd1<0) printf(1,"Failed to create 4\n");
-  // fd2 = open("/testsym/1", O_RDWR);
-  // if(fd2<0) printf(1,"Failed to open 1\n");
+  fd2 = open("/testsym/1", O_RDWR);
+  if(fd2<0) printf(1,"Failed to open 1\n");
 
-  // c = '#';
-  // r = write(fd2, &c, 1);
-  // if(r!=1) printf(1,"Failed to write to 1\n");
-  // r = read(fd1, &c2, 1);
-  // if(r!=1) printf(1,"Failed to read from 4\n");
-  // if(c!=c2)
-  //   printf(1,"Value read from 4 differed from value written to 1\n");
-  // printf(1, "test symlinks: ok\n");
+  c = '#';
+  r = write(fd2, &c, 1);
+  if(r!=1) printf(1,"Failed to write to 1\n");
+  r = read(fd1, &c2, 1);
+  if(r!=1) printf(1,"Failed to read from 4\n");
+  if(c!=c2)
+    printf(1,"Value read from 4 differed from value written to 1\n");
+  printf(1, "test symlinks: ok\n");
 
   close(fd1);
   close(fd2);
