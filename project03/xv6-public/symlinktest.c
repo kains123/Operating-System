@@ -54,6 +54,7 @@ testsym(void)
 {
   int r, fd1 = -1, fd2 = -1;
   char buf[4] = {'a', 'b', 'c', 'd'};
+  char buf1[4] = {'a', 'a', 'a', 'a'};
   char c = 0;
   struct stat st;
     
@@ -68,7 +69,7 @@ testsym(void)
   if(r < 0)
     printf(1,"symlink b -> a failed");
 
-  if(write(r, buf, sizeof(buf)) != 4)
+  if(write(fd1, buf, sizeof(buf)) != 4)
     printf(1,"failed to write to a");
 
   if (stat_slink("/testsym/b", &st) != 0)
@@ -79,6 +80,8 @@ testsym(void)
   fd2 = open("/testsym/b", O_RDWR);
   if(fd2 < 0)
     printf(1,"failed to open b");
+  if(write(fd1, buf1, sizeof(buf)) != 4)
+    printf(1,"failed to write to b");
   read(fd2, &c, 1);
   if (c != 'a')
     printf(1,"failed to read bytes from b");
